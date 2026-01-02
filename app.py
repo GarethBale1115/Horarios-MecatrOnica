@@ -22,13 +22,31 @@ st.markdown("""
     .credit-ok { background-color: #d1fae5; color: #065f46; border-color: #34d399; }
     .credit-error { background-color: #fee2e2; color: #991b1b; border-color: #f87171; }
 
-    /* Tabla Visual */
-    .horario-grid { width: 100%; border-collapse: collapse; text-align: center; font-family: 'Arial', sans-serif; font-size: 0.75em; background-color: white; }
-    .horario-grid th { background-color: #800000; color: white; padding: 4px; border: 1px solid #ddd; }
-    .horario-grid td { border: 1px solid #eee; height: 40px; vertical-align: middle; padding: 1px; }
-    .hora-col { background-color: #f9fafb; font-weight: bold; color: #333; width: 60px; }
-    .clase-cell { border-radius: 4px; padding: 2px; color: #222; font-weight: 600; font-size: 0.9em; height: 100%; display: flex; flex-direction: column; justify-content: center; line-height: 1.1; }
-    .clase-prof { font-weight: normal; font-size: 0.75em; color: #444; }
+    /* Tabla Visual Mejorada */
+    .horario-grid { width: 100%; border-collapse: collapse; text-align: center; font-family: 'Arial', sans-serif; font-size: 0.8em; background-color: white; }
+    .horario-grid th { background-color: #800000; color: white; padding: 6px; border: 1px solid #ddd; }
+    .horario-grid td { border: 1px solid #eee; height: 45px; vertical-align: middle; padding: 2px; }
+    .hora-col { background-color: #f9fafb; font-weight: bold; color: #333; width: 70px; font-size: 0.9em; }
+    
+    .clase-cell { 
+        border-radius: 4px; 
+        padding: 4px; 
+        color: #111; 
+        font-weight: 700; 
+        font-size: 0.95em; 
+        height: 100%; 
+        display: flex; 
+        flex-direction: column; 
+        justify-content: center; 
+        line-height: 1.2; 
+        box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    }
+    .clase-prof { 
+        font-weight: 500; 
+        font-size: 0.8em; 
+        color: #333; 
+        margin-top: 2px;
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -310,9 +328,18 @@ def create_timetable_html(horario):
     grid = {h: [None]*5 for h in range(min_h, max_h)} 
     
     for clase in horario:
-        mat_name = clase['materia'].split(' ')[1] if " " in clase['materia'] else clase['materia']
-        if len(mat_name) > 25: mat_name = mat_name[:22] + "..."
-        prof_name = clase['profesor'].split('(')[0].split(' ')[0]
+        full_name = clase['materia']
+        if "Controladores Lógicos" in full_name: mat_name = "PLC"
+        elif "Formulación y Evaluación" in full_name: mat_name = "Formulación"
+        elif "Sistemas Avanzados" in full_name: mat_name = "Sistemas Av. Man."
+        else:
+            mat_name = full_name.split(' ')[1] if " " in full_name else full_name
+            if len(mat_name) > 20: mat_name = mat_name[:20] + "..."
+            
+        # Prof Name Logic (Nombre y Apellido)
+        parts = clase['profesor'].split('(')[0].split()
+        prof_name = f"{parts[0]} {parts[1]}" if len(parts) > 1 else parts[0]
+        
         color = subject_colors[clase['materia']]
         for sesion in clase['horario']:
             dia = sesion[0]; hora_ini = sesion[1]
@@ -321,7 +348,7 @@ def create_timetable_html(horario):
 
     html = """<table class="horario-grid"><thead><tr><th class='hora-col'>Hora</th><th>Lun</th><th>Mar</th><th>Mié</th><th>Jue</th><th>Vie</th></tr></thead><tbody>"""
     for h in range(min_h, max_h):
-        html += f"<tr><td class='hora-col'>{h}:00</td>"
+        html += f"<tr><td class='hora-col'>{h}-{h+1}</td>"
         for d in range(5):
             cell = grid[h][d]
             html += f"<td>{cell['text']}</td>" if cell else "<td></td>"
