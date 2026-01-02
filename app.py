@@ -7,10 +7,18 @@ import os
 # -----------------------------------------------------------------------------
 # CONFIGURACIÓN DE PÁGINA
 # -----------------------------------------------------------------------------
-st.set_page_config(page_title="Carga Académica ITS", page_icon="🎓", layout="wide")
+st.set_page_config(page_title="Generador de Horarios ITS", page_icon="🎓", layout="wide")
+
+# Inicializar estado de la sesión (Para manejar los pasos)
+if 'step' not in st.session_state: st.session_state.step = 1
+if 'num_materias_deseadas' not in st.session_state: st.session_state.num_materias_deseadas = 6
+if 'materias_seleccionadas' not in st.session_state: st.session_state.materias_seleccionadas = []
+if 'rango_hora' not in st.session_state: st.session_state.rango_hora = (7, 22)
+if 'prefs' not in st.session_state: st.session_state.prefs = {}
+if 'resultados' not in st.session_state: st.session_state.resultados = []
 
 # -----------------------------------------------------------------------------
-# BASE DE DATOS (NOMBRES DE MATERIAS)
+# BASE DE DATOS
 # -----------------------------------------------------------------------------
 database = {
     "Ingeniería Mecatrónica": {
@@ -27,11 +35,11 @@ database = {
 }
 
 # -----------------------------------------------------------------------------
-# OFERTA ACADÉMICA COMPLETA (SEM 1 - 9)
+# OFERTA ACADÉMICA (PEGA AQUÍ TU BASE DE DATOS COMPLETA)
 # -----------------------------------------------------------------------------
-# Días: 0=Lun, 1=Mar, 2=Mie, 3=Jue, 4=Vie
+# (Por seguridad en el chat, asegúrate de que este bloque contenga los 9 semestres que ya tienes)
 oferta_academica = {
-    # --- SEMESTRE 1 ---
+    # ... SEMESTRE 1 ...
     "Química": [{"profesor": "Norma Hernández Flores", "horario": [(d,7,8) for d in range(4)], "id":"Q1"}, {"profesor": "Norma Hernández Flores", "horario": [(d,8,9) for d in range(4)], "id":"Q2"}, {"profesor": "Norma Hernández Flores", "horario": [(d,11,12) for d in range(4)], "id":"Q3"}, {"profesor": "Norma Hernández Flores", "horario": [(d,12,13) for d in range(4)], "id":"Q4"}, {"profesor": "Hilda Araceli Torres Plata", "horario": [(d,8,9) for d in range(4)], "id":"Q5"}, {"profesor": "Hilda Araceli Torres Plata", "horario": [(d,9,10) for d in range(4)], "id":"Q6"}, {"profesor": "Alma Leticia Cázares Arreguin", "horario": [(d,13,14) for d in range(4)], "id":"Q7"}, {"profesor": "Alma Leticia Cázares Arreguin", "horario": [(d,14,15) for d in range(4)], "id":"Q8"}, {"profesor": "Alma Leticia Cázares Arreguin", "horario": [(d,16,17) for d in range(4)], "id":"Q9"}, {"profesor": "José Raymundo Garza Aldaco", "horario": [(d,15,16) for d in range(4)], "id":"Q10"}, {"profesor": "Alejandra Torres Ordaz", "horario": [(d,15,16) for d in range(4)], "id":"Q11"}, {"profesor": "Alejandra Torres Ordaz", "horario": [(d,16,17) for d in range(4)], "id":"Q12"}, {"profesor": "Alejandra Torres Ordaz", "horario": [(d,17,18) for d in range(4)], "id":"Q13"}, {"profesor": "Victor Martinez Rivera", "horario": [(d,15,16) for d in range(4)], "id":"Q14"}, {"profesor": "Victor Martinez Rivera", "horario": [(d,16,17) for d in range(4)], "id":"Q15"}, {"profesor": "Victor Martinez Rivera", "horario": [(d,17,18) for d in range(4)], "id":"Q16"}, {"profesor": "Silvia Susana Aguirre Sanchez", "horario": [(d,17,18) for d in range(4)], "id":"Q17"}, {"profesor": "Silvia Susana Aguirre Sanchez", "horario": [(d,18,19) for d in range(4)], "id":"Q18"}, {"profesor": "Karina Azucena Ayala Torres", "horario": [(d,17,18) for d in range(4)], "id":"Q19"}, {"profesor": "Karina Azucena Ayala Torres", "horario": [(d,18,19) for d in range(4)], "id":"Q20"}],
     "Cálculo Diferencial": [{"profesor": "Allen Epifanio Lopez", "horario": [(d,7,8) for d in range(5)], "id":"CD1"}, {"profesor": "Kevin Alberto Cordova Ventura", "horario": [(d,8,9) for d in range(5)], "id":"CD2"}, {"profesor": "Kevin Alberto Cordova Ventura", "horario": [(d,12,13) for d in range(5)], "id":"CD3"}, {"profesor": "Erwin Rommel Cerda Leon", "horario": [(d,8,9) for d in range(5)], "id":"CD4"}, {"profesor": "Brenda Zavala Aguillon", "horario": [(d,9,10) for d in range(5)], "id":"CD5"}, {"profesor": "Brenda Zavala Aguillon", "horario": [(d,12,13) for d in range(5)], "id":"CD6"}, {"profesor": "Alicia Guadalupe Del Bosque Martínez", "horario": [(d,10,11) for d in range(5)], "id":"CD7"}, {"profesor": "Alicia Guadalupe Del Bosque Martínez", "horario": [(d,11,12) for d in range(5)], "id":"CD8"}, {"profesor": "Eliana Sarahi Sanchez Gonzalez", "horario": [(d,11,12) for d in range(5)], "id":"CD9"}, {"profesor": "Ana Victoria Ferniza Sandoval", "horario": [(d,11,12) for d in range(5)], "id":"CD10"}, {"profesor": "Ana Victoria Ferniza Sandoval", "horario": [(d,13,14) for d in range(5)], "id":"CD11"}, {"profesor": "Edna Marina Gonzalez Martinez", "horario": [(d,11,12) for d in range(5)], "id":"CD12"}, {"profesor": "Rodrigo Juarez Martinez", "horario": [(d,15,16) for d in range(5)], "id":"CD13"}, {"profesor": "Jose Jesus Israel Ruiz Benitez", "horario": [(d,16,17) for d in range(5)], "id":"CD14"}, {"profesor": "Javier Guadalupe Cuellar Villarreal", "horario": [(d,16,17) for d in range(5)], "id":"CD15"}, {"profesor": "Irma Karina Olmedo Landeros", "horario": [(d,17,18) for d in range(5)], "id":"CD16"}],
     "Taller de Ética": [{"profesor": "Emma Julia Velarde Sanchez", "horario": [(d,7,8) for d in range(4)], "id":"TE1"}, {"profesor": "Emma Julia Velarde Sanchez", "horario": [(d,8,9) for d in range(4)], "id":"TE2"}, {"profesor": "Maria Del Refugio Quijano Urbano", "horario": [(d,7,8) for d in range(4)], "id":"TE3"}, {"profesor": "Maria Del Refugio Quijano Urbano", "horario": [(d,9,10) for d in range(4)], "id":"TE4"}, {"profesor": "Claudia Enriqueta Cárdenas Aguirre", "horario": [(d,9,10) for d in range(4)], "id":"TE5"}, {"profesor": "Juana María Espinoza Rocha", "horario": [(d,9,10) for d in range(4)], "id":"TE6"}, {"profesor": "Juana María Espinoza Rocha", "horario": [(d,10,11) for d in range(4)], "id":"TE7"}, {"profesor": "Juana María Espinoza Rocha", "horario": [(d,11,12) for d in range(4)], "id":"TE8"}, {"profesor": "Juana María Espinoza Rocha", "horario": [(d,13,14) for d in range(4)], "id":"TE9"}, {"profesor": "Ana Laura Peña Cruz", "horario": [(d,10,11) for d in range(4)], "id":"TE10"}, {"profesor": "Guadalupe Del Socorro Peña Cruz", "horario": [(d,10,11) for d in range(4)], "id":"TE11"}, {"profesor": "Guadalupe Del Socorro Peña Cruz", "horario": [(d,12,13) for d in range(4)], "id":"TE12"}, {"profesor": "Sara Griselda Reyes Patiño", "horario": [(d,11,12) for d in range(4)], "id":"TE13"}, {"profesor": "Martin Mireles Contreras", "horario": [(d,15,16) for d in range(4)], "id":"TE14"}, {"profesor": "Martin Mireles Contreras", "horario": [(d,16,17) for d in range(4)], "id":"TE15"}, {"profesor": "Verónica Arlaine Barajas Salazar", "horario": [(d,17,18) for d in range(4)], "id":"TE16"}, {"profesor": "Verónica Arlaine Barajas Salazar", "horario": [(d,18,19) for d in range(4)], "id":"TE17"}, {"profesor": "Marcela Perales Moreno", "horario": [(d,18,19) for d in range(4)], "id":"TE18"}, {"profesor": "Marcela Perales Moreno", "horario": [(d,20,21) for d in range(4)], "id":"TE19"}, {"profesor": "Jesus Esquivel Alonso", "horario": [(d,18,19) for d in range(4)], "id":"TE20"}, {"profesor": "Carlos Benito Arriaga Aguilar", "horario": [(d,20,21) for d in range(4)], "id":"TE21"}],
@@ -92,40 +100,35 @@ oferta_academica = {
 }
 
 # -----------------------------------------------------------------------------
-# LÓGICA DE PDF TIPO "CARGA ACADÉMICA" (LANDSCAPE)
+# FUNCIONES LÓGICAS Y PDF
 # -----------------------------------------------------------------------------
 class PDF(FPDF):
     def header(self):
-        # Intentar cargar logos (Manejo de errores si no existen)
-        if os.path.exists("logo_tec.png"):
-            self.image('logo_tec.png', 10, 8, 33)
-        if os.path.exists("logo_its.png"):
-            self.image('logo_its.png', 240, 8, 33) 
-            
+        if os.path.exists("logo_tec.png"): self.image('logo_tec.png', 10, 8, 33)
+        if os.path.exists("logo_its.png"): self.image('logo_its.png', 240, 8, 33)
         self.set_font('Arial', 'B', 16)
         self.cell(0, 10, 'TECNOLÓGICO NACIONAL DE MÉXICO', 0, 1, 'C')
         self.set_font('Arial', 'B', 12)
         self.cell(0, 10, 'INSTITUTO TECNOLÓGICO DE SALTILLO', 0, 1, 'C')
         self.ln(15)
-
     def footer(self):
         self.set_y(-15)
         self.set_font('Arial', 'I', 8)
         self.cell(0, 10, f'Página {self.page_no()}', 0, 0, 'C')
 
 def create_pro_pdf(horario, alumno_data):
-    # Orientación Horizontal (Landscape) para que quepa la tabla
-    pdf = PDF(orientation='L', unit='mm', format='A4') 
+    pdf = PDF(orientation='L', unit='mm', format='A4')
     pdf.add_page()
     
-    # --- DATOS DEL ALUMNO ---
+    # Datos Alumno
     pdf.set_font("Arial", 'B', 14)
     pdf.cell(0, 10, "Carga Académica", 0, 1, 'C')
     pdf.ln(5)
     
     pdf.set_font("Arial", size=10)
-    # Fila 1
     pdf.set_fill_color(240, 240, 240)
+    
+    # Fila 1
     pdf.cell(30, 8, "No. Control:", 1, 0, 'L', 1)
     pdf.cell(40, 8, alumno_data.get("nc", ""), 1, 0, 'L')
     pdf.cell(30, 8, "Nombre:", 1, 0, 'L', 1)
@@ -140,57 +143,37 @@ def create_pro_pdf(horario, alumno_data):
     pdf.cell(100, 8, alumno_data.get("periodo", "ENE-JUN 2026"), 1, 1, 'L')
     pdf.ln(10)
 
-    # --- TABLA DE HORARIO ---
-    # Encabezados
+    # Tabla
     pdf.set_font("Arial", 'B', 9)
     pdf.set_fill_color(200, 220, 255)
-    
-    w_mat = 70
-    w_prof = 60
-    w_dia = 25
-    
+    w_mat, w_prof, w_dia = 70, 60, 25
     pdf.cell(w_mat, 10, "Materia", 1, 0, 'C', 1)
     pdf.cell(w_prof, 10, "Profesor", 1, 0, 'C', 1)
-    pdf.cell(w_dia, 10, "Lunes", 1, 0, 'C', 1)
-    pdf.cell(w_dia, 10, "Martes", 1, 0, 'C', 1)
-    pdf.cell(w_dia, 10, "Miércoles", 1, 0, 'C', 1)
-    pdf.cell(w_dia, 10, "Jueves", 1, 0, 'C', 1)
-    pdf.cell(w_dia, 10, "Viernes", 1, 1, 'C', 1)
+    for dia in ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes"]:
+        pdf.cell(w_dia, 10, dia, 1, 0, 'C', 1)
+    pdf.ln()
     
     pdf.set_font("Arial", size=8)
-    
-    # Ordenar materias por hora de inicio (buscando la hora mínima de la semana)
+    # Ordenar por hora
     def get_start_hour(clase):
         if not clase['horario']: return 24
         return min([h[1] for h in clase['horario']])
-    
     horario_ordenado = sorted(horario, key=get_start_hour)
     
     for clase in horario_ordenado:
-        # Altura de la celda
-        h = 10 
-        materia_nome = clase['materia'][:38] # Cortar si es muy largo
+        h = 10
+        materia_nome = clase['materia'][:38]
         profesor_nome = clase['profesor'].split('(')[0][:30]
-        
         pdf.cell(w_mat, h, materia_nome, 1)
         pdf.cell(w_prof, h, profesor_nome, 1)
-        
-        # Llenar días
-        for d in range(5): # 0 a 4
+        for d in range(5):
             txt_hora = ""
             for sesion in clase['horario']:
-                if sesion[0] == d:
-                    # Formato HH:00-HH:00
-                    txt_hora = f"{sesion[1]}:00-{sesion[2]}:00"
+                if sesion[0] == d: txt_hora = f"{sesion[1]}:00-{sesion[2]}:00"
             pdf.cell(w_dia, h, txt_hora, 1, 0, 'C')
-        
-        pdf.ln() # Salto de línea al terminar la fila
-        
+        pdf.ln()
     return pdf.output(dest='S').encode('latin-1')
 
-# -----------------------------------------------------------------------------
-# LÓGICA DE COMBINACIONES (Sin cambios mayores)
-# -----------------------------------------------------------------------------
 def traslape(horario1, horario2):
     for h1 in horario1:
         for h2 in horario2:
@@ -200,23 +183,34 @@ def traslape(horario1, horario2):
 
 def generar_combinaciones(materias, rango, prefs):
     pool = []
+    # 1. Validar que cada materia tenga opciones
     for mat in materias:
         if mat not in oferta_academica: continue
         opciones = []
         for sec in oferta_academica[mat]:
             key = f"{mat}_{sec['profesor']}"
             puntos = prefs.get(key, 50)
-            if puntos == 0: continue
+            
+            # FILTRO CRÍTICO: Si es 0 (Tacha), se ignora completamente.
+            if puntos == 0: continue 
+            
             dentro = True
             for h in sec['horario']:
                 if h[1] < rango[0] or h[2] > rango[1]: dentro = False; break
+            
             if dentro:
                 s = sec.copy(); s['materia'] = mat; s['score'] = puntos
                 opciones.append(s)
-        if opciones: pool.append(opciones)
-    if not pool: return [], "Falta selección"
+        
+        # SI UNA MATERIA SE QUEDA SIN OPCIONES, FALLAR INMEDIATAMENTE
+        if not opciones:
+            return [], f"❌ Error Crítico: No hay horarios posibles para **{mat}** con tus filtros. Intenta destachar maestros o ampliar el horario."
+        pool.append(opciones)
+    
+    # 2. Generar combinaciones
     combos = list(itertools.product(*pool))
     validos = []
+    
     for c in combos:
         ok = True; score = 0
         for i in range(len(c)):
@@ -225,102 +219,166 @@ def generar_combinaciones(materias, rango, prefs):
                 if traslape(c[i]['horario'], c[j]['horario']): ok=False; break
             if not ok: break
         if ok: validos.append((score, c))
+    
     validos.sort(key=lambda x: x[0], reverse=True)
     return validos, "OK"
 
 # -----------------------------------------------------------------------------
-# INTERFAZ WEB (STREAMLIT)
+# INTERFAZ WIZARD (PASO A PASO)
 # -----------------------------------------------------------------------------
-# 1. DATOS DEL ALUMNO (OPCIONALES)
-st.sidebar.title("👤 Datos del Alumno")
-st.sidebar.info("Opcional: Llena esto para que salga en tu PDF.")
-nombre = st.sidebar.text_input("Nombre Completo")
-nc = st.sidebar.text_input("No. Control")
-semestre = st.sidebar.text_input("Semestre a cursar", "1")
-periodo = st.sidebar.text_input("Periodo", "ENE-JUN 2026")
 
-alumno_data = {"nombre": nombre, "nc": nc, "semestre": semestre, "periodo": periodo}
-
-# 2. SELECCIÓN DE MATERIAS
-st.title("🐯 Generador de Carga Académica")
-st.write("Selecciona tus materias, define tu disponibilidad y genera tu horario ideal.")
-
-col_sel, col_res = st.columns([1, 2])
-
-with col_sel:
-    st.subheader("1. Materias")
-    todas = []
-    for sem, lista in database["Ingeniería Mecatrónica"].items():
-        with st.expander(sem):
-            s = st.multiselect(f"Seleccionar de {sem}", lista)
-            todas.extend(s)
+# --- PASO 1: BIENVENIDA ---
+if st.session_state.step == 1:
+    st.title("🐯 Generador de Horarios ITS")
+    st.markdown("### ¡Bienvenido Ingeniero!")
+    st.write("Esta herramienta te ayudará a encontrar la combinación perfecta de materias y maestros para tu siguiente semestre.")
+    st.write("---")
     
-    st.subheader("2. Disponibilidad")
-    rango = st.slider("Horas en la escuela", 7, 22, (7, 15))
+    cant = st.number_input("¿Cuántas materias piensas meter?", min_value=1, max_value=9, value=6)
+    
+    if st.button("Comenzar ➡️"):
+        st.session_state.num_materias_deseadas = cant
+        st.session_state.step = 2
+        st.rerun()
 
-    # Guardar en estado
-    if "seleccion" not in st.session_state: st.session_state.seleccion = []
-    st.session_state.seleccion = todas
-
-    if todas:
-        st.subheader("3. Profesores")
-        if "prefs" not in st.session_state: st.session_state.prefs = {}
-        for m in todas:
-            if m in oferta_academica:
-                profes = sorted(list(set([p['profesor'] for p in oferta_academica[m]])))
-                st.caption(f"**{m}**")
-                for p in profes:
-                    k = f"{m}_{p}"
-                    op = st.radio(p, ["✅", "➖", "❌"], index=1, key=k, horizontal=True, label_visibility="collapsed")
-                    st.write(p) # Mostrar nombre abajo del radio
-                    if op=="✅": st.session_state.prefs[k]=100
-                    elif op=="❌": st.session_state.prefs[k]=0
-                    else: st.session_state.prefs[k]=50
-                st.divider()
-
-    btn_gen = st.button("GENERAR HORARIOS 🚀", type="primary")
-
-with col_res:
-    if btn_gen:
-        if not todas:
-            st.warning("Selecciona materias primero.")
+# --- PASO 2: SELECCIÓN DE MATERIAS ---
+elif st.session_state.step == 2:
+    st.title("📚 Selección de Materias")
+    st.info(f"Debes seleccionar exactamente **{st.session_state.num_materias_deseadas}** materias.")
+    
+    todas_materias = []
+    seleccion_previa = st.session_state.materias_seleccionadas
+    
+    # Mostrar acordeón por semestres
+    for sem, lista in database["Ingeniería Mecatrónica"].items():
+        with st.expander(sem, expanded=False):
+            # Filtrar pre-selección para evitar errores
+            default_val = [m for m in seleccion_previa if m in lista]
+            sel = st.multiselect(f"Materias de {sem}", lista, default=default_val)
+            todas_materias.extend(sel)
+    
+    st.write(f"**Seleccionadas:** {len(todas_materias)} de {st.session_state.num_materias_deseadas}")
+    
+    col1, col2 = st.columns([1,1])
+    if col1.button("⬅️ Atrás"):
+        st.session_state.step = 1
+        st.rerun()
+        
+    if col2.button("Siguiente ➡️", type="primary"):
+        if len(todas_materias) != st.session_state.num_materias_deseadas:
+            st.error(f"⚠️ Error: Dijiste que querías {st.session_state.num_materias_deseadas} materias, pero seleccionaste {len(todas_materias)}. Corrige para avanzar.")
         else:
-            res, msg = generar_combinaciones(todas, rango, st.session_state.prefs)
-            if not res and msg!="OK":
-                st.error(msg)
-            else:
-                st.success(f"¡Se encontraron {len(res)} opciones posibles!")
+            st.session_state.materias_seleccionadas = todas_materias
+            st.session_state.step = 3
+            st.rerun()
+
+# --- PASO 3: DISPONIBILIDAD ---
+elif st.session_state.step == 3:
+    st.title("⏰ Tu Disponibilidad")
+    st.write("Define en qué horario te gustaría estar en la escuela.")
+    
+    rango = st.slider("Rango de Horas:", 7, 22, (7, 15))
+    st.session_state.rango_hora = rango
+    
+    col1, col2 = st.columns([1,1])
+    if col1.button("⬅️ Atrás"):
+        st.session_state.step = 2
+        st.rerun()
+    if col2.button("Siguiente ➡️", type="primary"):
+        st.session_state.step = 4
+        st.rerun()
+
+# --- PASO 4: PROFESORES ---
+elif st.session_state.step == 4:
+    st.title("👨‍🏫 Selección de Profesores")
+    st.info("✅ = Preferencia Alta | ➖ = Me da igual | ❌ = DESCARTAR (No lo quiero)")
+    
+    for mat in st.session_state.materias_seleccionadas:
+        if mat in oferta_academica:
+            with st.expander(f"📌 {mat}", expanded=True):
+                profes = sorted(list(set([p['profesor'] for p in oferta_academica[mat]])))
+                for p in profes:
+                    key = f"{mat}_{p}"
+                    c1, c2 = st.columns([3, 2])
+                    c1.write(f"**{p}**")
+                    val = c2.radio("Calif", ["✅", "➖", "❌"], index=1, key=key, horizontal=True, label_visibility="collapsed")
+                    
+                    if val == "✅": st.session_state.prefs[key] = 100
+                    elif val == "❌": st.session_state.prefs[key] = 0 # SE DESCARTA
+                    else: st.session_state.prefs[key] = 50
+
+    col1, col2 = st.columns([1,1])
+    if col1.button("⬅️ Atrás"):
+        st.session_state.step = 3
+        st.rerun()
+    if col2.button("🚀 GENERAR HORARIOS", type="primary"):
+        st.session_state.step = 5
+        st.rerun()
+
+# --- PASO 5: RESULTADOS ---
+elif st.session_state.step == 5:
+    st.title("✅ Resultados Finales")
+    
+    # Ejecutar cálculo solo una vez al entrar
+    if not st.session_state.resultados:
+        res, msg = generar_combinaciones(st.session_state.materias_seleccionadas, st.session_state.rango_hora, st.session_state.prefs)
+        if not res and msg != "OK":
+            st.error(msg)
+            if st.button("⬅️ Ajustar Filtros"):
+                st.session_state.step = 4
+                st.rerun()
+        else:
+            st.session_state.resultados = res
+
+    if st.session_state.resultados:
+        res = st.session_state.resultados
+        st.success(f"¡Se encontraron {len(res)} combinaciones posibles!")
+        
+        # Mostrar Top 10
+        for i, (score, horario) in enumerate(res[:10]):
+            with st.container(border=True):
+                col_info, col_pdf = st.columns([3, 1])
+                col_info.markdown(f"### Opción {i+1}")
+                col_info.caption(f"Puntaje de preferencia: {score}")
                 
-                # Mostrar Top 10
-                for i, (score, horario) in enumerate(res[:10]):
-                    with st.container(border=True):
-                        c1, c2 = st.columns([3, 1])
-                        c1.markdown(f"### Opción {i+1}")
-                        c2.caption(f"Score: {score}")
+                # Tabla Visual
+                tabla_web = []
+                horario_sorted = sorted(horario, key=lambda x: min([h[1] for h in x['horario']]))
+                for clase in horario_sorted:
+                    h_str = ""
+                    dias = ["Lun", "Mar", "Mie", "Jue", "Vie"]
+                    for d in range(5):
+                        for h in clase['horario']:
+                            if h[0] == d: h_str += f"{dias[d]} {h[1]}-{h[2]} "
+                    tabla_web.append({
+                        "Materia": clase['materia'],
+                        "Profesor": clase['profesor'],
+                        "Horario": h_str
+                    })
+                st.table(pd.DataFrame(tabla_web))
+                
+                # Formulario PDF
+                with col_pdf:
+                    st.write("**Datos para PDF**")
+                    with st.form(key=f"form_pdf_{i}"):
+                        nombre = st.text_input("Nombre", key=f"n_{i}")
+                        nc = st.text_input("No. Control", key=f"nc_{i}")
+                        sem = st.text_input("Semestre", "1", key=f"s_{i}")
+                        per = st.text_input("Periodo", "ENE-JUN 2026", key=f"p_{i}")
                         
-                        # Crear Tabla Visual para la Web
-                        tabla_web = []
-                        # Ordenar por hora para la vista web también
-                        horario_sorted = sorted(horario, key=lambda x: min([h[1] for h in x['horario']]))
+                        gen_pdf = st.form_submit_button("Generar PDF 📄")
                         
-                        for clase in horario_sorted:
-                            h_str = ""
-                            dias = ["L", "M", "M", "J", "V"]
-                            for d in range(5):
-                                for h in clase['horario']:
-                                    if h[0] == d: h_str += f"{dias[d]} {h[1]}-{h[2]} "
-                            tabla_web.append({
-                                "Materia": clase['materia'],
-                                "Profesor": clase['profesor'],
-                                "Horario": h_str
-                            })
-                        st.table(pd.DataFrame(tabla_web))
-                        
-                        # Generar PDF
-                        pdf_data = create_pro_pdf(horario, alumno_data)
-                        st.download_button(
-                            label=f"📄 Descargar Carga Académica (Opción {i+1})",
-                            data=pdf_data,
-                            file_name=f"Carga_{nc if nc else 'Generada'}_Op{i+1}.pdf",
-                            mime="application/pdf"
-                        )
+                        if gen_pdf:
+                            alumno_data = {"nombre": nombre, "nc": nc, "semestre": sem, "periodo": per}
+                            pdf_bytes = create_pro_pdf(horario, alumno_data)
+                            st.download_button(
+                                label="⬇️ DESCARGAR",
+                                data=pdf_bytes,
+                                file_name=f"Carga_{nc}_Op{i+1}.pdf",
+                                mime="application/pdf"
+                            )
+
+    if st.button("🔄 Volver al Inicio"):
+        st.session_state.resultados = []
+        st.session_state.step = 1
+        st.rerun()
