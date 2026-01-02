@@ -15,7 +15,7 @@ if 'num_materias_deseadas' not in st.session_state: st.session_state.num_materia
 if 'materias_seleccionadas' not in st.session_state: st.session_state.materias_seleccionadas = []
 if 'rango_hora' not in st.session_state: st.session_state.rango_hora = (7, 22)
 if 'prefs' not in st.session_state: st.session_state.prefs = {}
-if 'resultados' not in st.session_state: st.session_state.resultados = []
+if 'resultados' not in st.session_state: st.session_state.resultados = None # Cambiado a None para diferenciar
 
 # Datos del alumno (Persistentes)
 if 'alumno_nombre' not in st.session_state: st.session_state.alumno_nombre = ""
@@ -339,13 +339,15 @@ elif st.session_state.step == 5:
         st.session_state.alumno_per = c4.text_input("Periodo", st.session_state.alumno_per)
 
     # Ejecutar cálculo (si no está hecho)
-    if not st.session_state.resultados:
+    if st.session_state.resultados is None:
         res, msg = generar_combinaciones(st.session_state.materias_seleccionadas, st.session_state.rango_hora, st.session_state.prefs)
         if not res and msg != "OK":
             st.error(msg)
+            st.session_state.resultados = [] # Evitar loop
         else:
             st.session_state.resultados = res
 
+    # Mostrar Resultados o Advertencia
     if st.session_state.resultados:
         res = st.session_state.resultados
         st.success(f"¡Se encontraron {len(res)} combinaciones posibles con tus {len(st.session_state.materias_seleccionadas)} materias!")
@@ -391,8 +393,18 @@ elif st.session_state.step == 5:
                         "Horario": h_str
                     })
                 st.table(pd.DataFrame(tabla_web))
+    
+    # CASO: 0 RESULTADOS
+    elif st.session_state.resultados is not None and len(st.session_state.resultados) == 0:
+        st.warning("⚠️ **No se encontraron horarios compatibles.**")
+        st.markdown("""
+        **Posibles causas:**
+        1. Tus materias chocan entre sí (Ej. Dos materias a las 9am).
+        2. El **Rango de Hora** (Paso 3) es muy corto. *Intenta ampliarlo hasta las 22:00.*
+        3. Tachaste (❌) a los únicos maestros disponibles en ese horario.
+        """)
 
     if st.button("🔄 Volver al Inicio (Reiniciar Todo)"):
-        st.session_state.resultados = []
+        st.session_state.resultados = None
         st.session_state.step = 1
         st.rerun()
