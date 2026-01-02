@@ -11,83 +11,25 @@ st.set_page_config(page_title="Carga Académica ITS", page_icon="🐴", layout="
 
 st.markdown("""
 <style>
-    /* Colores Institucionales ITS */
-    :root {
-        --guinda: #800000;
-        --gris: #f0f2f6;
-    }
-    h1, h2, h3, .stMarkdown h1, .stMarkdown h2, .stMarkdown h3 {
-        color: #800000 !important;
-    }
-    .stButton>button {
-        color: white;
-        background-color: #800000;
-        border-color: #800000;
-    }
-    .stButton>button:hover {
-        background-color: #5c0000;
-        border-color: #5c0000;
-    }
-    .stExpander .streamlit-expanderHeader {
-        background-color: #ffe6e6;
-        color: #800000;
-        font-weight: bold;
-    }
-    /* Estilo de alerta de creditos */
-    .credit-box {
-        padding: 10px;
-        border-radius: 5px;
-        margin-bottom: 10px;
-        font-weight: bold;
-        text-align: center;
-    }
-    .credit-ok { background-color: #d1fae5; color: #065f46; }
-    .credit-error { background-color: #fee2e2; color: #991b1b; }
+    :root { --guinda: #800000; }
+    h1, h2, h3, .stMarkdown h1, .stMarkdown h2, .stMarkdown h3 { color: #800000 !important; }
+    .stButton>button { color: white; background-color: #800000; border-color: #800000; }
+    .stButton>button:hover { background-color: #5c0000; border-color: #5c0000; }
+    .stExpander .streamlit-expanderHeader { background-color: #ffe6e6; color: #800000; font-weight: bold; }
     
-    /* Tabla Mini Compacta */
-    .horario-grid {
-        width: 100%;
-        border-collapse: collapse;
-        text-align: center;
-        font-family: 'Arial', sans-serif;
-        font-size: 0.75em;
-        background-color: white;
-    }
-    .horario-grid th {
-        background-color: #800000;
-        color: white;
-        padding: 4px;
-        border: 1px solid #ddd;
-    }
-    .horario-grid td {
-        border: 1px solid #eee;
-        height: 35px;
-        vertical-align: middle;
-        padding: 1px;
-    }
-    .hora-col {
-        background-color: #f9fafb;
-        font-weight: bold;
-        color: #333;
-        width: 60px;
-    }
-    .clase-cell {
-        border-radius: 3px;
-        padding: 2px;
-        color: #222;
-        font-weight: 600;
-        font-size: 0.9em;
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        line-height: 1.1;
-    }
-    .clase-prof {
-        font-weight: normal;
-        font-size: 0.75em;
-        color: #444;
-    }
+    /* Alertas de Créditos */
+    .credit-box { padding: 15px; border-radius: 8px; margin-bottom: 20px; font-weight: bold; text-align: center; border: 1px solid; }
+    .credit-ok { background-color: #d1fae5; color: #065f46; border-color: #34d399; }
+    .credit-warn { background-color: #fef3c7; color: #92400e; border-color: #f59e0b; }
+    .credit-error { background-color: #fee2e2; color: #991b1b; border-color: #f87171; }
+
+    /* Tabla Visual */
+    .horario-grid { width: 100%; border-collapse: collapse; text-align: center; font-family: 'Arial', sans-serif; font-size: 0.75em; background-color: white; }
+    .horario-grid th { background-color: #800000; color: white; padding: 4px; border: 1px solid #ddd; }
+    .horario-grid td { border: 1px solid #eee; height: 40px; vertical-align: middle; padding: 1px; }
+    .hora-col { background-color: #f9fafb; font-weight: bold; color: #333; width: 60px; }
+    .clase-cell { border-radius: 4px; padding: 2px; color: #222; font-weight: 600; font-size: 0.9em; height: 100%; display: flex; flex-direction: column; justify-content: center; line-height: 1.1; }
+    .clase-prof { font-weight: normal; font-size: 0.75em; color: #444; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -105,13 +47,12 @@ if 'resultados' not in st.session_state: st.session_state.resultados = None
 # Datos alumno
 if 'alumno_nombre' not in st.session_state: st.session_state.alumno_nombre = ""
 if 'alumno_nc' not in st.session_state: st.session_state.alumno_nc = ""
-if 'alumno_sem' not in st.session_state: st.session_state.alumno_sem = 1 # Entero
+if 'alumno_sem' not in st.session_state: st.session_state.alumno_sem = 1
 if 'alumno_per' not in st.session_state: st.session_state.alumno_per = "ENE-JUN 2026"
 
 # -----------------------------------------------------------------------------
-# DICCIONARIO DE CRÉDITOS ACADÉMICOS
+# CRÉDITOS ACADÉMICOS (CORRECTOS)
 # -----------------------------------------------------------------------------
-# Mapeo exacto entre el nombre con Emoji y sus créditos
 CREDITOS = {
     "🧪 Química": 4, "📐 Cálculo Diferencial": 5, "⚖️ Taller de Ética": 4, "💻 Dibujo Asistido por Computadora": 4, "📏 Metrología y Normalización": 4, "🔎 Fundamentos de Investigación": 4,
     "∫ Cálculo Integral": 5, "🧮 Álgebra Lineal": 5, "🧱 Ciencia e Ingeniería de Materiales": 5, "💾 Programación Básica": 5, "📊 Estadística y Control de Calidad": 4, "💰 Administración y Contabilidad": 4,
@@ -142,12 +83,8 @@ database = {
 }
 
 # -----------------------------------------------------------------------------
-# OFERTA ACADÉMICA (Resumen para que funcione, tú pega el completo)
+# OFERTA ACADÉMICA
 # -----------------------------------------------------------------------------
-# NOTA PARA TI: Estoy usando los mismos datos mapeados del V7.
-# SI YA TIENES LA LISTA GIGANTE EN TU CÓDIGO ACTUAL, CÓPIALA Y PÉGALA AQUÍ.
-# Solo asegúrate que las claves coincidan con los nombres con emojis de arriba.
-
 oferta_academica = {
     # SEMESTRE 1
     "🧪 Química": [{"profesor": "Norma Hernández Flores", "horario": [(d,7,8) for d in range(4)], "id":"Q1"}, {"profesor": "Norma Hernández Flores", "horario": [(d,8,9) for d in range(4)], "id":"Q2"}, {"profesor": "Norma Hernández Flores", "horario": [(d,11,12) for d in range(4)], "id":"Q3"}, {"profesor": "Norma Hernández Flores", "horario": [(d,12,13) for d in range(4)], "id":"Q4"}, {"profesor": "Hilda Araceli Torres Plata", "horario": [(d,8,9) for d in range(4)], "id":"Q5"}, {"profesor": "Hilda Araceli Torres Plata", "horario": [(d,9,10) for d in range(4)], "id":"Q6"}, {"profesor": "Alma Leticia Cázares Arreguin", "horario": [(d,13,14) for d in range(4)], "id":"Q7"}, {"profesor": "Alma Leticia Cázares Arreguin", "horario": [(d,14,15) for d in range(4)], "id":"Q8"}, {"profesor": "Alma Leticia Cázares Arreguin", "horario": [(d,16,17) for d in range(4)], "id":"Q9"}, {"profesor": "José Raymundo Garza Aldaco", "horario": [(d,15,16) for d in range(4)], "id":"Q10"}, {"profesor": "Alejandra Torres Ordaz", "horario": [(d,15,16) for d in range(4)], "id":"Q11"}, {"profesor": "Alejandra Torres Ordaz", "horario": [(d,16,17) for d in range(4)], "id":"Q12"}, {"profesor": "Alejandra Torres Ordaz", "horario": [(d,17,18) for d in range(4)], "id":"Q13"}, {"profesor": "Victor Martinez Rivera", "horario": [(d,15,16) for d in range(4)], "id":"Q14"}, {"profesor": "Victor Martinez Rivera", "horario": [(d,16,17) for d in range(4)], "id":"Q15"}, {"profesor": "Victor Martinez Rivera", "horario": [(d,17,18) for d in range(4)], "id":"Q16"}, {"profesor": "Silvia Susana Aguirre Sanchez", "horario": [(d,17,18) for d in range(4)], "id":"Q17"}, {"profesor": "Silvia Susana Aguirre Sanchez", "horario": [(d,18,19) for d in range(4)], "id":"Q18"}, {"profesor": "Karina Azucena Ayala Torres", "horario": [(d,17,18) for d in range(4)], "id":"Q19"}, {"profesor": "Karina Azucena Ayala Torres", "horario": [(d,18,19) for d in range(4)], "id":"Q20"}],
@@ -251,14 +188,11 @@ def create_pro_pdf(horario, alumno_data, total_creditos):
     pdf.cell(30, 8, str(alumno_data.get("semestre", "")), 1, 1, 'L')
     
     # Fila 2
-    # Lógica de especialidad
     especialidad = "SIN ESPECIALIDAD"
     try:
-        sem_val = int(alumno_data.get("semestre", 1))
-        if sem_val >= 6:
+        if int(alumno_data.get("semestre", 1)) >= 6:
             especialidad = "AUTOMATIZACIÓN DE PROCESOS DE MANUFACTURA"
-    except:
-        pass
+    except: pass
 
     pdf.cell(30, 8, "Carrera:", 1, 0, 'L', 1)
     pdf.cell(100, 8, "INGENIERÍA MECATRÓNICA", 1, 0, 'L')
@@ -266,7 +200,7 @@ def create_pro_pdf(horario, alumno_data, total_creditos):
     pdf.cell(100, 8, especialidad, 1, 1, 'L')
     pdf.ln(10)
 
-    # Tabla PDF
+    # Tabla
     pdf.set_font("Arial", 'B', 9)
     pdf.set_fill_color(128, 0, 0)
     pdf.set_text_color(255, 255, 255)
@@ -304,7 +238,7 @@ def create_pro_pdf(horario, alumno_data, total_creditos):
             pdf.cell(w_dia, h, txt_hora, 1, 0, 'C')
         pdf.ln()
         
-    # Total de Creditos Row
+    # Total
     pdf.set_font("Arial", 'B', 9)
     pdf.cell(w_mat + w_prof, 8, "TOTAL DE CRÉDITOS:", 1, 0, 'R')
     pdf.cell(w_cred, 8, str(total_creditos), 1, 1, 'C')
@@ -401,63 +335,44 @@ if st.session_state.step == 1:
     st.markdown("### ¡Bienvenido Ingeniero!")
     st.write("Arma tu horario ideal respetando el límite de créditos.")
     st.write("---")
-    
-    # Mensaje informativo
     st.info("💡 **Regla de Oro:** El máximo de créditos permitidos por semestre es **36**.")
     
     if st.button("Comenzar ➡️"):
         st.session_state.step = 2
         st.rerun()
 
-# --- PASO 2: MATERIAS (CON VALIDACIÓN DE CRÉDITOS) ---
+# --- PASO 2: MATERIAS ---
 elif st.session_state.step == 2:
     st.title("📚 Selección de Materias")
     
     todas_materias = []
     seleccion_previa = st.session_state.materias_seleccionadas
     
-    # Acordeones
     for sem, lista in database["Ingeniería Mecatrónica"].items():
         with st.expander(f"📌 {sem}", expanded=True):
             default_val = [m for m in seleccion_previa if m in lista]
             sel = st.multiselect(f"Materias de {sem}:", lista, default=default_val, label_visibility="collapsed")
             todas_materias.extend(sel)
     
-    # CÁLCULO DE CRÉDITOS EN TIEMPO REAL
     total_creditos = sum([CREDITOS.get(m, 0) for m in todas_materias])
-    
-    # Mostrar barra de estado
     st.write("---")
     c_info = st.container()
     
     if total_creditos <= 36:
-        c_info.markdown(f"""
-        <div class="credit-box credit-ok">
-            ✅ Créditos Acumulados: {total_creditos} / 36
-        </div>
-        """, unsafe_allow_html=True)
+        c_info.markdown(f"<div class='credit-box credit-ok'>✅ Créditos Acumulados: {total_creditos} / 36</div>", unsafe_allow_html=True)
         st.progress(total_creditos / 36)
     else:
-        c_info.markdown(f"""
-        <div class="credit-box credit-error">
-            ⛔ ¡EXCESO DE CRÉDITOS! ({total_creditos} / 36)<br>
-            Elimina materias para poder continuar.
-        </div>
-        """, unsafe_allow_html=True)
-        st.progress(1.0) # Barra llena roja (simulada)
+        c_info.markdown(f"<div class='credit-box credit-error'>⛔ ¡EXCESO DE CRÉDITOS! ({total_creditos} / 36)</div>", unsafe_allow_html=True)
+        st.progress(1.0)
 
     col1, col2 = st.columns([1,1])
-    if col1.button("⬅️ Atrás"):
-        st.session_state.step = 1
-        st.rerun()
-        
-    # BOTÓN SIGUIENTE (BLOQUEADO SI > 36)
+    if col1.button("⬅️ Atrás"): st.session_state.step = 1; st.rerun()
+    
     if total_creditos > 36:
         col2.button("🚫 Límite Excedido", disabled=True)
     else:
         if col2.button("Siguiente ➡️", type="primary"):
-            if total_creditos == 0:
-                st.error("Selecciona al menos una materia.")
+            if total_creditos == 0: st.error("Selecciona al menos una materia.")
             else:
                 st.session_state.materias_seleccionadas = todas_materias
                 st.session_state.step = 3
@@ -489,7 +404,6 @@ elif st.session_state.step == 4:
         if mat in oferta_academica:
             with st.container(border=True):
                 st.subheader(f"{mat} ({CREDITOS.get(mat,0)} Cr)")
-                # Filtro inteligente por rango
                 profes_validos = []
                 all_profes = sorted(list(set([p['profesor'] for p in oferta_academica[mat]])))
                 for p_name in all_profes:
@@ -531,7 +445,6 @@ elif st.session_state.step == 5:
         c1, c2, c3, c4 = st.columns(4)
         st.session_state.alumno_nombre = c1.text_input("Nombre", st.session_state.alumno_nombre)
         st.session_state.alumno_nc = c2.text_input("No. Control", st.session_state.alumno_nc)
-        # Cambio a Selectbox 1-14
         st.session_state.alumno_sem = c3.selectbox("Semestre", range(1, 15), index=0)
         st.session_state.alumno_per = c4.text_input("Periodo", st.session_state.alumno_per)
 
@@ -543,19 +456,14 @@ elif st.session_state.step == 5:
     if st.session_state.resultados:
         res = st.session_state.resultados
         st.success(f"¡{len(res)} opciones encontradas!")
-        
-        # Calcular total creditos de la seleccion actual
         total_creditos_final = sum([CREDITOS.get(m, 0) for m in st.session_state.materias_seleccionadas])
+        alumno_data = { "nombre": st.session_state.alumno_nombre, "nc": st.session_state.alumno_nc, "semestre": st.session_state.alumno_sem, "periodo": st.session_state.alumno_per }
 
-        alumno_data = {
-            "nombre": st.session_state.alumno_nombre, "nc": st.session_state.alumno_nc,
-            "semestre": st.session_state.alumno_sem, "periodo": st.session_state.alumno_per
-        }
-
-        for i, horario in enumerate(res):
+        # AQUI ESTABA EL ERROR: AHORA DESEMPAQUETAMOS (score, horario)
+        for i, (score, horario) in enumerate(res):
             with st.container(border=True):
                 col_info, col_btn = st.columns([4, 1])
-                col_info.subheader(f"Opción {i+1}")
+                col_info.subheader(f"Opción {i+1} (Preferencia: {score})")
                 pdf_bytes = create_pro_pdf(horario, alumno_data, total_creditos_final)
                 col_btn.download_button("📄 PDF", data=pdf_bytes, file_name=f"Carga_Op{i+1}.pdf", mime="application/pdf", key=f"btn_{i}")
                 html_table = create_timetable_html(horario)
