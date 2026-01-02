@@ -7,9 +7,9 @@ import os
 # -----------------------------------------------------------------------------
 # CONFIGURACIÓN DE PÁGINA
 # -----------------------------------------------------------------------------
-st.set_page_config(page_title="Generador de Horarios ITS", page_icon="🎓", layout="wide")
+st.set_page_config(page_title="Carga Académica ITS", page_icon="🎓", layout="wide")
 
-# Inicializar estado de la sesión (Para manejar los pasos)
+# Inicializar estado
 if 'step' not in st.session_state: st.session_state.step = 1
 if 'num_materias_deseadas' not in st.session_state: st.session_state.num_materias_deseadas = 6
 if 'materias_seleccionadas' not in st.session_state: st.session_state.materias_seleccionadas = []
@@ -17,8 +17,14 @@ if 'rango_hora' not in st.session_state: st.session_state.rango_hora = (7, 22)
 if 'prefs' not in st.session_state: st.session_state.prefs = {}
 if 'resultados' not in st.session_state: st.session_state.resultados = []
 
+# Datos del alumno (Persistentes)
+if 'alumno_nombre' not in st.session_state: st.session_state.alumno_nombre = ""
+if 'alumno_nc' not in st.session_state: st.session_state.alumno_nc = ""
+if 'alumno_sem' not in st.session_state: st.session_state.alumno_sem = "1"
+if 'alumno_per' not in st.session_state: st.session_state.alumno_per = "ENE-JUN 2026"
+
 # -----------------------------------------------------------------------------
-# BASE DE DATOS
+# BASE DE DATOS (NOMBRES DE MATERIAS)
 # -----------------------------------------------------------------------------
 database = {
     "Ingeniería Mecatrónica": {
@@ -35,9 +41,8 @@ database = {
 }
 
 # -----------------------------------------------------------------------------
-# OFERTA ACADÉMICA (PEGA AQUÍ TU BASE DE DATOS COMPLETA)
+# OFERTA ACADÉMICA COMPLETA
 # -----------------------------------------------------------------------------
-# (Por seguridad en el chat, asegúrate de que este bloque contenga los 9 semestres que ya tienes)
 oferta_academica = {
     # ... SEMESTRE 1 ...
     "Química": [{"profesor": "Norma Hernández Flores", "horario": [(d,7,8) for d in range(4)], "id":"Q1"}, {"profesor": "Norma Hernández Flores", "horario": [(d,8,9) for d in range(4)], "id":"Q2"}, {"profesor": "Norma Hernández Flores", "horario": [(d,11,12) for d in range(4)], "id":"Q3"}, {"profesor": "Norma Hernández Flores", "horario": [(d,12,13) for d in range(4)], "id":"Q4"}, {"profesor": "Hilda Araceli Torres Plata", "horario": [(d,8,9) for d in range(4)], "id":"Q5"}, {"profesor": "Hilda Araceli Torres Plata", "horario": [(d,9,10) for d in range(4)], "id":"Q6"}, {"profesor": "Alma Leticia Cázares Arreguin", "horario": [(d,13,14) for d in range(4)], "id":"Q7"}, {"profesor": "Alma Leticia Cázares Arreguin", "horario": [(d,14,15) for d in range(4)], "id":"Q8"}, {"profesor": "Alma Leticia Cázares Arreguin", "horario": [(d,16,17) for d in range(4)], "id":"Q9"}, {"profesor": "José Raymundo Garza Aldaco", "horario": [(d,15,16) for d in range(4)], "id":"Q10"}, {"profesor": "Alejandra Torres Ordaz", "horario": [(d,15,16) for d in range(4)], "id":"Q11"}, {"profesor": "Alejandra Torres Ordaz", "horario": [(d,16,17) for d in range(4)], "id":"Q12"}, {"profesor": "Alejandra Torres Ordaz", "horario": [(d,17,18) for d in range(4)], "id":"Q13"}, {"profesor": "Victor Martinez Rivera", "horario": [(d,15,16) for d in range(4)], "id":"Q14"}, {"profesor": "Victor Martinez Rivera", "horario": [(d,16,17) for d in range(4)], "id":"Q15"}, {"profesor": "Victor Martinez Rivera", "horario": [(d,17,18) for d in range(4)], "id":"Q16"}, {"profesor": "Silvia Susana Aguirre Sanchez", "horario": [(d,17,18) for d in range(4)], "id":"Q17"}, {"profesor": "Silvia Susana Aguirre Sanchez", "horario": [(d,18,19) for d in range(4)], "id":"Q18"}, {"profesor": "Karina Azucena Ayala Torres", "horario": [(d,17,18) for d in range(4)], "id":"Q19"}, {"profesor": "Karina Azucena Ayala Torres", "horario": [(d,18,19) for d in range(4)], "id":"Q20"}],
@@ -319,27 +324,57 @@ elif st.session_state.step == 4:
 elif st.session_state.step == 5:
     st.title("✅ Resultados Finales")
     
-    # Ejecutar cálculo solo una vez al entrar
+    # Botón regresar arriba
+    col_back, col_space = st.columns([1, 5])
+    if col_back.button("⬅️ Ajustar Filtros"):
+        st.session_state.step = 4
+        st.rerun()
+
+    # FORMULARIO ÚNICO DE DATOS (FUERA DEL LOOP)
+    with st.expander("📝 Configurar Datos del Alumno para PDF (Opcional)", expanded=True):
+        c1, c2, c3, c4 = st.columns(4)
+        st.session_state.alumno_nombre = c1.text_input("Nombre", st.session_state.alumno_nombre)
+        st.session_state.alumno_nc = c2.text_input("No. Control", st.session_state.alumno_nc)
+        st.session_state.alumno_sem = c3.text_input("Semestre", st.session_state.alumno_sem)
+        st.session_state.alumno_per = c4.text_input("Periodo", st.session_state.alumno_per)
+
+    # Ejecutar cálculo (si no está hecho)
     if not st.session_state.resultados:
         res, msg = generar_combinaciones(st.session_state.materias_seleccionadas, st.session_state.rango_hora, st.session_state.prefs)
         if not res and msg != "OK":
             st.error(msg)
-            if st.button("⬅️ Ajustar Filtros"):
-                st.session_state.step = 4
-                st.rerun()
         else:
             st.session_state.resultados = res
 
     if st.session_state.resultados:
         res = st.session_state.resultados
-        st.success(f"¡Se encontraron {len(res)} combinaciones posibles!")
+        st.success(f"¡Se encontraron {len(res)} combinaciones posibles con tus {len(st.session_state.materias_seleccionadas)} materias!")
         
+        # Datos actuales para generar PDF al vuelo
+        alumno_data = {
+            "nombre": st.session_state.alumno_nombre,
+            "nc": st.session_state.alumno_nc,
+            "semestre": st.session_state.alumno_sem,
+            "periodo": st.session_state.alumno_per
+        }
+
         # Mostrar Top 10
         for i, (score, horario) in enumerate(res[:10]):
             with st.container(border=True):
-                col_info, col_pdf = st.columns([3, 1])
-                col_info.markdown(f"### Opción {i+1}")
-                col_info.caption(f"Puntaje de preferencia: {score}")
+                col_info, col_btn = st.columns([4, 1])
+                col_info.markdown(f"### Opción {i+1} (Puntaje: {score})")
+                
+                # Generar PDF Bytes
+                pdf_bytes = create_pro_pdf(horario, alumno_data)
+                
+                # BOTÓN DE DESCARGA (SIN FORMULARIO = SIN ERROR)
+                col_btn.download_button(
+                    label="📄 Descargar PDF",
+                    data=pdf_bytes,
+                    file_name=f"Carga_{st.session_state.alumno_nc}_Op{i+1}.pdf",
+                    mime="application/pdf",
+                    key=f"btn_dl_{i}"
+                )
                 
                 # Tabla Visual
                 tabla_web = []
@@ -356,29 +391,8 @@ elif st.session_state.step == 5:
                         "Horario": h_str
                     })
                 st.table(pd.DataFrame(tabla_web))
-                
-                # Formulario PDF
-                with col_pdf:
-                    st.write("**Datos para PDF**")
-                    with st.form(key=f"form_pdf_{i}"):
-                        nombre = st.text_input("Nombre", key=f"n_{i}")
-                        nc = st.text_input("No. Control", key=f"nc_{i}")
-                        sem = st.text_input("Semestre", "1", key=f"s_{i}")
-                        per = st.text_input("Periodo", "ENE-JUN 2026", key=f"p_{i}")
-                        
-                        gen_pdf = st.form_submit_button("Generar PDF 📄")
-                        
-                        if gen_pdf:
-                            alumno_data = {"nombre": nombre, "nc": nc, "semestre": sem, "periodo": per}
-                            pdf_bytes = create_pro_pdf(horario, alumno_data)
-                            st.download_button(
-                                label="⬇️ DESCARGAR",
-                                data=pdf_bytes,
-                                file_name=f"Carga_{nc}_Op{i+1}.pdf",
-                                mime="application/pdf"
-                            )
 
-    if st.button("🔄 Volver al Inicio"):
+    if st.button("🔄 Volver al Inicio (Reiniciar Todo)"):
         st.session_state.resultados = []
         st.session_state.step = 1
         st.rerun()
