@@ -5,9 +5,80 @@ from fpdf import FPDF
 import os
 
 # -----------------------------------------------------------------------------
-# CONFIGURACIÓN DE PÁGINA
+# CONFIGURACIÓN VISUAL Y DE PÁGINA
 # -----------------------------------------------------------------------------
-st.set_page_config(page_title="Generador de Horarios ITS", page_icon="🎓", layout="wide")
+st.set_page_config(page_title="Carga Académica ITS", page_icon="🎓", layout="wide")
+
+# Inyectar CSS para darle color y quitar el estilo "oscuro y triste"
+st.markdown("""
+<style>
+    [data-testid="stAppViewContainer"] {
+        background-color: #f0f2f6; /* Fondo gris claro */
+    }
+    [data-testid="stHeader"] {
+        background-color: #f0f2f6;
+    }
+    .st-emotion-cache-10trblm {
+        color: #31333F; /* Texto oscuro */
+    }
+    h1, h2, h3 {
+        color: #1E3A8A !important; /* Títulos azules */
+    }
+    .stExpander .streamlit-expanderHeader {
+        background-color: #E0E7FF; /* Colorcito en los acordeones */
+        color: #1E3A8A;
+        font-weight: bold;
+    }
+    /* Estilo para las tablas de horario visuales */
+    .horario-grid {
+        width: 100%;
+        border-collapse: collapse;
+        text-align: center;
+        font-family: sans-serif;
+        font-size: 0.85em;
+        background-color: white;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .horario-grid th {
+        background-color: #1E3A8A;
+        color: white;
+        padding: 8px;
+        border: 1px solid #ccc;
+    }
+    .horario-grid td {
+        border: 1px solid #eee;
+        height: 50px; /* Altura fija para que se vea uniforme */
+        vertical-align: middle;
+        padding: 2px;
+    }
+    .hora-col {
+        background-color: #f9fafb;
+        font-weight: bold;
+        color: #555;
+        width: 80px;
+    }
+    .clase-cell {
+        border-radius: 4px;
+        padding: 4px;
+        color: #222;
+        font-weight: 600;
+        box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1);
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+    .clase-prof {
+        font-weight: normal;
+        font-size: 0.8em;
+        margin-top: 2px;
+        color: #444;
+    }
+</style>
+""", unsafe_allow_html=True)
+
+# Paleta de colores pastel para las materias
+COLORS = ['#FFB3BA', '#FFDFBA', '#FFFFBA', '#BAFFC9', '#BAE1FF', '#D7B3FF', '#FFC8DD', '#A2EDE2', '#F4A261', '#E76F51']
 
 # Inicializar estado
 if 'step' not in st.session_state: st.session_state.step = 1
@@ -15,7 +86,7 @@ if 'num_materias_deseadas' not in st.session_state: st.session_state.num_materia
 if 'materias_seleccionadas' not in st.session_state: st.session_state.materias_seleccionadas = []
 if 'rango_hora' not in st.session_state: st.session_state.rango_hora = (7, 22)
 if 'horas_libres' not in st.session_state: st.session_state.horas_libres = []
-if 'prefs' not in st.session_state: st.session_state.prefs = {}
+if 'prefs_descarte' not in st.session_state: st.session_state.prefs_descarte = {} # Nuevo: Solo guarda descartes
 if 'resultados' not in st.session_state: st.session_state.resultados = None
 
 # Datos del alumno
@@ -25,7 +96,7 @@ if 'alumno_sem' not in st.session_state: st.session_state.alumno_sem = "1"
 if 'alumno_per' not in st.session_state: st.session_state.alumno_per = "ENE-JUN 2026"
 
 # -----------------------------------------------------------------------------
-# BASE DE DATOS
+# BASE DE DATOS Y OFERTA (Igual que antes)
 # -----------------------------------------------------------------------------
 database = {
     "Ingeniería Mecatrónica": {
@@ -41,10 +112,6 @@ database = {
     }
 }
 
-# -----------------------------------------------------------------------------
-# OFERTA ACADÉMICA COMPLETA
-# -----------------------------------------------------------------------------
-# Días: 0=Lun, 1=Mar, 2=Mie, 3=Jue, 4=Vie
 oferta_academica = {
     # ... SEMESTRE 1 ...
     "Química": [{"profesor": "Norma Hernández Flores", "horario": [(d,7,8) for d in range(4)], "id":"Q1"}, {"profesor": "Norma Hernández Flores", "horario": [(d,8,9) for d in range(4)], "id":"Q2"}, {"profesor": "Norma Hernández Flores", "horario": [(d,11,12) for d in range(4)], "id":"Q3"}, {"profesor": "Norma Hernández Flores", "horario": [(d,12,13) for d in range(4)], "id":"Q4"}, {"profesor": "Hilda Araceli Torres Plata", "horario": [(d,8,9) for d in range(4)], "id":"Q5"}, {"profesor": "Hilda Araceli Torres Plata", "horario": [(d,9,10) for d in range(4)], "id":"Q6"}, {"profesor": "Alma Leticia Cázares Arreguin", "horario": [(d,13,14) for d in range(4)], "id":"Q7"}, {"profesor": "Alma Leticia Cázares Arreguin", "horario": [(d,14,15) for d in range(4)], "id":"Q8"}, {"profesor": "Alma Leticia Cázares Arreguin", "horario": [(d,16,17) for d in range(4)], "id":"Q9"}, {"profesor": "José Raymundo Garza Aldaco", "horario": [(d,15,16) for d in range(4)], "id":"Q10"}, {"profesor": "Alejandra Torres Ordaz", "horario": [(d,15,16) for d in range(4)], "id":"Q11"}, {"profesor": "Alejandra Torres Ordaz", "horario": [(d,16,17) for d in range(4)], "id":"Q12"}, {"profesor": "Alejandra Torres Ordaz", "horario": [(d,17,18) for d in range(4)], "id":"Q13"}, {"profesor": "Victor Martinez Rivera", "horario": [(d,15,16) for d in range(4)], "id":"Q14"}, {"profesor": "Victor Martinez Rivera", "horario": [(d,16,17) for d in range(4)], "id":"Q15"}, {"profesor": "Victor Martinez Rivera", "horario": [(d,17,18) for d in range(4)], "id":"Q16"}, {"profesor": "Silvia Susana Aguirre Sanchez", "horario": [(d,17,18) for d in range(4)], "id":"Q17"}, {"profesor": "Silvia Susana Aguirre Sanchez", "horario": [(d,18,19) for d in range(4)], "id":"Q18"}, {"profesor": "Karina Azucena Ayala Torres", "horario": [(d,17,18) for d in range(4)], "id":"Q19"}, {"profesor": "Karina Azucena Ayala Torres", "horario": [(d,18,19) for d in range(4)], "id":"Q20"}],
@@ -150,7 +217,7 @@ def create_pro_pdf(horario, alumno_data):
     pdf.cell(100, 8, alumno_data.get("periodo", "ENE-JUN 2026"), 1, 1, 'L')
     pdf.ln(10)
 
-    # Tabla
+    # Tabla PDF
     pdf.set_font("Arial", 'B', 9)
     pdf.set_fill_color(200, 220, 255)
     w_mat, w_prof, w_dia = 70, 60, 25
@@ -161,7 +228,6 @@ def create_pro_pdf(horario, alumno_data):
     pdf.ln()
     
     pdf.set_font("Arial", size=8)
-    # Ordenar por hora
     def get_start_hour(clase):
         if not clase['horario']: return 24
         return min([h[1] for h in clase['horario']])
@@ -188,24 +254,21 @@ def traslape(horario1, horario2):
                 if h1[1] < h2[2] and h1[2] > h2[1]: return True
     return False
 
-def generar_combinaciones(materias, rango, prefs, horas_libres):
-    # Convertir horas libres "12:00-13:00" a lista de enteros [12]
+def generar_combinaciones(materias, rango, descartados, horas_libres):
     bloqueos = []
     for hl in horas_libres:
         inicio = int(hl.split(":")[0])
         bloqueos.append(inicio)
 
     pool = []
-    # 1. Validar que cada materia tenga opciones
     for mat in materias:
         if mat not in oferta_academica: continue
         opciones = []
         for sec in oferta_academica[mat]:
             key = f"{mat}_{sec['profesor']}"
-            puntos = prefs.get(key, 50)
             
-            # FILTRO 1: Preferencia (Si es Tacha, adiós)
-            if puntos == 0: continue 
+            # FILTRO 1: Descartes (❌)
+            if key in descartados and descartados[key]: continue 
             
             dentro = True
             for h in sec['horario']:
@@ -214,39 +277,76 @@ def generar_combinaciones(materias, rango, prefs, horas_libres):
                     dentro = False; break
                 
                 # FILTRO 3: Horas Libres (Huecos)
-                # Si la clase es 7-8 y bloqueo es 7 -> Choque
-                # La clase dura de h[1] a h[2]. Si hay solape con bloqueo.
                 for b in bloqueos:
-                    # Intervalo clase: [h[1], h[2])
-                    # Intervalo bloqueo: [b, b+1)
                     if max(h[1], b) < min(h[2], b+1):
                         dentro = False; break
                 if not dentro: break
             
             if dentro:
-                s = sec.copy(); s['materia'] = mat; s['score'] = puntos
+                s = sec.copy(); s['materia'] = mat
                 opciones.append(s)
         
-        # SI UNA MATERIA SE QUEDA SIN OPCIONES
         if not opciones:
-            return [], f"❌ **{mat}**: No tiene horarios disponibles con tus filtros (Hora libre o Rango)."
+            return [], f"❌ **{mat}**: No tiene horarios disponibles con tus filtros (Hora libre, Rango o Profesor Descartado)."
         pool.append(opciones)
     
-    # 2. Generar combinaciones
+    # Generar combinaciones (Sin puntaje)
     combos = list(itertools.product(*pool))
     validos = []
     
     for c in combos:
-        ok = True; score = 0
+        ok = True
         for i in range(len(c)):
-            score += c[i]['score']
             for j in range(i+1, len(c)):
                 if traslape(c[i]['horario'], c[j]['horario']): ok=False; break
             if not ok: break
-        if ok: validos.append((score, c))
+        if ok: validos.append(c)
     
-    validos.sort(key=lambda x: x[0], reverse=True)
     return validos, "OK"
+
+# NUEVA FUNCIÓN: Generar tabla HTML visual
+def create_timetable_html(horario):
+    # 1. Asignar colores únicos a cada materia del horario actual
+    subject_colors = {}
+    for i, clase in enumerate(horario):
+        subject_colors[clase['materia']] = COLORS[i % len(COLORS)]
+
+    # 2. Construir la rejilla (7am a 10pm, Lun-Vie)
+    grid = {h: [None]*5 for h in range(7, 23)} 
+    
+    # 3. Llenar la rejilla con los datos
+    for clase in horario:
+        # Acortar nombres para que quepan
+        materia_short = clase['materia'] if len(clase['materia']) < 20 else clase['materia'][:17] + "..."
+        prof_parts = clase['profesor'].split(' ')
+        prof_short = f"{prof_parts[0]} {prof_parts[1] if len(prof_parts)>1 else ''}"
+        color = subject_colors[clase['materia']]
+        
+        for sesion in clase['horario']:
+            dia = sesion[0]
+            hora_ini = sesion[1]
+            # Si la clase es de 2 horas (ej. 7-9), la BD tiene (7,8) y (8,9). Se llena cada celda.
+            if hora_ini in grid:
+                grid[hora_ini][dia] = {
+                    'text': f"<div class='clase-cell' style='background-color: {color};'><span>{materia_short}</span><span class='clase-prof'>{prof_short}</span></div>"
+                }
+
+    # 4. Generar el HTML de la tabla
+    html = """<table class="horario-grid">"""
+    html += "<thead><tr><th class='hora-col'>Hora</th><th>Lunes</th><th>Martes</th><th>Miércoles</th><th>Jueves</th><th>Viernes</th></tr></thead><tbody>"
+    
+    for h in range(7, 23):
+        hora_str = f"{h}:00 - {h+1}:00"
+        html += f"<tr><td class='hora-col'>{hora_str}</td>"
+        for d in range(5):
+            cell = grid[h][d]
+            if cell:
+                html += f"<td>{cell['text']}</td>"
+            else:
+                html += f"<td></td>" # Celda vacía
+        html += "</tr>"
+    html += "</tbody></table>"
+    return html
 
 # -----------------------------------------------------------------------------
 # INTERFAZ WIZARD (PASO A PASO)
@@ -266,7 +366,7 @@ if st.session_state.step == 1:
         st.session_state.step = 2
         st.rerun()
 
-# --- PASO 2: SELECCIÓN DE MATERIAS ---
+# --- PASO 2: SELECCIÓN DE MATERIAS (Ahora desplegadas por defecto) ---
 elif st.session_state.step == 2:
     st.title("📚 Selección de Materias")
     st.info(f"Debes seleccionar exactamente **{st.session_state.num_materias_deseadas}** materias.")
@@ -274,14 +374,14 @@ elif st.session_state.step == 2:
     todas_materias = []
     seleccion_previa = st.session_state.materias_seleccionadas
     
-    # Mostrar acordeón por semestres
+    # Mostrar acordeón por semestres, ABIERTOS por defecto
     for sem, lista in database["Ingeniería Mecatrónica"].items():
-        with st.expander(sem, expanded=False):
-            # Filtrar pre-selección para evitar errores
+        with st.expander(f"📌 {sem}", expanded=True): # expanded=True los abre
             default_val = [m for m in seleccion_previa if m in lista]
-            sel = st.multiselect(f"Materias de {sem}", lista, default=default_val)
+            sel = st.multiselect(f"Selecciona materias de {sem}:", lista, default=default_val, label_visibility="collapsed")
             todas_materias.extend(sel)
     
+    st.write("---")
     st.write(f"**Seleccionadas:** {len(todas_materias)} de {st.session_state.num_materias_deseadas}")
     
     col1, col2 = st.columns([1,1])
@@ -291,7 +391,7 @@ elif st.session_state.step == 2:
         
     if col2.button("Siguiente ➡️", type="primary"):
         if len(todas_materias) != st.session_state.num_materias_deseadas:
-            st.error(f"⚠️ Error: Dijiste que querías {st.session_state.num_materias_deseadas} materias, pero seleccionaste {len(todas_materias)}. Corrige para avanzar.")
+            st.error(f"⚠️ Error: Debes seleccionar exactamente {st.session_state.num_materias_deseadas} materias.")
         else:
             st.session_state.materias_seleccionadas = todas_materias
             st.session_state.step = 3
@@ -306,13 +406,12 @@ elif st.session_state.step == 3:
     
     with col_rang:
         st.subheader("Rango General")
-        rango = st.slider("¿A qué hora puedes estar en la escuela?", 7, 22, (7, 22)) # Default abierto 7-22
+        rango = st.slider("¿A qué hora puedes estar en la escuela?", 7, 22, (7, 22))
         st.session_state.rango_hora = rango
         
     with col_free:
         st.subheader("Horas Libres (Huecos)")
         st.info("Selecciona las horas donde NO quieres clase.")
-        # Generar lista de horas
         horas_posibles = [f"{h}:00-{h+1}:00" for h in range(7, 22)]
         libres = st.multiselect("Quiero estas horas libres:", horas_posibles)
         st.session_state.horas_libres = libres
@@ -325,45 +424,43 @@ elif st.session_state.step == 3:
         st.session_state.step = 4
         st.rerun()
 
-# --- PASO 4: PROFESORES ---
+# --- PASO 4: PROFESORES (Sin puntos, solo descarte) ---
 elif st.session_state.step == 4:
-    st.title("👨‍🏫 Selección de Profesores")
-    st.info("✅ = Preferencia Alta | ➖ = Me da igual | ❌ = DESCARTAR (No lo quiero)")
+    st.title("👨‍🏫 Filtrado de Profesores")
+    st.write("Marca las casillas de los profesores que **NO** deseas bajo ninguna circunstancia.")
     
+    prefs_temp = {}
     for mat in st.session_state.materias_seleccionadas:
         if mat in oferta_academica:
-            with st.expander(f"📌 {mat}", expanded=True):
+            with st.container(border=True):
+                st.subheader(mat)
                 profes = sorted(list(set([p['profesor'] for p in oferta_academica[mat]])))
-                for p in profes:
+                cols = st.columns(3) # Mostrar en 3 columnas para ahorrar espacio
+                for i, p in enumerate(profes):
                     key = f"{mat}_{p}"
-                    c1, c2 = st.columns([3, 2])
-                    c1.write(f"**{p}**")
-                    val = c2.radio("Calif", ["✅", "➖", "❌"], index=1, key=key, horizontal=True, label_visibility="collapsed")
-                    
-                    if val == "✅": st.session_state.prefs[key] = 100
-                    elif val == "❌": st.session_state.prefs[key] = 0 # SE DESCARTA
-                    else: st.session_state.prefs[key] = 50
+                    # Checkbox simple: Marcado = Descartar
+                    descartar = cols[i % 3].checkbox(f"❌ {p}", key=key, value=st.session_state.prefs_descarte.get(key, False))
+                    prefs_temp[key] = descartar
 
     col1, col2 = st.columns([1,1])
     if col1.button("⬅️ Atrás"):
         st.session_state.step = 3
         st.rerun()
     if col2.button("🚀 GENERAR HORARIOS", type="primary"):
+        st.session_state.prefs_descarte = prefs_temp
         st.session_state.step = 5
         st.session_state.resultados = None # Forzar recálculo
         st.rerun()
 
-# --- PASO 5: RESULTADOS ---
+# --- PASO 5: RESULTADOS VISUALES ---
 elif st.session_state.step == 5:
     st.title("✅ Resultados Finales")
     
-    # Botón regresar arriba
-    col_back, col_space = st.columns([1, 5])
+    col_back, col_space = st.columns([1, 4])
     if col_back.button("⬅️ Ajustar Filtros"):
         st.session_state.step = 4
         st.rerun()
 
-    # FORMULARIO ÚNICO DE DATOS (FUERA DEL LOOP)
     with st.expander("📝 Configurar Datos del Alumno para PDF (Opcional)", expanded=True):
         c1, c2, c3, c4 = st.columns(4)
         st.session_state.alumno_nombre = c1.text_input("Nombre", st.session_state.alumno_nombre)
@@ -371,21 +468,21 @@ elif st.session_state.step == 5:
         st.session_state.alumno_sem = c3.text_input("Semestre", st.session_state.alumno_sem)
         st.session_state.alumno_per = c4.text_input("Periodo", st.session_state.alumno_per)
 
-    # Ejecutar cálculo (si no está hecho)
+    # Ejecutar cálculo
     if st.session_state.resultados is None:
-        res, msg = generar_combinaciones(st.session_state.materias_seleccionadas, st.session_state.rango_hora, st.session_state.prefs, st.session_state.horas_libres)
+        res, msg = generar_combinaciones(st.session_state.materias_seleccionadas, st.session_state.rango_hora, st.session_state.prefs_descarte, st.session_state.horas_libres)
         if not res and msg != "OK":
             st.error(msg)
-            st.session_state.resultados = [] # Evitar loop
+            st.session_state.resultados = []
         else:
             st.session_state.resultados = res
 
-    # Mostrar Resultados o Advertencia
+    # Mostrar Resultados
     if st.session_state.resultados:
         res = st.session_state.resultados
-        st.success(f"¡Se encontraron {len(res)} combinaciones posibles con tus {len(st.session_state.materias_seleccionadas)} materias!")
+        num_res = len(res)
+        st.success(f"¡Se encontraron {num_res} combinaciones posibles!")
         
-        # Datos actuales para generar PDF al vuelo
         alumno_data = {
             "nombre": st.session_state.alumno_nombre,
             "nc": st.session_state.alumno_nc,
@@ -393,16 +490,13 @@ elif st.session_state.step == 5:
             "periodo": st.session_state.alumno_per
         }
 
-        # Mostrar Top 10
-        for i, (score, horario) in enumerate(res[:10]):
+        # MOSTRAR TODAS LAS OPCIONES (Sin límite)
+        for i, horario in enumerate(res):
             with st.container(border=True):
                 col_info, col_btn = st.columns([4, 1])
-                col_info.markdown(f"### Opción {i+1} (Puntaje: {score})")
+                col_info.subheader(f"Opción {i+1}")
                 
-                # Generar PDF Bytes
                 pdf_bytes = create_pro_pdf(horario, alumno_data)
-                
-                # BOTÓN DE DESCARGA (SIN FORMULARIO = SIN ERROR)
                 col_btn.download_button(
                     label="📄 Descargar PDF",
                     data=pdf_bytes,
@@ -411,34 +505,16 @@ elif st.session_state.step == 5:
                     key=f"btn_dl_{i}"
                 )
                 
-                # Tabla Visual
-                tabla_web = []
-                horario_sorted = sorted(horario, key=lambda x: min([h[1] for h in x['horario']]))
-                for clase in horario_sorted:
-                    h_str = ""
-                    dias = ["Lun", "Mar", "Mie", "Jue", "Vie"]
-                    for d in range(5):
-                        for h in clase['horario']:
-                            if h[0] == d: h_str += f"{dias[d]} {h[1]}-{h[2]} "
-                    tabla_web.append({
-                        "Materia": clase['materia'],
-                        "Profesor": clase['profesor'],
-                        "Horario": h_str
-                    })
-                st.table(pd.DataFrame(tabla_web))
-    
-    # CASO: 0 RESULTADOS
+                # --- HORARIO VISUAL HTML ---
+                timetable_html = create_timetable_html(horario)
+                st.markdown(timetable_html, unsafe_allow_html=True)
+                st.write("") # Espacio extra
+
     elif st.session_state.resultados is not None and len(st.session_state.resultados) == 0:
         st.warning("⚠️ **No se encontraron horarios compatibles.**")
-        st.markdown("""
-        **Posibles causas:**
-        1. **CHOQUE DE HORARIOS:** Tienes materias que se imparten a la misma hora (ej. 9:00 AM).
-        2. **RANGO MUY CORTO:** Tus materias son en la tarde/noche y tu rango termina temprano.
-        3. **HORAS LIBRES:** Bloqueaste una hora donde era la única opción de una materia.
-        4. **FILTRO DE MAESTROS:** Tachaste (❌) a los únicos profes disponibles.
-        """)
+        st.markdown("Revisa los filtros de horas libres, el rango de hora o los profesores descartados.")
 
     if st.button("🔄 Volver al Inicio (Reiniciar Todo)"):
-        st.session_state.resultados = None
-        st.session_state.step = 1
+        for key in st.session_state.keys():
+            del st.session_state[key]
         st.rerun()
