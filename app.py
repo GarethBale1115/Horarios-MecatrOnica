@@ -20,7 +20,6 @@ st.markdown("""
     /* Alertas de Créditos */
     .credit-box { padding: 15px; border-radius: 8px; margin-bottom: 20px; font-weight: bold; text-align: center; border: 1px solid; }
     .credit-ok { background-color: #d1fae5; color: #065f46; border-color: #34d399; }
-    .credit-warn { background-color: #fef3c7; color: #92400e; border-color: #f59e0b; }
     .credit-error { background-color: #fee2e2; color: #991b1b; border-color: #f87171; }
 
     /* Tabla Visual */
@@ -51,7 +50,7 @@ if 'alumno_sem' not in st.session_state: st.session_state.alumno_sem = 1
 if 'alumno_per' not in st.session_state: st.session_state.alumno_per = "ENE-JUN 2026"
 
 # -----------------------------------------------------------------------------
-# CRÉDITOS ACADÉMICOS (CORRECTOS)
+# CRÉDITOS ACADÉMICOS
 # -----------------------------------------------------------------------------
 CREDITOS = {
     "🧪 Química": 4, "📐 Cálculo Diferencial": 5, "⚖️ Taller de Ética": 4, "💻 Dibujo Asistido por Computadora": 4, "📏 Metrología y Normalización": 4, "🔎 Fundamentos de Investigación": 4,
@@ -165,6 +164,10 @@ class PDF(FPDF):
         self.set_font('Arial', 'I', 8)
         self.cell(0, 10, f'Página {self.page_no()}', 0, 0, 'C')
 
+def clean_text(text):
+    # Eliminar emojis y caracteres especiales para el PDF
+    return text.encode('latin-1', 'ignore').decode('latin-1')
+
 def create_pro_pdf(horario, alumno_data, total_creditos):
     pdf = PDF(orientation='L', unit='mm', format='A4')
     pdf.add_page()
@@ -181,9 +184,9 @@ def create_pro_pdf(horario, alumno_data, total_creditos):
     
     # Fila 1
     pdf.cell(30, 8, "No. Control:", 1, 0, 'L', 1)
-    pdf.cell(40, 8, alumno_data.get("nc", ""), 1, 0, 'L')
+    pdf.cell(40, 8, clean_text(alumno_data.get("nc", "")), 1, 0, 'L')
     pdf.cell(30, 8, "Nombre:", 1, 0, 'L', 1)
-    pdf.cell(100, 8, alumno_data.get("nombre", "").upper(), 1, 0, 'L')
+    pdf.cell(100, 8, clean_text(alumno_data.get("nombre", "").upper()), 1, 0, 'L')
     pdf.cell(30, 8, "Semestre:", 1, 0, 'L', 1)
     pdf.cell(30, 8, str(alumno_data.get("semestre", "")), 1, 1, 'L')
     
@@ -197,7 +200,7 @@ def create_pro_pdf(horario, alumno_data, total_creditos):
     pdf.cell(30, 8, "Carrera:", 1, 0, 'L', 1)
     pdf.cell(100, 8, "INGENIERÍA MECATRÓNICA", 1, 0, 'L')
     pdf.cell(30, 8, "Especialidad:", 1, 0, 'L', 1)
-    pdf.cell(100, 8, especialidad, 1, 1, 'L')
+    pdf.cell(100, 8, clean_text(especialidad), 1, 1, 'L')
     pdf.ln(10)
 
     # Tabla
@@ -210,7 +213,7 @@ def create_pro_pdf(horario, alumno_data, total_creditos):
     pdf.cell(w_prof, 10, "Profesor", 1, 0, 'C', 1)
     pdf.cell(w_cred, 10, "Créd.", 1, 0, 'C', 1)
     for dia in ["Lun", "Mar", "Mié", "Jue", "Vie"]:
-        pdf.cell(w_dia, 10, dia, 1, 0, 'C', 1)
+        pdf.cell(w_dia, 10, clean_text(dia), 1, 0, 'C', 1)
     pdf.ln()
     
     pdf.set_font("Arial", size=8)
@@ -223,8 +226,9 @@ def create_pro_pdf(horario, alumno_data, total_creditos):
     
     for clase in horario_ordenado:
         h = 10
-        materia_nome = clase['materia'][:38]
-        profesor_nome = clase['profesor'].split('(')[0][:30]
+        materia_nome = clean_text(clase['materia'])
+        if len(materia_nome) > 38: materia_nome = materia_nome[:35] + "..."
+        profesor_nome = clean_text(clase['profesor'].split('(')[0][:30])
         creditos = str(CREDITOS.get(clase['materia'], 0))
         
         pdf.cell(w_mat, h, materia_nome, 1)
@@ -240,7 +244,7 @@ def create_pro_pdf(horario, alumno_data, total_creditos):
         
     # Total
     pdf.set_font("Arial", 'B', 9)
-    pdf.cell(w_mat + w_prof, 8, "TOTAL DE CRÉDITOS:", 1, 0, 'R')
+    pdf.cell(w_mat + w_prof, 8, clean_text("TOTAL DE CRÉDITOS:"), 1, 0, 'R')
     pdf.cell(w_cred, 8, str(total_creditos), 1, 1, 'C')
         
     return pdf.output(dest='S').encode('latin-1')
@@ -459,11 +463,10 @@ elif st.session_state.step == 5:
         total_creditos_final = sum([CREDITOS.get(m, 0) for m in st.session_state.materias_seleccionadas])
         alumno_data = { "nombre": st.session_state.alumno_nombre, "nc": st.session_state.alumno_nc, "semestre": st.session_state.alumno_sem, "periodo": st.session_state.alumno_per }
 
-        # AQUI ESTABA EL ERROR: AHORA DESEMPAQUETAMOS (score, horario)
         for i, (score, horario) in enumerate(res):
             with st.container(border=True):
                 col_info, col_btn = st.columns([4, 1])
-                col_info.subheader(f"Opción {i+1} (Preferencia: {score})")
+                col_info.subheader(f"Opción {i+1}") # Ya no muestra puntaje
                 pdf_bytes = create_pro_pdf(horario, alumno_data, total_creditos_final)
                 col_btn.download_button("📄 PDF", data=pdf_bytes, file_name=f"Carga_Op{i+1}.pdf", mime="application/pdf", key=f"btn_{i}")
                 html_table = create_timetable_html(horario)
