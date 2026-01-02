@@ -7,24 +7,25 @@ import os
 # -----------------------------------------------------------------------------
 # CONFIGURACIÓN DE PÁGINA
 # -----------------------------------------------------------------------------
-st.set_page_config(page_title="Carga Académica ITS", page_icon="🎓", layout="wide")
+st.set_page_config(page_title="Generador de Horarios ITS", page_icon="🎓", layout="wide")
 
 # Inicializar estado
 if 'step' not in st.session_state: st.session_state.step = 1
 if 'num_materias_deseadas' not in st.session_state: st.session_state.num_materias_deseadas = 6
 if 'materias_seleccionadas' not in st.session_state: st.session_state.materias_seleccionadas = []
 if 'rango_hora' not in st.session_state: st.session_state.rango_hora = (7, 22)
+if 'horas_libres' not in st.session_state: st.session_state.horas_libres = []
 if 'prefs' not in st.session_state: st.session_state.prefs = {}
-if 'resultados' not in st.session_state: st.session_state.resultados = None # Cambiado a None para diferenciar
+if 'resultados' not in st.session_state: st.session_state.resultados = None
 
-# Datos del alumno (Persistentes)
+# Datos del alumno
 if 'alumno_nombre' not in st.session_state: st.session_state.alumno_nombre = ""
 if 'alumno_nc' not in st.session_state: st.session_state.alumno_nc = ""
 if 'alumno_sem' not in st.session_state: st.session_state.alumno_sem = "1"
 if 'alumno_per' not in st.session_state: st.session_state.alumno_per = "ENE-JUN 2026"
 
 # -----------------------------------------------------------------------------
-# BASE DE DATOS (NOMBRES DE MATERIAS)
+# BASE DE DATOS
 # -----------------------------------------------------------------------------
 database = {
     "Ingeniería Mecatrónica": {
@@ -43,6 +44,7 @@ database = {
 # -----------------------------------------------------------------------------
 # OFERTA ACADÉMICA COMPLETA
 # -----------------------------------------------------------------------------
+# Días: 0=Lun, 1=Mar, 2=Mie, 3=Jue, 4=Vie
 oferta_academica = {
     # ... SEMESTRE 1 ...
     "Química": [{"profesor": "Norma Hernández Flores", "horario": [(d,7,8) for d in range(4)], "id":"Q1"}, {"profesor": "Norma Hernández Flores", "horario": [(d,8,9) for d in range(4)], "id":"Q2"}, {"profesor": "Norma Hernández Flores", "horario": [(d,11,12) for d in range(4)], "id":"Q3"}, {"profesor": "Norma Hernández Flores", "horario": [(d,12,13) for d in range(4)], "id":"Q4"}, {"profesor": "Hilda Araceli Torres Plata", "horario": [(d,8,9) for d in range(4)], "id":"Q5"}, {"profesor": "Hilda Araceli Torres Plata", "horario": [(d,9,10) for d in range(4)], "id":"Q6"}, {"profesor": "Alma Leticia Cázares Arreguin", "horario": [(d,13,14) for d in range(4)], "id":"Q7"}, {"profesor": "Alma Leticia Cázares Arreguin", "horario": [(d,14,15) for d in range(4)], "id":"Q8"}, {"profesor": "Alma Leticia Cázares Arreguin", "horario": [(d,16,17) for d in range(4)], "id":"Q9"}, {"profesor": "José Raymundo Garza Aldaco", "horario": [(d,15,16) for d in range(4)], "id":"Q10"}, {"profesor": "Alejandra Torres Ordaz", "horario": [(d,15,16) for d in range(4)], "id":"Q11"}, {"profesor": "Alejandra Torres Ordaz", "horario": [(d,16,17) for d in range(4)], "id":"Q12"}, {"profesor": "Alejandra Torres Ordaz", "horario": [(d,17,18) for d in range(4)], "id":"Q13"}, {"profesor": "Victor Martinez Rivera", "horario": [(d,15,16) for d in range(4)], "id":"Q14"}, {"profesor": "Victor Martinez Rivera", "horario": [(d,16,17) for d in range(4)], "id":"Q15"}, {"profesor": "Victor Martinez Rivera", "horario": [(d,17,18) for d in range(4)], "id":"Q16"}, {"profesor": "Silvia Susana Aguirre Sanchez", "horario": [(d,17,18) for d in range(4)], "id":"Q17"}, {"profesor": "Silvia Susana Aguirre Sanchez", "horario": [(d,18,19) for d in range(4)], "id":"Q18"}, {"profesor": "Karina Azucena Ayala Torres", "horario": [(d,17,18) for d in range(4)], "id":"Q19"}, {"profesor": "Karina Azucena Ayala Torres", "horario": [(d,18,19) for d in range(4)], "id":"Q20"}],
@@ -186,7 +188,13 @@ def traslape(horario1, horario2):
                 if h1[1] < h2[2] and h1[2] > h2[1]: return True
     return False
 
-def generar_combinaciones(materias, rango, prefs):
+def generar_combinaciones(materias, rango, prefs, horas_libres):
+    # Convertir horas libres "12:00-13:00" a lista de enteros [12]
+    bloqueos = []
+    for hl in horas_libres:
+        inicio = int(hl.split(":")[0])
+        bloqueos.append(inicio)
+
     pool = []
     # 1. Validar que cada materia tenga opciones
     for mat in materias:
@@ -196,20 +204,32 @@ def generar_combinaciones(materias, rango, prefs):
             key = f"{mat}_{sec['profesor']}"
             puntos = prefs.get(key, 50)
             
-            # FILTRO CRÍTICO: Si es 0 (Tacha), se ignora completamente.
+            # FILTRO 1: Preferencia (Si es Tacha, adiós)
             if puntos == 0: continue 
             
             dentro = True
             for h in sec['horario']:
-                if h[1] < rango[0] or h[2] > rango[1]: dentro = False; break
+                # FILTRO 2: Rango Global
+                if h[1] < rango[0] or h[2] > rango[1]: 
+                    dentro = False; break
+                
+                # FILTRO 3: Horas Libres (Huecos)
+                # Si la clase es 7-8 y bloqueo es 7 -> Choque
+                # La clase dura de h[1] a h[2]. Si hay solape con bloqueo.
+                for b in bloqueos:
+                    # Intervalo clase: [h[1], h[2])
+                    # Intervalo bloqueo: [b, b+1)
+                    if max(h[1], b) < min(h[2], b+1):
+                        dentro = False; break
+                if not dentro: break
             
             if dentro:
                 s = sec.copy(); s['materia'] = mat; s['score'] = puntos
                 opciones.append(s)
         
-        # SI UNA MATERIA SE QUEDA SIN OPCIONES, FALLAR INMEDIATAMENTE
+        # SI UNA MATERIA SE QUEDA SIN OPCIONES
         if not opciones:
-            return [], f"❌ Error Crítico: No hay horarios posibles para **{mat}** con tus filtros. Intenta destachar maestros o ampliar el horario."
+            return [], f"❌ **{mat}**: No tiene horarios disponibles con tus filtros (Hora libre o Rango)."
         pool.append(opciones)
     
     # 2. Generar combinaciones
@@ -280,10 +300,22 @@ elif st.session_state.step == 2:
 # --- PASO 3: DISPONIBILIDAD ---
 elif st.session_state.step == 3:
     st.title("⏰ Tu Disponibilidad")
-    st.write("Define en qué horario te gustaría estar en la escuela.")
+    st.write("Define tu horario ideal y tus horas libres.")
     
-    rango = st.slider("Rango de Horas:", 7, 22, (7, 15))
-    st.session_state.rango_hora = rango
+    col_rang, col_free = st.columns(2)
+    
+    with col_rang:
+        st.subheader("Rango General")
+        rango = st.slider("¿A qué hora puedes estar en la escuela?", 7, 22, (7, 22)) # Default abierto 7-22
+        st.session_state.rango_hora = rango
+        
+    with col_free:
+        st.subheader("Horas Libres (Huecos)")
+        st.info("Selecciona las horas donde NO quieres clase.")
+        # Generar lista de horas
+        horas_posibles = [f"{h}:00-{h+1}:00" for h in range(7, 22)]
+        libres = st.multiselect("Quiero estas horas libres:", horas_posibles)
+        st.session_state.horas_libres = libres
     
     col1, col2 = st.columns([1,1])
     if col1.button("⬅️ Atrás"):
@@ -318,6 +350,7 @@ elif st.session_state.step == 4:
         st.rerun()
     if col2.button("🚀 GENERAR HORARIOS", type="primary"):
         st.session_state.step = 5
+        st.session_state.resultados = None # Forzar recálculo
         st.rerun()
 
 # --- PASO 5: RESULTADOS ---
@@ -340,7 +373,7 @@ elif st.session_state.step == 5:
 
     # Ejecutar cálculo (si no está hecho)
     if st.session_state.resultados is None:
-        res, msg = generar_combinaciones(st.session_state.materias_seleccionadas, st.session_state.rango_hora, st.session_state.prefs)
+        res, msg = generar_combinaciones(st.session_state.materias_seleccionadas, st.session_state.rango_hora, st.session_state.prefs, st.session_state.horas_libres)
         if not res and msg != "OK":
             st.error(msg)
             st.session_state.resultados = [] # Evitar loop
@@ -399,9 +432,10 @@ elif st.session_state.step == 5:
         st.warning("⚠️ **No se encontraron horarios compatibles.**")
         st.markdown("""
         **Posibles causas:**
-        1. Tus materias chocan entre sí (Ej. Dos materias a las 9am).
-        2. El **Rango de Hora** (Paso 3) es muy corto. *Intenta ampliarlo hasta las 22:00.*
-        3. Tachaste (❌) a los únicos maestros disponibles en ese horario.
+        1. **CHOQUE DE HORARIOS:** Tienes materias que se imparten a la misma hora (ej. 9:00 AM).
+        2. **RANGO MUY CORTO:** Tus materias son en la tarde/noche y tu rango termina temprano.
+        3. **HORAS LIBRES:** Bloqueaste una hora donde era la única opción de una materia.
+        4. **FILTRO DE MAESTROS:** Tachaste (❌) a los únicos profes disponibles.
         """)
 
     if st.button("🔄 Volver al Inicio (Reiniciar Todo)"):
