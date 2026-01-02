@@ -168,22 +168,28 @@ oferta_academica = {
 # -----------------------------------------------------------------------------
 class PDF(FPDF):
     def header(self):
-        if os.path.exists("logo_tec.png"): self.image('logo_tec.png', 10, 8, 33)
-        if os.path.exists("logo_its.png"): self.image('logo_its.png', 240, 8, 33)
+        # LOGO TECNM GIGANTE (Ancho 55mm)
+        if os.path.exists("logo_tec.png"): 
+            self.image('logo_tec.png', 10, 5, 55)
+        # LOGO ITS (Mismo tamaño, ajustado a la derecha)
+        if os.path.exists("logo_its.png"): 
+            self.image('logo_its.png', 250, 5, 25)
+            
         self.set_font('Arial', 'B', 16)
         self.set_text_color(128, 0, 0)
+        self.set_y(12) # Ajuste vertical
         self.cell(0, 10, 'TECNOLÓGICO NACIONAL DE MÉXICO', 0, 1, 'C')
         self.set_font('Arial', 'B', 12)
         self.set_text_color(0, 0, 0)
-        self.cell(0, 10, 'INSTITUTO TECNOLÓGICO DE SALTILLO', 0, 1, 'C')
-        self.ln(15)
+        self.cell(0, 8, 'INSTITUTO TECNOLÓGICO DE SALTILLO', 0, 1, 'C')
+        self.ln(5)
+
     def footer(self):
         self.set_y(-15)
         self.set_font('Arial', 'I', 8)
         self.cell(0, 10, f'Página {self.page_no()}', 0, 0, 'C')
 
 def clean_text(text):
-    # Eliminar emojis y caracteres especiales para el PDF
     return text.encode('latin-1', 'ignore').decode('latin-1')
 
 def create_pro_pdf(horario, alumno_data, total_creditos):
@@ -194,19 +200,22 @@ def create_pro_pdf(horario, alumno_data, total_creditos):
     pdf.set_font("Arial", 'B', 14)
     pdf.set_text_color(128, 0, 0)
     pdf.cell(0, 10, "Carga Académica", 0, 1, 'C')
-    pdf.ln(5)
+    pdf.ln(2)
     
-    pdf.set_font("Arial", size=10)
+    pdf.set_font("Arial", size=9) # Letra un poco más chica
     pdf.set_text_color(0, 0, 0)
     pdf.set_fill_color(245, 245, 245)
     
+    # Altura reducida (Compacto)
+    h_row = 6 
+    
     # Fila 1
-    pdf.cell(30, 8, "No. Control:", 1, 0, 'L', 1)
-    pdf.cell(40, 8, clean_text(alumno_data.get("nc", "")), 1, 0, 'L')
-    pdf.cell(30, 8, "Nombre:", 1, 0, 'L', 1)
-    pdf.cell(100, 8, clean_text(alumno_data.get("nombre", "").upper()), 1, 0, 'L')
-    pdf.cell(30, 8, "Semestre:", 1, 0, 'L', 1)
-    pdf.cell(30, 8, str(alumno_data.get("semestre", "")), 1, 1, 'L')
+    pdf.cell(30, h_row, "No. Control:", 1, 0, 'L', 1)
+    pdf.cell(40, h_row, clean_text(alumno_data.get("nc", "")), 1, 0, 'L')
+    pdf.cell(30, h_row, "Nombre:", 1, 0, 'L', 1)
+    pdf.cell(100, h_row, clean_text(alumno_data.get("nombre", "").upper()), 1, 0, 'L')
+    pdf.cell(30, h_row, "Semestre:", 1, 0, 'L', 1)
+    pdf.cell(30, h_row, str(alumno_data.get("semestre", "")), 1, 1, 'L')
     
     # Fila 2
     especialidad = "SIN ESPECIALIDAD"
@@ -215,23 +224,25 @@ def create_pro_pdf(horario, alumno_data, total_creditos):
             especialidad = "AUTOMATIZACIÓN DE PROCESOS DE MANUFACTURA"
     except: pass
 
-    pdf.cell(30, 8, "Carrera:", 1, 0, 'L', 1)
-    pdf.cell(100, 8, "INGENIERÍA MECATRÓNICA", 1, 0, 'L')
-    pdf.cell(30, 8, "Especialidad:", 1, 0, 'L', 1)
-    pdf.cell(100, 8, clean_text(especialidad), 1, 1, 'L')
-    pdf.ln(10)
+    pdf.cell(30, h_row, "Carrera:", 1, 0, 'L', 1)
+    pdf.cell(100, h_row, "INGENIERÍA MECATRÓNICA", 1, 0, 'L')
+    pdf.cell(30, h_row, "Especialidad:", 1, 0, 'L', 1)
+    pdf.cell(100, h_row, clean_text(especialidad), 1, 1, 'L')
+    pdf.ln(8) # Espacio reducido
 
-    # Tabla
+    # Tabla Header
     pdf.set_font("Arial", 'B', 9)
     pdf.set_fill_color(128, 0, 0)
     pdf.set_text_color(255, 255, 255)
     
     w_mat, w_prof, w_dia, w_cred = 70, 60, 22, 15
-    pdf.cell(w_mat, 10, "Materia", 1, 0, 'C', 1)
-    pdf.cell(w_prof, 10, "Profesor", 1, 0, 'C', 1)
-    pdf.cell(w_cred, 10, "Créd.", 1, 0, 'C', 1)
+    h_table = 8 # Altura reducida de tabla
+    
+    pdf.cell(w_mat, h_table, "Materia", 1, 0, 'C', 1)
+    pdf.cell(w_prof, h_table, "Profesor", 1, 0, 'C', 1)
+    pdf.cell(w_cred, h_table, "Créd.", 1, 0, 'C', 1)
     for dia in ["Lun", "Mar", "Mié", "Jue", "Vie"]:
-        pdf.cell(w_dia, 10, clean_text(dia), 1, 0, 'C', 1)
+        pdf.cell(w_dia, h_table, clean_text(dia), 1, 0, 'C', 1)
     pdf.ln()
     
     pdf.set_font("Arial", size=8)
@@ -243,27 +254,26 @@ def create_pro_pdf(horario, alumno_data, total_creditos):
     horario_ordenado = sorted(horario, key=get_start_hour)
     
     for clase in horario_ordenado:
-        h = 10
         materia_nome = clean_text(clase['materia'])
         if len(materia_nome) > 38: materia_nome = materia_nome[:35] + "..."
         profesor_nome = clean_text(clase['profesor'].split('(')[0][:30])
         creditos = str(CREDITOS.get(clase['materia'], 0))
         
-        pdf.cell(w_mat, h, materia_nome, 1)
-        pdf.cell(w_prof, h, profesor_nome, 1)
-        pdf.cell(w_cred, h, creditos, 1, 0, 'C')
+        pdf.cell(w_mat, h_table, materia_nome, 1)
+        pdf.cell(w_prof, h_table, profesor_nome, 1)
+        pdf.cell(w_cred, h_table, creditos, 1, 0, 'C')
         
         for d in range(5):
             txt_hora = ""
             for sesion in clase['horario']:
                 if sesion[0] == d: txt_hora = f"{sesion[1]}:00-{sesion[2]}:00"
-            pdf.cell(w_dia, h, txt_hora, 1, 0, 'C')
+            pdf.cell(w_dia, h_table, txt_hora, 1, 0, 'C')
         pdf.ln()
         
     # Total
     pdf.set_font("Arial", 'B', 9)
-    pdf.cell(w_mat + w_prof, 8, clean_text("TOTAL DE CRÉDITOS:"), 1, 0, 'R')
-    pdf.cell(w_cred, 8, str(total_creditos), 1, 1, 'C')
+    pdf.cell(w_mat + w_prof, h_table, clean_text("TOTAL DE CRÉDITOS:"), 1, 0, 'R')
+    pdf.cell(w_cred, h_table, str(total_creditos), 1, 1, 'C')
         
     return pdf.output(dest='S').encode('latin-1')
 
@@ -336,7 +346,6 @@ def create_timetable_html(horario):
             mat_name = full_name.split(' ')[1] if " " in full_name else full_name
             if len(mat_name) > 20: mat_name = mat_name[:20] + "..."
             
-        # Prof Name Logic (Nombre y Apellido)
         parts = clase['profesor'].split('(')[0].split()
         prof_name = f"{parts[0]} {parts[1]}" if len(parts) > 1 else parts[0]
         
@@ -493,7 +502,7 @@ elif st.session_state.step == 5:
         for i, (score, horario) in enumerate(res):
             with st.container(border=True):
                 col_info, col_btn = st.columns([4, 1])
-                col_info.subheader(f"Opción {i+1}") # Ya no muestra puntaje
+                col_info.subheader(f"Opción {i+1}") 
                 pdf_bytes = create_pro_pdf(horario, alumno_data, total_creditos_final)
                 col_btn.download_button("📄 PDF", data=pdf_bytes, file_name=f"Carga_Op{i+1}.pdf", mime="application/pdf", key=f"btn_{i}")
                 html_table = create_timetable_html(horario)
