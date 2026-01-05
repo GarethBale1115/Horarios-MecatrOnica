@@ -5,9 +5,9 @@ from fpdf import FPDF
 import os
 
 # -----------------------------------------------------------------------------
-# CONFIGURACIÓN VISUAL (TEMA INSTITUCIONAL TECNM BLINDADO)
+# CONFIGURACIÓN VISUAL (TÍTULO NUEVO Y TEMA BLINDADO)
 # -----------------------------------------------------------------------------
-st.set_page_config(page_title="Carga Académica ITS", page_icon="🐴", layout="wide")
+st.set_page_config(page_title="Horario ITS", page_icon="🐴", layout="wide")
 
 st.markdown("""
 <style>
@@ -18,24 +18,33 @@ st.markdown("""
         --texto-oscuro: #333333;
     }
 
-    /* FUERZA EL COLOR GUINDA EN TÍTULOS SIN IMPORTAR EL TEMA (CLARO/OSCURO) */
-    h1, h2, h3, .stMarkdown h1, .stMarkdown h2, .stMarkdown h3 {
+    /* FUERZA EL COLOR GUINDA EN TÍTULOS Y SUBTÍTULOS */
+    h1, h2, h3, .stMarkdown h1, .stMarkdown h2, .stMarkdown h3, h3[id^="ingenier-a-mecatr-nica"] {
         color: var(--guinda-oficial) !important;
+        font-family: 'Arial', sans-serif;
     }
 
-    /* ESTILO DEL CONTENEDOR DE BIENVENIDA (HERO BOX) */
+    /* ESTILO DEL CONTENEDOR DE BIENVENIDA */
     .welcome-box {
-        background-color: var(--blanco-humo) !important; /* Fondo claro siempre */
+        background-color: var(--blanco-humo) !important;
         padding: 25px;
         border-radius: 10px;
         border-left: 8px solid var(--guinda-oficial);
         box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
         margin-bottom: 20px;
     }
+    /* Texto del cuerpo limpio, sin negritas forzadas, color oscuro */
     .welcome-text-content p {
-        color: var(--texto-oscuro) !important; /* Texto oscuro siempre visible */
+        color: var(--texto-oscuro) !important;
         font-size: 1.05em;
-        line-height: 1.5;
+        line-height: 1.6;
+        font-weight: normal; /* Asegura que no haya negritas */
+    }
+    .welcome-greeting {
+        font-size: 1.2em;
+        font-weight: bold;
+        color: var(--guinda-oficial) !important;
+        margin-bottom: 15px;
     }
     .welcome-lema {
         margin-top: 15px;
@@ -46,6 +55,11 @@ st.markdown("""
         border-top: 2px solid #e0e0e0;
         padding-top: 10px;
     }
+    .developer-credit {
+        margin-top: 20px;
+        font-size: 0.9em;
+        color: #666 !important;
+    }
 
     /* BOTONES PERSONALIZADOS */
     .stButton>button {
@@ -53,9 +67,11 @@ st.markdown("""
         background-color: var(--guinda-oficial) !important;
         border: none;
         font-weight: bold;
+        border-radius: 6px;
+        padding: 0.5rem 1rem;
     }
     .stButton>button:hover {
-        background-color: #5c0000 !important; /* Guinda más oscuro al pasar el mouse */
+        background-color: #5c0000 !important;
     }
 
     /* CREDIT BOXES */
@@ -394,42 +410,47 @@ def create_timetable_html(horario):
 
 # --- PASO 1: BIENVENIDA ---
 if st.session_state.step == 1:
-    # HEADER CON LOGOS
-    col_tec, col_titulo, col_its = st.columns([1, 3, 1])
+    # HEADER CON LOGOS GIGANTES Y CENTRADOS
+    col_tec, col_centro, col_its = st.columns([1.5, 3, 1.5], gap="medium")
     with col_tec:
         if os.path.exists("logo_tec.png"):
-            st.image("logo_tec.png", width=100)
-    with col_titulo:
-        st.markdown("<h1 style='text-align: center;'>Generador de Cargas ITS</h1>", unsafe_allow_html=True)
-        st.markdown("<h3 style='text-align: center;'>Ingeniería Mecatrónica - Enero Junio 2026</h3>", unsafe_allow_html=True)
+            st.image("logo_tec.png", width=180) # Logo TecNM Grande
+    with col_centro:
+        # LOGO PRINCIPAL HORARIO ITS GIGANTE
+        if os.path.exists("horarioits.png"):
+            st.image("horarioits.png", use_container_width=True)
+        else:
+            # Fallback por si acaso
+            st.markdown("<h1 style='text-align: center; font-size: 3em;'>Horario ITS</h1>", unsafe_allow_html=True)
+        st.markdown("<h3 style='text-align: center; color: #800000; margin-top: -10px;'>Ingeniería Mecatrónica - Enero Junio 2026</h3>", unsafe_allow_html=True)
     with col_its:
         if os.path.exists("logo_its.png"):
-            st.image("logo_its.png", width=80)
+            st.image("logo_its.png", width=150) # Logo ITS Grande
             
     st.write("---")
 
-    # CONTENEDOR DE BIENVENIDA + MASCOTA
+    # CONTENEDOR DE BIENVENIDA + MASCOTA (Pequeña)
     col_texto, col_mascota = st.columns([3, 1])
     
     with col_texto:
         st.markdown("""
         <div class="welcome-box">
+            <div class="welcome-greeting">
+                ¡Bienvenido, futuro ingeniero! 🦅
+            </div>
             <div class="welcome-text-content">
                 <p>
-                    <strong>¡Bienvenido, futuro ingeniero!</strong> 🦅
-                </p>
-                <p>
-                    Esta herramienta ha sido diseñada <strong>PARA la comunidad estudiantil</strong> de Ingeniería Mecatrónica 
+                    Esta herramienta ha sido diseñada para la comunidad estudiantil de Ingeniería Mecatrónica 
                     del Instituto Tecnológico de Saltillo. Su objetivo principal es ayudarte a 
-                    <strong>visualizar todas las posibles opciones de horario</strong> disponibles, facilitando la 
+                    visualizar todas las posibles opciones de horario disponibles, facilitando la 
                     toma de decisiones para tu próxima carga académica.
                 </p>
                 <p>
                     Encuentra la combinación perfecta de materias y maestros que se ajuste a tus necesidades sin complicaciones.
                 </p>
-                <p style="margin-top: 20px;">
-                    <strong>Desarrollado por: Néstor Alexis Piña Rodríguez</strong>
-                </p>
+                <div class="developer-credit">
+                    Desarrollado por: Néstor Alexis Piña Rodríguez
+                </div>
             </div>
             <div class="welcome-lema">
                 "La Técnica por la Grandeza de México"
@@ -438,10 +459,11 @@ if st.session_state.step == 1:
         """, unsafe_allow_html=True)
         
     with col_mascota:
+        st.write("") # Espacio superior
+        st.write("")
         if os.path.exists("burro.png"):
-            st.image("burro.png", use_container_width=True)
-        else:
-            st.info("Aquí iría la mascota institucional.")
+            # Mascota más pequeña para no robar protagonismo
+            st.image("burro.png", width=120)
 
     # BOTÓN DE INICIO
     st.write("")
