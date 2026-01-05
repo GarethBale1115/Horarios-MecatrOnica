@@ -143,26 +143,6 @@ st.markdown("""
         padding: 8px; border-radius: 5px; margin-bottom: 5px;
         font-size: 0.9em; border-left: 3px solid var(--guinda);
     }
-    
-    /* CHECKBOX DENTRO DE EXPANDER (Para Horas) - RESTAURAR PALOMITA AQUI */
-    [data-testid="stExpander"] [data-testid="stCheckbox"] label span[role="checkbox"] {
-        display: block !important; /* Restaurar palomita en submenús */
-    }
-    [data-testid="stExpander"] [data-testid="stCheckbox"] label {
-        min-height: 30px !important;
-        border: none !important;
-        justify-content: flex-start !important;
-        text-align: left !important;
-    }
-    [data-testid="stExpander"] [data-testid="stCheckbox"]:has(input:checked) label {
-        background-color: transparent !important;
-        border-color: transparent !important;
-    }
-    [data-testid="stExpander"] [data-testid="stCheckbox"] div[data-testid="stMarkdownContainer"] p {
-        color: inherit !important;
-        font-weight: normal !important;
-        text-align: left !important;
-    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -383,11 +363,12 @@ def generar_combinaciones(materias, rango, prefs, horas_libres):
     # ALGORITMO DE ORDENAMIENTO INTELIGENTE
     def sort_key(item):
         puntos, horario = item
-        horas = []
+        horas_ocupadas = []
         for clase in horario:
-            for s in clase['horario']: horas.append(s[1])
-        if not horas: return (puntos, 0)
-        span = max(horas) - min(horas)
+            for s in clase['horario']: horas_ocupadas.append(s[1])
+        
+        if not horas_ocupadas: return (puntos, 0)
+        span = max(horas_ocupadas) - min(horas_ocupadas)
         return (puntos, -span)
 
     validos.sort(key=sort_key, reverse=True)
@@ -512,7 +493,7 @@ if os.path.exists("reticula.pdf"):
         st.sidebar.download_button(label="📄 Descargar Retícula", data=pdf_file, file_name="Reticula_Mecatronica.pdf", mime="application/pdf")
 
 # =============================================================================
-# VISTA 1: GENERADOR
+# VISTA 1: GENERADOR DE HORARIOS
 # =============================================================================
 if menu == "📅 Generador de Horarios":
     # --- PASO 1: BIENVENIDA ---
@@ -533,7 +514,7 @@ if menu == "📅 Generador de Horarios":
             <div class="welcome-box">
                 <div class="welcome-greeting">¡Bienvenido, futuro ingeniero! 🦅</div>
                 <div class="welcome-text-content">
-                    <p>Esta herramienta ha sido diseñada PARA la comunidad estudiantil de Ingeniería Mecatrónica 
+                    <p>Esta herramienta ha sido diseñada para la comunidad estudiantil de Ingeniería Mecatrónica 
                     del Instituto Tecnológico de Saltillo. Su objetivo principal es ayudarte a 
                     visualizar todas las posibles opciones de horario disponibles, facilitando la 
                     toma de decisiones para tu próxima carga académica.</p>
