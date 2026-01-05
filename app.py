@@ -39,7 +39,7 @@ st.markdown("""
         border: 1px solid rgba(128, 128, 128, 0.4);
         background-color: transparent; /* Fondo transparente para respetar modo oscuro */
         padding: 5px;
-        border-radius: 8px;
+        border-radius: 6px;
         width: 100%;
         min-height: 90px; /* Altura mínima FIJA para simetría */
         height: 100%;
@@ -61,6 +61,7 @@ st.markdown("""
     [data-testid="stCheckbox"]:has(input:checked) label {
         background-color: var(--guinda) !important;
         border-color: var(--guinda) !important;
+        color: white !important;
     }
     
     /* Cambiar color de texto a BLANCO al seleccionar */
@@ -170,7 +171,7 @@ if 'alumno_sem' not in st.session_state: st.session_state.alumno_sem = 1
 if 'alumno_per' not in st.session_state: st.session_state.alumno_per = "ENE-JUN 2026"
 
 # -----------------------------------------------------------------------------
-# CRÉDITOS ACADÉMICOS (CON EMOJIS, DEBEN COINCIDIR CON LA BASE DE DATOS)
+# CRÉDITOS ACADÉMICOS
 # -----------------------------------------------------------------------------
 CREDITOS = {
     "🧪 Química": 4, "📐 Cálculo Diferencial": 5, "⚖️ Taller de Ética": 4, "💻 Dibujo Asistido por Computadora": 4, "📏 Metrología y Normalización": 4, "🔎 Fundamentos de Investigación": 4,
@@ -185,7 +186,7 @@ CREDITOS = {
 }
 
 # -----------------------------------------------------------------------------
-# REGLAS DE SERIACIÓN (USANDO EMOJIS PARA COINCIDIR)
+# REGLAS DE SERIACIÓN
 # -----------------------------------------------------------------------------
 SERIACION = {
     "∫ Cálculo Integral": ["📐 Cálculo Diferencial"], "🧱 Ciencia e Ingeniería de Materiales": ["🧪 Química"], "↗️ Cálculo Vectorial": ["∫ Cálculo Integral"],
@@ -198,7 +199,7 @@ SERIACION = {
 }
 
 # -----------------------------------------------------------------------------
-# BASE DE DATOS DE NOMBRES (CON EMOJIS)
+# BASE DE DATOS DE NOMBRES
 # -----------------------------------------------------------------------------
 database = {
     "Ingeniería Mecatrónica": {
@@ -217,7 +218,6 @@ database = {
 # -----------------------------------------------------------------------------
 # OFERTA ACADÉMICA (COMPLETA - KEYS SIN EMOJIS PARA LOGICA INTERNA)
 # -----------------------------------------------------------------------------
-# NOTA: Las llaves aqui NO tienen emojis. Usamos strip_emoji para conectar.
 oferta_academica = {
     # SEMESTRE 1
     "Química": [{"profesor": "Norma Hernández Flores", "horario": [(d,7,8) for d in range(4)], "id":"Q1"}, {"profesor": "Norma Hernández Flores", "horario": [(d,8,9) for d in range(4)], "id":"Q2"}, {"profesor": "Norma Hernández Flores", "horario": [(d,11,12) for d in range(4)], "id":"Q3"}, {"profesor": "Norma Hernández Flores", "horario": [(d,12,13) for d in range(4)], "id":"Q4"}, {"profesor": "Hilda Araceli Torres Plata", "horario": [(d,8,9) for d in range(4)], "id":"Q5"}, {"profesor": "Hilda Araceli Torres Plata", "horario": [(d,9,10) for d in range(4)], "id":"Q6"}, {"profesor": "Alma Leticia Cázares Arreguin", "horario": [(d,13,14) for d in range(4)], "id":"Q7"}, {"profesor": "Alma Leticia Cázares Arreguin", "horario": [(d,14,15) for d in range(4)], "id":"Q8"}, {"profesor": "Alma Leticia Cázares Arreguin", "horario": [(d,16,17) for d in range(4)], "id":"Q9"}, {"profesor": "José Raymundo Garza Aldaco", "horario": [(d,15,16) for d in range(4)], "id":"Q10"}, {"profesor": "Alejandra Torres Ordaz", "horario": [(d,15,16) for d in range(4)], "id":"Q11"}, {"profesor": "Alejandra Torres Ordaz", "horario": [(d,16,17) for d in range(4)], "id":"Q12"}, {"profesor": "Alejandra Torres Ordaz", "horario": [(d,17,18) for d in range(4)], "id":"Q13"}, {"profesor": "Victor Martinez Rivera", "horario": [(d,15,16) for d in range(4)], "id":"Q14"}, {"profesor": "Victor Martinez Rivera", "horario": [(d,16,17) for d in range(4)], "id":"Q15"}, {"profesor": "Victor Martinez Rivera", "horario": [(d,17,18) for d in range(4)], "id":"Q16"}, {"profesor": "Silvia Susana Aguirre Sanchez", "horario": [(d,17,18) for d in range(4)], "id":"Q17"}, {"profesor": "Silvia Susana Aguirre Sanchez", "horario": [(d,18,19) for d in range(4)], "id":"Q18"}, {"profesor": "Karina Azucena Ayala Torres", "horario": [(d,17,18) for d in range(4)], "id":"Q19"}, {"profesor": "Karina Azucena Ayala Torres", "horario": [(d,18,19) for d in range(4)], "id":"Q20"}],
@@ -382,7 +382,7 @@ class PDF(FPDF):
         if os.path.exists("horarioits.png"): self.image('horarioits.png', 120, 5, 60) # Logo nuestro centrado
         
         # AJUSTE PARA QUE NO CHOQUE EL TEXTO CON EL LOGO
-        self.set_y(35) # Bajamos el cursor MAS
+        self.set_y(45) # Bajamos el cursor MAS
         self.set_font('Arial', 'B', 16)
         self.set_text_color(128, 0, 0)
         self.cell(0, 10, 'TECNOLÓGICO NACIONAL DE MÉXICO', 0, 1, 'C')
@@ -429,7 +429,9 @@ def create_pro_pdf(horario, alumno_data, total_creditos):
         materia_nome = clean_text(materia_clean)
         if len(materia_nome) > 38: materia_nome = materia_nome[:35] + "..."
         profesor_nome = clean_text(clase['profesor'].split('(')[0][:30])
+        # Usar key limpia para creditos
         creditos = str(CREDITOS.get(materia_clean, 0))
+        
         pdf.cell(w_mat, h_table, materia_nome, 1); pdf.cell(w_prof, h_table, profesor_nome, 1); pdf.cell(w_cred, h_table, creditos, 1, 0, 'C')
         for d in range(5):
             txt_hora = ""
@@ -509,10 +511,7 @@ if menu == "📅 Generador de Horarios":
             <div class="welcome-box">
                 <div class="welcome-greeting">¡Bienvenido, futuro ingeniero! 🦅</div>
                 <div class="welcome-text-content">
-                    <p>Esta herramienta ha sido diseñada para la comunidad estudiantil de Ingeniería Mecatrónica 
-                    del Instituto Tecnológico de Saltillo. Su objetivo principal es ayudarte a 
-                    visualizar todas las posibles opciones de horario disponibles, facilitando la 
-                    toma de decisiones para tu próxima carga académica.</p>
+                    <p>Esta herramienta ha sido diseñada PARA la comunidad estudiantil de Ingeniería Mecatrónica del Instituto Tecnológico de Saltillo. Su objetivo principal es ayudarte a visualizar todas las posibles opciones de horario disponibles, facilitando la toma de decisiones para tu próxima carga académica.</p>
                     <p>Encuentra la combinación perfecta de materias y maestros que se ajuste a tus necesidades sin complicaciones.</p>
                     <div class="developer-credit">Desarrollado por: Néstor Alexis Piña Rodríguez</div>
                 </div>
@@ -529,7 +528,7 @@ if menu == "📅 Generador de Horarios":
         if st.button("Comenzar ➡️", use_container_width=True):
             st.session_state.num_materias_deseadas = cant; st.session_state.step = 2; st.rerun()
 
-    # --- PASO 2: MATERIAS ---
+    # --- PASO 2: MATERIAS (TABLERO 9 COLUMNAS) ---
     elif st.session_state.step == 2:
         st.title("📚 Selección de Materias")
         
@@ -554,22 +553,30 @@ if menu == "📅 Generador de Horarios":
         
         st.write("---")
         c_info = st.container()
+        
+        # Mensajes de validación
         msg_cred = f"✅ Créditos: {total_creditos} / 36" if total_creditos <= 36 else f"⛔ Exceso: {total_creditos} / 36"
         style_cred = "credit-ok" if total_creditos <= 36 else "credit-error"
         msg_cant = f"Materias: {num_selected} / {st.session_state.num_materias_deseadas}"
-        if num_selected != st.session_state.num_materias_deseadas: style_cred = "credit-error"; msg_cant = f"⚠️ Debes elegir exactamente {st.session_state.num_materias_deseadas} materias."
+        
+        if num_selected != st.session_state.num_materias_deseadas:
+            style_cred = "credit-error"
+            msg_cant = f"⚠️ Debes elegir exactamente {st.session_state.num_materias_deseadas} materias."
 
         c_info.markdown(f"<div class='credit-box {style_cred}'>{msg_cred} | {msg_cant}</div>", unsafe_allow_html=True)
+        
         if total_creditos > 36: st.progress(1.0)
         else: st.progress(total_creditos / 36)
 
         col1, col2 = st.columns([1,1])
         if col1.button("⬅️ Atrás"): st.session_state.step = 1; st.rerun()
         
+        # Lógica de Bloqueo y Seriación
         bloqueo = False
         if total_creditos > 36: bloqueo = True
         if num_selected != st.session_state.num_materias_deseadas: bloqueo = True
         
+        # Validar Seriación
         conflicto_seriacion = []
         for materia in selected_in_this_step:
             m_clean = strip_emoji(materia)
@@ -589,7 +596,9 @@ if menu == "📅 Generador de Horarios":
                 st.rerun()
         else:
             if col2.button("Siguiente ➡️", type="primary"):
-                st.session_state.materias_seleccionadas = selected_in_this_step; st.session_state.step = 3; st.rerun()
+                st.session_state.materias_seleccionadas = selected_in_this_step
+                st.session_state.step = 3
+                st.rerun()
 
     # --- PASO 3: DISPONIBILIDAD ---
     elif st.session_state.step == 3:
@@ -693,7 +702,7 @@ if menu == "📅 Generador de Horarios":
             st.rerun()
 
 # =============================================================================
-# VISTA 2: EVALUACIÓN DOCENTE
+# VISTA 2: EVALUACIÓN DOCENTE (SIDEBAR)
 # =============================================================================
 elif menu == "⭐ Evaluación Docente":
     st.title("⭐ Califica a tu Maestro")
