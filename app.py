@@ -5,115 +5,95 @@ from fpdf import FPDF
 import os
 
 # -----------------------------------------------------------------------------
-# CONFIGURACIÓN VISUAL (ADAPTABLE OSCURO/CLARO + TEMA ITS)
+# CONFIGURACIÓN VISUAL (MODO CLARO FORZADO + BOTONES GUINDA)
 # -----------------------------------------------------------------------------
 st.set_page_config(page_title="Horario ITS", page_icon="🐴", layout="wide")
 
 st.markdown("""
 <style>
-    /* VARIABLES DE COLOR */
+    /* VARIABLES */
     :root {
         --guinda: #800000;
+        --blanco: #ffffff;
+        --gris-claro: #f0f2f6;
     }
 
-    /* FUERZA EL COLOR GUINDA EN TÍTULOS Y SUBTÍTULOS */
-    h1, h2, h3, .stMarkdown h1, .stMarkdown h2, .stMarkdown h3, h3[id^="ingenier-a-mecatr-nica"] {
+    /* MODO CLARO OBLIGATORIO (Para asegurar el diseño) */
+    [data-testid="stAppViewContainer"] { background-color: white !important; color: black !important; }
+    [data-testid="stSidebar"] { background-color: var(--gris-claro) !important; }
+    [data-testid="stHeader"] { background-color: white !important; }
+    
+    /* TITULOS */
+    h1, h2, h3, .stMarkdown h1, .stMarkdown h2, .stMarkdown h3 {
         color: var(--guinda) !important;
         font-family: 'Arial', sans-serif;
     }
 
-    /* ESTILO DE LOS CHECKBOXES COMO "TARJETAS" SIMÉTRICAS */
-    .stCheckbox {
-        background-color: transparent; /* Se adapta al modo oscuro/claro */
-        border: 1px solid rgba(128, 128, 128, 0.2);
-        border-radius: 8px;
-        padding: 10px;
-        margin-bottom: 8px;
-        transition: all 0.2s;
-        /* Simetría y altura mínima */
-        min-height: 80px; 
-        display: flex;
-        align-items: center;
+    /* --- ESTILO DE MATERIAS (TIPO BOTÓN) --- */
+    
+    /* 1. Ocultar la casilla de verificación (palomita) */
+    div[data-testid="stCheckbox"] input {
+        display: none; /* Adiós palomita */
     }
     
-    .stCheckbox:hover {
-        border-color: var(--guinda);
-        background-color: rgba(128, 0, 0, 0.05); /* Sutil toque guinda */
+    /* 2. Estilo base del cuadro (Sin seleccionar) */
+    div[data-testid="stCheckbox"] label {
+        border: 1px solid #ccc;
+        background-color: #fff;
+        padding: 8px 5px; /* Padding vertical, horizontal reducido */
+        border-radius: 6px;
+        width: 100%;
+        height: 100%;
+        min-height: 60px; /* Altura uniforme */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.2s ease-in-out;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    
+    /* 3. Estilo del Texto (Sin seleccionar) */
+    div[data-testid="stCheckbox"] label p {
+        font-size: 0.8em !important;
+        font-weight: 600 !important;
+        color: #333 !important;
+        line-height: 1.2 !important;
+        margin: 0 !important;
+        word-wrap: break-word !important; /* Evitar cortes */
     }
 
-    /* ARREGLO DE TEXTO: NUNCA CORTAR PALABRAS */
-    .stCheckbox label p {
-        font-size: 0.9em;
-        font-weight: 600;
-        word-break: normal !important; /* Prohíbe cortar palabras */
-        overflow-wrap: break-word !important; /* Baja la palabra completa si no cabe */
-        line-height: 1.3;
+    /* 4. EFECTO AL SELECCIONAR (Pintar de Guinda) */
+    /* Usamos el selector :has() para detectar si el input oculto está checked */
+    div[data-testid="stCheckbox"]:has(input:checked) label {
+        background-color: var(--guinda) !important;
+        border-color: var(--guinda) !important;
+        box-shadow: 0 2px 5px rgba(128, 0, 0, 0.4);
+    }
+    
+    /* 5. Texto Blanco al seleccionar */
+    div[data-testid="stCheckbox"]:has(input:checked) label p {
+        color: white !important;
     }
 
     /* ENCABEZADOS DE SEMESTRE */
     .semestre-header {
-        color: var(--guinda) !important;
+        color: var(--guinda);
         font-weight: 900;
-        font-size: 1.1em;
+        font-size: 1rem;
         text-align: center;
-        border-bottom: 3px solid var(--guinda);
-        margin-bottom: 15px;
+        border-bottom: 2px solid var(--guinda);
+        margin-bottom: 10px;
         padding-bottom: 5px;
-        text-transform: uppercase;
-    }
-
-    /* CONTENEDOR DE BIENVENIDA (Ajustado para verse bien en dark mode) */
-    .welcome-box {
-        background-color: rgba(255, 255, 255, 0.05); /* Transparente sutil */
-        border: 1px solid rgba(128, 128, 128, 0.2);
-        padding: 25px;
-        border-radius: 10px;
-        border-left: 8px solid var(--guinda);
-        margin-bottom: 20px;
-    }
-    .welcome-text-content p {
-        font-size: 1.05em;
-        line-height: 1.6;
-    }
-    .welcome-greeting {
-        font-size: 1.2em;
-        font-weight: bold;
-        color: var(--guinda) !important;
-        margin-bottom: 15px;
-    }
-    .welcome-lema {
-        margin-top: 15px;
-        font-style: italic;
-        font-weight: bold;
-        color: var(--guinda) !important;
-        text-align: right;
-        border-top: 1px solid rgba(128, 128, 128, 0.2);
-        padding-top: 10px;
-    }
-    .developer-credit {
-        margin-top: 20px;
-        font-size: 0.9em;
-        opacity: 0.7;
-    }
-
-    /* BOTONES */
-    .stButton>button {
-        color: white !important;
-        background-color: var(--guinda) !important;
-        border: none;
-        font-weight: bold;
-        border-radius: 6px;
-    }
-    .stButton>button:hover {
-        background-color: #5c0000 !important;
     }
 
     /* CREDIT BOXES */
-    .credit-box { padding: 15px; border-radius: 8px; margin-bottom: 20px; font-weight: bold; text-align: center; border: 1px solid rgba(128,128,128,0.3); }
-    .credit-ok { background-color: rgba(4, 95, 70, 0.2); color: #34d399; border-color: #34d399; }
-    .credit-error { background-color: rgba(153, 27, 27, 0.2); color: #f87171; border-color: #f87171; }
+    .credit-box { padding: 15px; border-radius: 8px; margin-bottom: 20px; font-weight: bold; text-align: center; border: 1px solid #ccc; color: black; }
+    .credit-ok { background-color: #d1fae5; color: #065f46; border-color: #34d399; }
+    .credit-error { background-color: #fee2e2; color: #991b1b; border-color: #f87171; }
 
-    /* TABLA VISUAL */
+    /* TABLA VISUAL DE RESULTADOS */
     .horario-grid { width: 100%; border-collapse: collapse; text-align: center; font-family: 'Arial', sans-serif; font-size: 0.8em; background-color: white; color: black; }
     .horario-grid th { background-color: var(--guinda); color: white; padding: 6px; border: 1px solid #ddd; }
     .horario-grid td { border: 1px solid #eee; height: 45px; vertical-align: middle; padding: 2px; color: #333; }
@@ -126,6 +106,21 @@ st.markdown("""
         line-height: 1.2; box-shadow: 0 1px 2px rgba(0,0,0,0.1);
     }
     .clase-prof { font-weight: 500; font-size: 0.8em; color: #333; margin-top: 2px; }
+    
+    /* BIENVENIDA */
+    .welcome-box {
+        background-color: #f9f9f9; padding: 25px; border-radius: 10px;
+        border-left: 8px solid var(--guinda); box-shadow: 0px 4px 10px rgba(0,0,0,0.1); margin-bottom: 20px;
+    }
+    .welcome-text-content p { color: #333; font-size: 1.05em; line-height: 1.6; }
+    .welcome-greeting { font-size: 1.2em; font-weight: bold; color: var(--guinda); margin-bottom: 15px; }
+    .welcome-lema { margin-top: 15px; font-style: italic; font-weight: bold; color: var(--guinda); text-align: right; border-top: 1px solid #ddd; padding-top: 10px; }
+    .developer-credit { margin-top: 20px; font-size: 0.9em; color: #666; }
+
+    /* BOTONES */
+    .stButton>button { color: white !important; background-color: var(--guinda) !important; border: none; font-weight: bold; border-radius: 6px; }
+    .stButton>button:hover { background-color: #5c0000 !important; }
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -251,7 +246,6 @@ class PDF(FPDF):
         if os.path.exists("logo_its.png"): self.image('logo_its.png', 250, 5, 25)
         self.set_font('Arial', 'B', 16)
         self.set_text_color(128, 0, 0)
-        self.set_y(12)
         self.cell(0, 10, 'TECNOLÓGICO NACIONAL DE MÉXICO', 0, 1, 'C')
         self.set_font('Arial', 'B', 12)
         self.set_text_color(0, 0, 0)
@@ -512,44 +506,33 @@ if st.session_state.step == 1:
             st.session_state.step = 2
             st.rerun()
 
-# --- PASO 2: MATERIAS (TABLERO GRID 2 FILAS) ---
+# --- PASO 2: MATERIAS (TABLERO GRID 9 COLUMNAS) ---
 elif st.session_state.step == 2:
     st.title("📚 Selección de Materias")
     
-    # ESTRATEGIA GRID: 2 FILAS GRANDES PARA QUE EL TEXTO QUEPA
-    # Fila 1: Semestres 1 al 5 (5 columnas)
-    st.subheader("Ciclo Básico e Intermedio")
-    cols_top = st.columns(5)
-    
+    # LAYOUT GRID: 9 Columnas para 9 Semestres
+    # Usamos st.columns para distribuir horizontalmente
+    cols = st.columns(9)
     selected_in_this_step = []
     
-    all_semesters = list(database["Ingeniería Mecatrónica"].items())
-    
-    # Render Semestres 1-5
-    for i in range(5):
-        sem_name, materias = all_semesters[i]
-        with cols_top[i]:
-            st.markdown(f"<div class='semestre-header'>{i+1}°</div>", unsafe_allow_html=True)
-            for m in materias:
-                is_checked = m in st.session_state.materias_seleccionadas
-                if st.checkbox(m, value=is_checked, key=f"chk_{m}"):
-                    selected_in_this_step.append(m)
+    # Recorrer los 9 semestres
+    # NOTA: database tiene un diccionario con claves "Semestre 1", etc.
+    # Convertimos a lista para acceder por índice
+    semestres_list = list(database["Ingeniería Mecatrónica"].items())
 
-    st.write("---")
-    
-    # Fila 2: Semestres 6 al 9 (4 columnas) -> MÁS ESPACIO
-    st.subheader("Ciclo de Especialización")
-    cols_bottom = st.columns(4)
-    
-    for i in range(4):
-        idx_real = i + 5 # Empezamos en el 6to semestre (index 5)
-        sem_name, materias = all_semesters[idx_real]
-        with cols_bottom[i]:
-            st.markdown(f"<div class='semestre-header'>{idx_real+1}°</div>", unsafe_allow_html=True)
-            for m in materias:
-                is_checked = m in st.session_state.materias_seleccionadas
-                if st.checkbox(m, value=is_checked, key=f"chk_{m}"):
-                    selected_in_this_step.append(m)
+    for i in range(9):
+        if i < len(semestres_list):
+            sem_name, lista_materias = semestres_list[i]
+            with cols[i]:
+                # Encabezado del semestre (1°, 2°, etc.)
+                st.markdown(f"<div class='semestre-header'>{i+1}°</div>", unsafe_allow_html=True)
+                
+                # Checkboxes para cada materia
+                for materia in lista_materias:
+                    is_checked = materia in st.session_state.materias_seleccionadas
+                    # Checkbox: Cuando se selecciona, CSS lo pinta de guinda (gracias a :has)
+                    if st.checkbox(materia, value=is_checked, key=f"chk_{materia}"):
+                        selected_in_this_step.append(materia)
 
     total_creditos = sum([CREDITOS.get(m, 0) for m in selected_in_this_step])
     st.write("---")
@@ -563,13 +546,16 @@ elif st.session_state.step == 2:
         st.progress(1.0)
 
     col1, col2 = st.columns([1,1])
-    if col1.button("⬅️ Atrás"): st.session_state.step = 1; st.rerun()
+    if col1.button("⬅️ Atrás"): 
+        st.session_state.step = 1
+        st.rerun()
     
     if total_creditos > 36:
         col2.button("🚫 Límite Excedido", disabled=True)
     else:
         if col2.button("Siguiente ➡️", type="primary"):
-            if total_creditos == 0: st.error("Selecciona al menos una materia.")
+            if total_creditos == 0: 
+                st.error("Selecciona al menos una materia.")
             else:
                 st.session_state.materias_seleccionadas = selected_in_this_step
                 st.session_state.step = 3
