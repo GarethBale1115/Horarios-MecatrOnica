@@ -5,80 +5,101 @@ from fpdf import FPDF
 import os
 
 # -----------------------------------------------------------------------------
-# CONFIGURACIÓN VISUAL (MODO CLARO FORZADO + TEMA ITS)
+# CONFIGURACIÓN VISUAL (ADAPTABLE OSCURO/CLARO + TEMA ITS)
 # -----------------------------------------------------------------------------
 st.set_page_config(page_title="Horario ITS", page_icon="🐴", layout="wide")
 
 st.markdown("""
 <style>
-    /* --- FUERZA BRUTA: MODO CLARO OBLIGATORIO --- */
-    [data-testid="stAppViewContainer"] {
-        background-color: #ffffff !important;
-        color: #000000 !important;
-    }
-    [data-testid="stHeader"] {
-        background-color: #ffffff !important;
-    }
-    [data-testid="stSidebar"] {
-        background-color: #f0f2f6 !important;
-    }
-    
     /* VARIABLES DE COLOR */
     :root {
         --guinda: #800000;
-        --gris-claro: #f5f5f5;
     }
 
-    /* TEXTOS */
-    h1, h2, h3, .stMarkdown h1, .stMarkdown h2, .stMarkdown h3, p, div, span, label {
-        color: #333333; /* Texto base casi negro */
+    /* FUERZA EL COLOR GUINDA EN TÍTULOS Y SUBTÍTULOS */
+    h1, h2, h3, .stMarkdown h1, .stMarkdown h2, .stMarkdown h3, h3[id^="ingenier-a-mecatr-nica"] {
+        color: var(--guinda) !important;
         font-family: 'Arial', sans-serif;
     }
-    
-    /* TÍTULOS EN GUINDA */
-    h1, .welcome-title, .welcome-greeting {
-        color: #800000 !important;
+
+    /* ESTILO DE LOS CHECKBOXES COMO "TARJETAS" SIMÉTRICAS */
+    .stCheckbox {
+        background-color: transparent; /* Se adapta al modo oscuro/claro */
+        border: 1px solid rgba(128, 128, 128, 0.2);
+        border-radius: 8px;
+        padding: 10px;
+        margin-bottom: 8px;
+        transition: all 0.2s;
+        /* Simetría y altura mínima */
+        min-height: 80px; 
+        display: flex;
+        align-items: center;
     }
     
-    /* SEMESTRES (Encabezados de columnas) */
-    .semestre-header {
-        color: #800000 !important;
-        font-weight: bold;
-        font-size: 1.1em;
-        text-align: center;
-        border-bottom: 2px solid #800000;
-        margin-bottom: 10px;
-        padding-bottom: 5px;
+    .stCheckbox:hover {
+        border-color: var(--guinda);
+        background-color: rgba(128, 0, 0, 0.05); /* Sutil toque guinda */
     }
 
-    /* ESTILO DEL CONTENEDOR DE BIENVENIDA */
+    /* ARREGLO DE TEXTO: NUNCA CORTAR PALABRAS */
+    .stCheckbox label p {
+        font-size: 0.9em;
+        font-weight: 600;
+        word-break: normal !important; /* Prohíbe cortar palabras */
+        overflow-wrap: break-word !important; /* Baja la palabra completa si no cabe */
+        line-height: 1.3;
+    }
+
+    /* ENCABEZADOS DE SEMESTRE */
+    .semestre-header {
+        color: var(--guinda) !important;
+        font-weight: 900;
+        font-size: 1.1em;
+        text-align: center;
+        border-bottom: 3px solid var(--guinda);
+        margin-bottom: 15px;
+        padding-bottom: 5px;
+        text-transform: uppercase;
+    }
+
+    /* CONTENEDOR DE BIENVENIDA (Ajustado para verse bien en dark mode) */
     .welcome-box {
-        background-color: #f9f9f9 !important;
+        background-color: rgba(255, 255, 255, 0.05); /* Transparente sutil */
+        border: 1px solid rgba(128, 128, 128, 0.2);
         padding: 25px;
         border-radius: 10px;
-        border-left: 8px solid #800000;
-        box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
+        border-left: 8px solid var(--guinda);
         margin-bottom: 20px;
     }
     .welcome-text-content p {
-        color: #000000 !important;
         font-size: 1.05em;
         line-height: 1.6;
+    }
+    .welcome-greeting {
+        font-size: 1.2em;
+        font-weight: bold;
+        color: var(--guinda) !important;
+        margin-bottom: 15px;
     }
     .welcome-lema {
         margin-top: 15px;
         font-style: italic;
         font-weight: bold;
-        color: #800000 !important;
+        color: var(--guinda) !important;
         text-align: right;
-        border-top: 1px solid #ddd;
+        border-top: 1px solid rgba(128, 128, 128, 0.2);
         padding-top: 10px;
+    }
+    .developer-credit {
+        margin-top: 20px;
+        font-size: 0.9em;
+        opacity: 0.7;
     }
 
     /* BOTONES */
     .stButton>button {
         color: white !important;
-        background-color: #800000 !important;
+        background-color: var(--guinda) !important;
         border: none;
         font-weight: bold;
         border-radius: 6px;
@@ -87,34 +108,14 @@ st.markdown("""
         background-color: #5c0000 !important;
     }
 
-    /* CHECKBOXES (MATERIAS) */
-    /* Forzamos que se vean bien en fondo blanco */
-    .stCheckbox {
-        background-color: white;
-        padding: 5px;
-        border-radius: 5px;
-        border: 1px solid #eee;
-        margin-bottom: 5px;
-        transition: all 0.2s;
-    }
-    .stCheckbox:hover {
-        border-color: #800000;
-        background-color: #fff0f0;
-    }
-    /* Texto del checkbox */
-    .stCheckbox p {
-        font-size: 0.85em;
-        font-weight: 600;
-    }
-
     /* CREDIT BOXES */
-    .credit-box { padding: 15px; border-radius: 8px; margin-bottom: 20px; font-weight: bold; text-align: center; border: 1px solid #ccc; color: black; }
-    .credit-ok { background-color: #d1fae5; color: #065f46; border-color: #34d399; }
-    .credit-error { background-color: #fee2e2; color: #991b1b; border-color: #f87171; }
+    .credit-box { padding: 15px; border-radius: 8px; margin-bottom: 20px; font-weight: bold; text-align: center; border: 1px solid rgba(128,128,128,0.3); }
+    .credit-ok { background-color: rgba(4, 95, 70, 0.2); color: #34d399; border-color: #34d399; }
+    .credit-error { background-color: rgba(153, 27, 27, 0.2); color: #f87171; border-color: #f87171; }
 
     /* TABLA VISUAL */
-    .horario-grid { width: 100%; border-collapse: collapse; text-align: center; font-family: 'Arial', sans-serif; font-size: 0.8em; background-color: white; }
-    .horario-grid th { background-color: #800000; color: white; padding: 6px; border: 1px solid #ddd; }
+    .horario-grid { width: 100%; border-collapse: collapse; text-align: center; font-family: 'Arial', sans-serif; font-size: 0.8em; background-color: white; color: black; }
+    .horario-grid th { background-color: var(--guinda); color: white; padding: 6px; border: 1px solid #ddd; }
     .horario-grid td { border: 1px solid #eee; height: 45px; vertical-align: middle; padding: 2px; color: #333; }
     .hora-col { background-color: #f9fafb; font-weight: bold; color: #333; width: 70px; font-size: 0.9em; }
     
@@ -242,6 +243,202 @@ oferta_academica = {
 }
 
 # -----------------------------------------------------------------------------
+# FUNCIONES LÓGICAS Y PDF
+# -----------------------------------------------------------------------------
+class PDF(FPDF):
+    def header(self):
+        if os.path.exists("logo_tec.png"): self.image('logo_tec.png', 10, 5, 55)
+        if os.path.exists("logo_its.png"): self.image('logo_its.png', 250, 5, 25)
+        self.set_font('Arial', 'B', 16)
+        self.set_text_color(128, 0, 0)
+        self.set_y(12)
+        self.cell(0, 10, 'TECNOLÓGICO NACIONAL DE MÉXICO', 0, 1, 'C')
+        self.set_font('Arial', 'B', 12)
+        self.set_text_color(0, 0, 0)
+        self.cell(0, 8, 'INSTITUTO TECNOLÓGICO DE SALTILLO', 0, 1, 'C')
+        self.ln(5)
+
+    def footer(self):
+        self.set_y(-15)
+        self.set_font('Arial', 'I', 8)
+        self.cell(0, 10, f'Página {self.page_no()}', 0, 0, 'C')
+
+def clean_text(text):
+    return text.encode('latin-1', 'ignore').decode('latin-1')
+
+def create_pro_pdf(horario, alumno_data, total_creditos):
+    pdf = PDF(orientation='L', unit='mm', format='A4')
+    pdf.add_page()
+    
+    # Datos Alumno
+    pdf.set_font("Arial", 'B', 14)
+    pdf.set_text_color(128, 0, 0)
+    pdf.cell(0, 10, "Carga Académica", 0, 1, 'C')
+    pdf.ln(2)
+    
+    pdf.set_font("Arial", size=9)
+    pdf.set_text_color(0, 0, 0)
+    pdf.set_fill_color(245, 245, 245)
+    
+    h_row = 6 
+    
+    # Fila 1
+    pdf.cell(30, h_row, "No. Control:", 1, 0, 'L', 1)
+    pdf.cell(40, h_row, clean_text(alumno_data.get("nc", "")), 1, 0, 'L')
+    pdf.cell(30, h_row, "Nombre:", 1, 0, 'L', 1)
+    pdf.cell(100, h_row, clean_text(alumno_data.get("nombre", "").upper()), 1, 0, 'L')
+    pdf.cell(30, h_row, "Semestre:", 1, 0, 'L', 1)
+    pdf.cell(30, h_row, str(alumno_data.get("semestre", "")), 1, 1, 'L')
+    
+    # Fila 2
+    especialidad = "SIN ESPECIALIDAD"
+    try:
+        if int(alumno_data.get("semestre", 1)) >= 6:
+            especialidad = "AUTOMATIZACIÓN DE PROCESOS DE MANUFACTURA"
+    except: pass
+
+    pdf.cell(30, h_row, "Carrera:", 1, 0, 'L', 1)
+    pdf.cell(100, h_row, "INGENIERÍA MECATRÓNICA", 1, 0, 'L')
+    pdf.cell(30, h_row, "Especialidad:", 1, 0, 'L', 1)
+    pdf.cell(100, h_row, clean_text(especialidad), 1, 1, 'L')
+    pdf.ln(8)
+
+    # Tabla
+    pdf.set_font("Arial", 'B', 9)
+    pdf.set_fill_color(128, 0, 0)
+    pdf.set_text_color(255, 255, 255)
+    
+    w_mat, w_prof, w_dia, w_cred = 70, 60, 22, 15
+    h_table = 8
+    
+    pdf.cell(w_mat, h_table, "Materia", 1, 0, 'C', 1)
+    pdf.cell(w_prof, h_table, "Profesor", 1, 0, 'C', 1)
+    pdf.cell(w_cred, h_table, "Créd.", 1, 0, 'C', 1)
+    for dia in ["Lun", "Mar", "Mié", "Jue", "Vie"]:
+        pdf.cell(w_dia, h_table, clean_text(dia), 1, 0, 'C', 1)
+    pdf.ln()
+    
+    pdf.set_font("Arial", size=8)
+    pdf.set_text_color(0, 0, 0)
+    
+    def get_start_hour(clase):
+        if not clase['horario']: return 24
+        return min([h[1] for h in clase['horario']])
+    horario_ordenado = sorted(horario, key=get_start_hour)
+    
+    for clase in horario_ordenado:
+        materia_nome = clean_text(clase['materia'])
+        if len(materia_nome) > 38: materia_nome = materia_nome[:35] + "..."
+        profesor_nome = clean_text(clase['profesor'].split('(')[0][:30])
+        creditos = str(CREDITOS.get(clase['materia'], 0))
+        
+        pdf.cell(w_mat, h_table, materia_nome, 1)
+        pdf.cell(w_prof, h_table, profesor_nome, 1)
+        pdf.cell(w_cred, h_table, creditos, 1, 0, 'C')
+        
+        for d in range(5):
+            txt_hora = ""
+            for sesion in clase['horario']:
+                if sesion[0] == d: txt_hora = f"{sesion[1]}:00-{sesion[2]}:00"
+            pdf.cell(w_dia, h_table, txt_hora, 1, 0, 'C')
+        pdf.ln()
+        
+    # Total
+    pdf.set_font("Arial", 'B', 9)
+    pdf.cell(w_mat + w_prof, h_table, clean_text("TOTAL DE CRÉDITOS:"), 1, 0, 'R')
+    pdf.cell(w_cred, h_table, str(total_creditos), 1, 1, 'C')
+        
+    return pdf.output(dest='S').encode('latin-1')
+
+def traslape(horario1, horario2):
+    for h1 in horario1:
+        for h2 in horario2:
+            if h1[0] == h2[0]:
+                if h1[1] < h2[2] and h1[2] > h2[1]: return True
+    return False
+
+def generar_combinaciones(materias, rango, prefs, horas_libres):
+    bloqueos = []
+    for hl in horas_libres:
+        inicio = int(hl.split(":")[0])
+        bloqueos.append(inicio)
+
+    pool = []
+    for mat in materias:
+        if mat not in oferta_academica: continue
+        opciones = []
+        for sec in oferta_academica[mat]:
+            key = f"{mat}_{sec['profesor']}"
+            puntos = prefs.get(key, 50)
+            if puntos == 0: continue 
+            dentro = True
+            for h in sec['horario']:
+                if h[1] < rango[0] or h[2] > rango[1]: dentro = False; break
+                for b in bloqueos:
+                    if max(h[1], b) < min(h[2], b+1): dentro = False; break
+                if not dentro: break
+            if dentro:
+                s = sec.copy(); s['materia'] = mat; s['score'] = puntos
+                opciones.append(s)
+        if not opciones:
+            return [], f"❌ **{mat}**: No tiene horarios disponibles con tus filtros."
+        pool.append(opciones)
+    
+    combos = list(itertools.product(*pool))
+    validos = []
+    for c in combos:
+        ok = True; score = 0
+        for i in range(len(c)):
+            score += c[i]['score']
+            for j in range(i+1, len(c)):
+                if traslape(c[i]['horario'], c[j]['horario']): ok=False; break
+            if not ok: break
+        if ok: validos.append((score, c))
+    
+    validos.sort(key=lambda x: x[0], reverse=True)
+    return validos, "OK"
+
+def create_timetable_html(horario):
+    horas_ocupadas = []
+    for clase in horario:
+        for sesion in clase['horario']:
+            horas_ocupadas.append(sesion[1]); horas_ocupadas.append(sesion[2])
+    if not horas_ocupadas: return ""
+    min_h = min(horas_ocupadas); max_h = max(horas_ocupadas)
+    
+    subject_colors = {}
+    for i, clase in enumerate(horario): subject_colors[clase['materia']] = COLORS[i % len(COLORS)]
+    grid = {h: [None]*5 for h in range(min_h, max_h)} 
+    
+    for clase in horario:
+        full_name = clase['materia']
+        if "Controladores Lógicos" in full_name: mat_name = "PLC"
+        elif "Formulación y Evaluación" in full_name: mat_name = "Formulación"
+        elif "Sistemas Avanzados" in full_name: mat_name = "Sistemas Av. Man."
+        else:
+            mat_name = full_name.split(' ')[1] if " " in full_name else full_name
+            if len(mat_name) > 20: mat_name = mat_name[:20] + "..."
+            
+        parts = clase['profesor'].split('(')[0].split()
+        prof_name = f"{parts[0]} {parts[1]}" if len(parts) > 1 else parts[0]
+        
+        color = subject_colors[clase['materia']]
+        for sesion in clase['horario']:
+            dia = sesion[0]; hora_ini = sesion[1]
+            if hora_ini in grid:
+                grid[hora_ini][dia] = {'text': f"<div class='clase-cell' style='background-color: {color};'><span>{mat_name}</span><span class='clase-prof'>{prof_name}</span></div>"}
+
+    html = """<table class="horario-grid"><thead><tr><th class='hora-col'>Hora</th><th>Lun</th><th>Mar</th><th>Mié</th><th>Jue</th><th>Vie</th></tr></thead><tbody>"""
+    for h in range(min_h, max_h):
+        html += f"<tr><td class='hora-col'>{h}-{h+1}</td>"
+        for d in range(5):
+            cell = grid[h][d]
+            html += f"<td>{cell['text']}</td>" if cell else "<td></td>"
+        html += "</tr>"
+    html += "</tbody></table>"
+    return html
+
+# -----------------------------------------------------------------------------
 # INTERFAZ WIZARD
 # -----------------------------------------------------------------------------
 
@@ -315,23 +512,44 @@ if st.session_state.step == 1:
             st.session_state.step = 2
             st.rerun()
 
-# --- PASO 2: MATERIAS (TABLERO GRID) ---
+# --- PASO 2: MATERIAS (TABLERO GRID 2 FILAS) ---
 elif st.session_state.step == 2:
     st.title("📚 Selección de Materias")
     
-    # LAYOUT GRID: 9 Columnas para 9 Semestres
-    cols = st.columns(9)
+    # ESTRATEGIA GRID: 2 FILAS GRANDES PARA QUE EL TEXTO QUEPA
+    # Fila 1: Semestres 1 al 5 (5 columnas)
+    st.subheader("Ciclo Básico e Intermedio")
+    cols_top = st.columns(5)
+    
     selected_in_this_step = []
     
-    # Iterar semestres y colocar en columnas
-    for i, (sem, lista_materias) in enumerate(database["Ingeniería Mecatrónica"].items()):
-        with cols[i]:
+    all_semesters = list(database["Ingeniería Mecatrónica"].items())
+    
+    # Render Semestres 1-5
+    for i in range(5):
+        sem_name, materias = all_semesters[i]
+        with cols_top[i]:
             st.markdown(f"<div class='semestre-header'>{i+1}°</div>", unsafe_allow_html=True)
-            for materia in lista_materias:
-                is_checked = materia in st.session_state.materias_seleccionadas
-                # Usar checkbox, es lo más parecido a un "cuadrito" funcional en Streamlit
-                if st.checkbox(materia, value=is_checked, key=f"chk_{materia}"):
-                    selected_in_this_step.append(materia)
+            for m in materias:
+                is_checked = m in st.session_state.materias_seleccionadas
+                if st.checkbox(m, value=is_checked, key=f"chk_{m}"):
+                    selected_in_this_step.append(m)
+
+    st.write("---")
+    
+    # Fila 2: Semestres 6 al 9 (4 columnas) -> MÁS ESPACIO
+    st.subheader("Ciclo de Especialización")
+    cols_bottom = st.columns(4)
+    
+    for i in range(4):
+        idx_real = i + 5 # Empezamos en el 6to semestre (index 5)
+        sem_name, materias = all_semesters[idx_real]
+        with cols_bottom[i]:
+            st.markdown(f"<div class='semestre-header'>{idx_real+1}°</div>", unsafe_allow_html=True)
+            for m in materias:
+                is_checked = m in st.session_state.materias_seleccionadas
+                if st.checkbox(m, value=is_checked, key=f"chk_{m}"):
+                    selected_in_this_step.append(m)
 
     total_creditos = sum([CREDITOS.get(m, 0) for m in selected_in_this_step])
     st.write("---")
