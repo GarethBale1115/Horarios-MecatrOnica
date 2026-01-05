@@ -5,7 +5,7 @@ from fpdf import FPDF
 import os
 
 # -----------------------------------------------------------------------------
-# CONFIGURACIÓN VISUAL (MODO OSCURO NATIVO + TEMA ITS)
+# 1. CONFIGURACIÓN VISUAL (MODO OSCURO NATIVO + TEMA ITS)
 # -----------------------------------------------------------------------------
 st.set_page_config(page_title="Horario ITS", page_icon="🐴", layout="wide")
 
@@ -37,7 +37,7 @@ st.markdown("""
     
     [data-testid="stCheckbox"] label {
         border: 1px solid rgba(128, 128, 128, 0.4);
-        background-color: transparent; /* Fondo transparente para respetar modo oscuro */
+        background-color: transparent; /* Fondo transparente */
         padding: 5px;
         border-radius: 6px;
         width: 100%;
@@ -148,7 +148,9 @@ st.markdown("""
 
 COLORS = ['#FFCDD2', '#F8BBD0', '#E1BEE7', '#D1C4E9', '#C5CAE9', '#BBDEFB', '#B3E5FC', '#B2EBF2', '#B2DFDB', '#C8E6C9', '#DCEDC8', '#F0F4C3', '#FFF9C4', '#FFECB3', '#FFE0B2', '#FFCCBC']
 
-# Inicializar estado
+# -----------------------------------------------------------------------------
+# 2. INICIALIZAR ESTADO
+# -----------------------------------------------------------------------------
 if 'step' not in st.session_state: st.session_state.step = 1
 if 'num_materias_deseadas' not in st.session_state: st.session_state.num_materias_deseadas = 6
 if 'materias_seleccionadas' not in st.session_state: st.session_state.materias_seleccionadas = []
@@ -157,21 +159,19 @@ if 'horas_libres' not in st.session_state: st.session_state.horas_libres = []
 if 'prefs' not in st.session_state: st.session_state.prefs = {}
 if 'resultados' not in st.session_state: st.session_state.resultados = None
 
-# Base de Datos de Opiniones
 if 'opiniones' not in st.session_state: 
     st.session_state.opiniones = {
         "Ana Gabriela Gomez Muñoz": {"suma": 450, "votos": 5, "comentarios": ["Excelente maestra, muy clara.", "Estricta pero justa."]},
         "Gerardo Jarquín Hernández": {"suma": 98, "votos": 1, "comentarios": ["El mejor para Robótica, 100% recomendado."]}
     }
 
-# Datos alumno
 if 'alumno_nombre' not in st.session_state: st.session_state.alumno_nombre = ""
 if 'alumno_nc' not in st.session_state: st.session_state.alumno_nc = ""
 if 'alumno_sem' not in st.session_state: st.session_state.alumno_sem = 1
 if 'alumno_per' not in st.session_state: st.session_state.alumno_per = "ENE-JUN 2026"
 
 # -----------------------------------------------------------------------------
-# CRÉDITOS ACADÉMICOS
+# 3. DATOS (CRÉDITOS Y OFERTA)
 # -----------------------------------------------------------------------------
 CREDITOS = {
     "🧪 Química": 4, "📐 Cálculo Diferencial": 5, "⚖️ Taller de Ética": 4, "💻 Dibujo Asistido por Computadora": 4, "📏 Metrología y Normalización": 4, "🔎 Fundamentos de Investigación": 4,
@@ -185,9 +185,6 @@ CREDITOS = {
     "🦾 Robótica": 5, "🏭 Tópicos Selectos de Automatización Industrial": 6
 }
 
-# -----------------------------------------------------------------------------
-# REGLAS DE SERIACIÓN
-# -----------------------------------------------------------------------------
 SERIACION = {
     "∫ Cálculo Integral": ["📐 Cálculo Diferencial"], "🧱 Ciencia e Ingeniería de Materiales": ["🧪 Química"], "↗️ Cálculo Vectorial": ["∫ Cálculo Integral"],
     "🔨 Procesos de Fabricación": ["🧱 Ciencia e Ingeniería de Materiales"], "💻 Programación Avanzada": ["💾 Programación Básica"], "🏎️ Dinámica": ["↗️ Cálculo Vectorial"],
@@ -198,9 +195,6 @@ SERIACION = {
     "💾 Microcontroladores": ["👾 Electrónica Digital"], "🎮 Control": ["🔄 Dinámica de Sistemas"], "🏭 Tópicos Selectos de Automatización Industrial": ["🎛️ Controladores Lógicos Programables"]
 }
 
-# -----------------------------------------------------------------------------
-# BASE DE DATOS DE NOMBRES
-# -----------------------------------------------------------------------------
 database = {
     "Ingeniería Mecatrónica": {
         "Semestre 1": ["🧪 Química", "📐 Cálculo Diferencial", "⚖️ Taller de Ética", "💻 Dibujo Asistido por Computadora", "📏 Metrología y Normalización", "🔎 Fundamentos de Investigación"],
@@ -215,9 +209,6 @@ database = {
     }
 }
 
-# -----------------------------------------------------------------------------
-# OFERTA ACADÉMICA (COMPLETA - KEYS SIN EMOJIS PARA LOGICA INTERNA)
-# -----------------------------------------------------------------------------
 oferta_academica = {
     # SEMESTRE 1
     "Química": [{"profesor": "Norma Hernández Flores", "horario": [(d,7,8) for d in range(4)], "id":"Q1"}, {"profesor": "Norma Hernández Flores", "horario": [(d,8,9) for d in range(4)], "id":"Q2"}, {"profesor": "Norma Hernández Flores", "horario": [(d,11,12) for d in range(4)], "id":"Q3"}, {"profesor": "Norma Hernández Flores", "horario": [(d,12,13) for d in range(4)], "id":"Q4"}, {"profesor": "Hilda Araceli Torres Plata", "horario": [(d,8,9) for d in range(4)], "id":"Q5"}, {"profesor": "Hilda Araceli Torres Plata", "horario": [(d,9,10) for d in range(4)], "id":"Q6"}, {"profesor": "Alma Leticia Cázares Arreguin", "horario": [(d,13,14) for d in range(4)], "id":"Q7"}, {"profesor": "Alma Leticia Cázares Arreguin", "horario": [(d,14,15) for d in range(4)], "id":"Q8"}, {"profesor": "Alma Leticia Cázares Arreguin", "horario": [(d,16,17) for d in range(4)], "id":"Q9"}, {"profesor": "José Raymundo Garza Aldaco", "horario": [(d,15,16) for d in range(4)], "id":"Q10"}, {"profesor": "Alejandra Torres Ordaz", "horario": [(d,15,16) for d in range(4)], "id":"Q11"}, {"profesor": "Alejandra Torres Ordaz", "horario": [(d,16,17) for d in range(4)], "id":"Q12"}, {"profesor": "Alejandra Torres Ordaz", "horario": [(d,17,18) for d in range(4)], "id":"Q13"}, {"profesor": "Victor Martinez Rivera", "horario": [(d,15,16) for d in range(4)], "id":"Q14"}, {"profesor": "Victor Martinez Rivera", "horario": [(d,16,17) for d in range(4)], "id":"Q15"}, {"profesor": "Victor Martinez Rivera", "horario": [(d,17,18) for d in range(4)], "id":"Q16"}, {"profesor": "Silvia Susana Aguirre Sanchez", "horario": [(d,17,18) for d in range(4)], "id":"Q17"}, {"profesor": "Silvia Susana Aguirre Sanchez", "horario": [(d,18,19) for d in range(4)], "id":"Q18"}, {"profesor": "Karina Azucena Ayala Torres", "horario": [(d,17,18) for d in range(4)], "id":"Q19"}, {"profesor": "Karina Azucena Ayala Torres", "horario": [(d,18,19) for d in range(4)], "id":"Q20"}],
@@ -280,7 +271,7 @@ oferta_academica = {
 }
 
 # -----------------------------------------------------------------------------
-# FUNCIONES LÓGICAS (DEFINIDAS AL INICIO)
+# 4. FUNCIONES LÓGICAS (DEFINIDAS AL INICIO PARA EVITAR NAME ERROR)
 # -----------------------------------------------------------------------------
 def clean_text(text):
     return text.encode('latin-1', 'ignore').decode('latin-1')
@@ -348,7 +339,7 @@ class PDF(FPDF):
         if os.path.exists("logo_tec.png"): self.image('logo_tec.png', 10, 5, 55)
         if os.path.exists("logo_its.png"): self.image('logo_its.png', 250, 5, 25)
         if os.path.exists("horarioits.png"): self.image('horarioits.png', 120, 5, 60)
-        self.set_y(50) # BAJADO A 50 PARA EVITAR EMPALME
+        self.set_y(60) # MARGEN CORRECTO PARA QUE NO CHOQUE EL LOGO
         self.set_font('Arial', 'B', 16); self.set_text_color(128, 0, 0)
         self.cell(0, 10, 'TECNOLÓGICO NACIONAL DE MÉXICO', 0, 1, 'C')
         self.set_font('Arial', 'B', 12); self.set_text_color(0, 0, 0)
@@ -436,14 +427,21 @@ def create_timetable_html(horario):
     return html
 
 # -----------------------------------------------------------------------------
-# INTERFAZ WIZARD (ESTRUCTURA CORREGIDA)
+# 5. MENÚ LATERAL
 # -----------------------------------------------------------------------------
+menu = st.sidebar.radio("Menú", ["📅 Generador de Horarios", "⭐ Evaluación Docente"])
+
+if os.path.exists("burro.png"):
+    st.sidebar.image("burro.png", use_container_width=True)
+    
+if os.path.exists("reticula.pdf"):
+    with open("reticula.pdf", "rb") as pdf_file:
+        st.sidebar.download_button(label="📄 Descargar Retícula", data=pdf_file, file_name="Reticula_Mecatronica.pdf", mime="application/pdf")
 
 # =============================================================================
-# VISTA 1: GENERADOR DE HORARIOS
+# VISTA 1: GENERADOR
 # =============================================================================
 if menu == "📅 Generador de Horarios":
-
     # --- PASO 1: BIENVENIDA ---
     if st.session_state.step == 1:
         col_tec, col_centro, col_its = st.columns([1.5, 3, 1.5], gap="medium")
@@ -462,7 +460,10 @@ if menu == "📅 Generador de Horarios":
             <div class="welcome-box">
                 <div class="welcome-greeting">¡Bienvenido, futuro ingeniero! 🦅</div>
                 <div class="welcome-text-content">
-                    <p>Esta herramienta ha sido diseñada PARA la comunidad estudiantil de Ingeniería Mecatrónica del Instituto Tecnológico de Saltillo. Su objetivo principal es ayudarte a visualizar todas las posibles opciones de horario disponibles, facilitando la toma de decisiones para tu próxima carga académica.</p>
+                    <p>Esta herramienta ha sido diseñada PARA la comunidad estudiantil de Ingeniería Mecatrónica 
+                    del Instituto Tecnológico de Saltillo. Su objetivo principal es ayudarte a 
+                    visualizar todas las posibles opciones de horario disponibles, facilitando la 
+                    toma de decisiones para tu próxima carga académica.</p>
                     <p>Encuentra la combinación perfecta de materias y maestros que se ajuste a tus necesidades sin complicaciones.</p>
                     <div class="developer-credit">Desarrollado por: Néstor Alexis Piña Rodríguez</div>
                 </div>
@@ -522,8 +523,6 @@ if menu == "📅 Generador de Horarios":
         else:
             if col2.button("Siguiente ➡️", type="primary"):
                 st.session_state.materias_seleccionadas = selected_in_this_step; st.session_state.step = 3; st.rerun()
-        if os.path.exists("reticula.pdf"):
-            with open("reticula.pdf", "rb") as pdf_file: st.sidebar.download_button(label="📄 Descargar Retícula", data=pdf_file, file_name="Reticula_Mecatronica.pdf", mime="application/pdf")
 
     # --- PASO 3: DISPONIBILIDAD ---
     elif st.session_state.step == 3:
