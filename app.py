@@ -280,7 +280,7 @@ oferta_academica = {
 }
 
 # -----------------------------------------------------------------------------
-# FUNCIONES LÓGICAS (DEFINIDAS AL INICIO PARA EVITAR NAME ERROR)
+# FUNCIONES LÓGICAS (DEFINIDAS AL INICIO)
 # -----------------------------------------------------------------------------
 def clean_text(text):
     return text.encode('latin-1', 'ignore').decode('latin-1')
@@ -292,65 +292,37 @@ def traslape(horario1, horario2):
                 if max(h1[1], h2[1]) < min(h1[2], h2[2]): return True
     return False
 
-# FUNCION PARA LIMPIAR EMOJIS DE UNA CADENA
 def strip_emoji(text):
     if " " in text:
         parts = text.split(" ", 1)
-        if len(parts) > 1:
-            return parts[1] # Devuelve lo que sigue al primer espacio
+        if len(parts) > 1: return parts[1]
     return text
 
 def generar_combinaciones(materias, rango, prefs, horas_libres):
-    # Convertir horas libres a lista de inicios
     bloqueos = []
-    for hl in horas_libres:
-        inicio = int(hl.split(":")[0])
-        bloqueos.append(inicio)
-
+    for hl in horas_libres: inicio = int(hl.split(":")[0]); bloqueos.append(inicio)
     pool = []
     for mat_display in materias:
-        # Limpiar nombre para buscar en oferta_academica
         mat_key = strip_emoji(mat_display)
-        
         if mat_key not in oferta_academica: 
-            # Fallback por si el nombre no tiene emoji o no coincide
-            if mat_display in oferta_academica:
-                mat_key = mat_display
-            else:
-                continue
-
+            if mat_display in oferta_academica: mat_key = mat_display
+            else: continue
         opciones = []
         for sec in oferta_academica[mat_key]:
-            key = f"{mat_display}_{sec['profesor']}" # Usamos nombre display para keys unicas en prefs
+            key = f"{mat_display}_{sec['profesor']}"
             puntos = prefs.get(key, 50)
-            
-            # 1. Filtro: Profesor Descartado (❌ = 0 puntos)
             if puntos == 0: continue 
-            
             dentro = True
             for h in sec['horario']:
-                # 2. Filtro: Rango de Hora General
-                if h[1] < rango[0] or h[2] > rango[1]: 
-                    dentro = False; break
-                
-                # 3. Filtro: Horas Libres Especificas
+                if h[1] < rango[0] or h[2] > rango[1]: dentro = False; break
                 for b in bloqueos:
-                    if max(h[1], b) < min(h[2], b+1):
-                        dentro = False; break
+                    if max(h[1], b) < min(h[2], b+1): dentro = False; break
                 if not dentro: break
-            
-            if dentro:
-                s = sec.copy(); s['materia'] = mat_display; s['score'] = puntos # Guardamos nombre display
-                opciones.append(s)
-        
-        if not opciones:
-            return [], f"❌ **{mat_display}**: No tiene horarios disponibles con tus filtros (Hora, Rango o Profe)."
+            if dentro: s = sec.copy(); s['materia'] = mat_display; s['score'] = puntos; opciones.append(s)
+        if not opciones: return [], f"❌ **{mat_display}**: No tiene horarios disponibles con tus filtros."
         pool.append(opciones)
-    
-    # Generar combinaciones
     combos = list(itertools.product(*pool))
     validos = []
-    
     for c in combos:
         ok = True; score = 0
         for i in range(len(c)):
@@ -360,40 +332,29 @@ def generar_combinaciones(materias, rango, prefs, horas_libres):
             if not ok: break
         if ok: validos.append((score, c))
     
-    # ALGORITMO DE ORDENAMIENTO INTELIGENTE
     def sort_key(item):
         puntos, horario = item
-        horas_ocupadas = []
+        horas = []
         for clase in horario:
-            for s in clase['horario']: horas_ocupadas.append(s[1])
-        
-        if not horas_ocupadas: return (puntos, 0)
-        span = max(horas_ocupadas) - min(horas_ocupadas)
+            for s in clase['horario']: horas.append(s[1])
+        if not horas: return (puntos, 0)
+        span = max(horas) - min(horas)
         return (puntos, -span)
-
     validos.sort(key=sort_key, reverse=True)
     return validos, "OK"
 
 class PDF(FPDF):
     def header(self):
-        # LOGOS EN PDF
         if os.path.exists("logo_tec.png"): self.image('logo_tec.png', 10, 5, 55)
         if os.path.exists("logo_its.png"): self.image('logo_its.png', 250, 5, 25)
-        if os.path.exists("horarioits.png"): self.image('horarioits.png', 120, 5, 60) # Logo nuestro centrado
-        
-        # AJUSTE PARA QUE NO CHOQUE EL TEXTO CON EL LOGO
-        self.set_y(45) # Bajamos el cursor MAS
-        self.set_font('Arial', 'B', 16)
-        self.set_text_color(128, 0, 0)
+        if os.path.exists("horarioits.png"): self.image('horarioits.png', 120, 5, 60)
+        self.set_y(50) # BAJADO A 50 PARA EVITAR EMPALME
+        self.set_font('Arial', 'B', 16); self.set_text_color(128, 0, 0)
         self.cell(0, 10, 'TECNOLÓGICO NACIONAL DE MÉXICO', 0, 1, 'C')
-        self.set_font('Arial', 'B', 12)
-        self.set_text_color(0, 0, 0)
-        self.cell(0, 8, 'INSTITUTO TECNOLÓGICO DE SALTILLO', 0, 1, 'C')
-        self.ln(5)
-
+        self.set_font('Arial', 'B', 12); self.set_text_color(0, 0, 0)
+        self.cell(0, 8, 'INSTITUTO TECNOLÓGICO DE SALTILLO', 0, 1, 'C'); self.ln(5)
     def footer(self):
-        self.set_y(-15)
-        self.set_font('Arial', 'I', 8)
+        self.set_y(-15); self.set_font('Arial', 'I', 8)
         self.cell(0, 10, clean_text('Desarrollado por: Néstor Alexis Piña Rodríguez | Página ') + str(self.page_no()), 0, 0, 'C')
 
 def create_pro_pdf(horario, alumno_data, total_creditos):
@@ -424,14 +385,11 @@ def create_pro_pdf(horario, alumno_data, total_creditos):
     horario_ordenado = sorted(horario, key=get_start_hour)
     
     for clase in horario_ordenado:
-        # Limpiar emojis para el PDF
         materia_clean = strip_emoji(clase['materia'])
         materia_nome = clean_text(materia_clean)
         if len(materia_nome) > 38: materia_nome = materia_nome[:35] + "..."
         profesor_nome = clean_text(clase['profesor'].split('(')[0][:30])
-        # Usar key limpia para creditos
         creditos = str(CREDITOS.get(materia_clean, 0))
-        
         pdf.cell(w_mat, h_table, materia_nome, 1); pdf.cell(w_prof, h_table, profesor_nome, 1); pdf.cell(w_cred, h_table, creditos, 1, 0, 'C')
         for d in range(5):
             txt_hora = ""
@@ -478,21 +436,14 @@ def create_timetable_html(horario):
     return html
 
 # -----------------------------------------------------------------------------
-# MENÚ LATERAL
+# INTERFAZ WIZARD (ESTRUCTURA CORREGIDA)
 # -----------------------------------------------------------------------------
-menu = st.sidebar.radio("Menú", ["📅 Generador de Horarios", "⭐ Evaluación Docente"])
-
-if os.path.exists("burro.png"):
-    st.sidebar.image("burro.png", use_container_width=True)
-    
-if os.path.exists("reticula.pdf"):
-    with open("reticula.pdf", "rb") as pdf_file:
-        st.sidebar.download_button(label="📄 Descargar Retícula", data=pdf_file, file_name="Reticula_Mecatronica.pdf", mime="application/pdf")
 
 # =============================================================================
-# VISTA 1: GENERADOR
+# VISTA 1: GENERADOR DE HORARIOS
 # =============================================================================
 if menu == "📅 Generador de Horarios":
+
     # --- PASO 1: BIENVENIDA ---
     if st.session_state.step == 1:
         col_tec, col_centro, col_its = st.columns([1.5, 3, 1.5], gap="medium")
@@ -520,85 +471,59 @@ if menu == "📅 Generador de Horarios":
         with col_mascota:
             st.write(""); st.write("")
             if os.path.exists("burro.png"): st.image("burro.png", width=120)
+        st.write(""); st.write("")
+        col_btn, _ = st.columns([1, 2])
+        with col_btn:
+            cant = st.number_input("Materias a cursar:", min_value=1, max_value=9, value=6, label_visibility="collapsed")
+            if st.button("Comenzar ➡️", use_container_width=True):
+                st.session_state.num_materias_deseadas = cant; st.session_state.step = 2; st.rerun()
 
-    st.write(""); st.write("")
-    col_btn, _ = st.columns([1, 2])
-    with col_btn:
-        cant = st.number_input("Materias a cursar:", min_value=1, max_value=9, value=6, label_visibility="collapsed")
-        if st.button("Comenzar ➡️", use_container_width=True):
-            st.session_state.num_materias_deseadas = cant; st.session_state.step = 2; st.rerun()
-
-    # --- PASO 2: MATERIAS (TABLERO 9 COLUMNAS) ---
+    # --- PASO 2: MATERIAS ---
     elif st.session_state.step == 2:
         st.title("📚 Selección de Materias")
-        
         cols = st.columns(9); selected_in_this_step = []
         all_semesters = list(database["Ingeniería Mecatrónica"].items())
-
         for i in range(9):
             if i < len(all_semesters):
                 sem_name, materias = all_semesters[i]
                 with cols[i]:
                     st.markdown(f"<div class='semestre-header'>{i+1}°</div>", unsafe_allow_html=True)
                     for m in materias:
-                        # Limpiar nombre para buscar creditos
-                        m_clean = strip_emoji(m)
-                        cr = CREDITOS.get(m_clean, 0)
-                        
-                        if st.checkbox(f"{m} ({cr} Cr)", value=(m in st.session_state.materias_seleccionadas), key=f"chk_{m}"):
-                            selected_in_this_step.append(m)
-
+                        m_clean = strip_emoji(m); cr = CREDITOS.get(m_clean, 0)
+                        if st.checkbox(f"{m} ({cr} Cr)", value=(m in st.session_state.materias_seleccionadas), key=f"chk_{m}"): selected_in_this_step.append(m)
         total_creditos = sum([CREDITOS.get(strip_emoji(m), 0) for m in selected_in_this_step])
         num_selected = len(selected_in_this_step)
-        
         st.write("---")
         c_info = st.container()
-        
-        # Mensajes de validación
         msg_cred = f"✅ Créditos: {total_creditos} / 36" if total_creditos <= 36 else f"⛔ Exceso: {total_creditos} / 36"
         style_cred = "credit-ok" if total_creditos <= 36 else "credit-error"
         msg_cant = f"Materias: {num_selected} / {st.session_state.num_materias_deseadas}"
-        
-        if num_selected != st.session_state.num_materias_deseadas:
-            style_cred = "credit-error"
-            msg_cant = f"⚠️ Debes elegir exactamente {st.session_state.num_materias_deseadas} materias."
-
+        if num_selected != st.session_state.num_materias_deseadas: style_cred = "credit-error"; msg_cant = f"⚠️ Debes elegir exactamente {st.session_state.num_materias_deseadas} materias."
         c_info.markdown(f"<div class='credit-box {style_cred}'>{msg_cred} | {msg_cant}</div>", unsafe_allow_html=True)
-        
         if total_creditos > 36: st.progress(1.0)
         else: st.progress(total_creditos / 36)
-
         col1, col2 = st.columns([1,1])
         if col1.button("⬅️ Atrás"): st.session_state.step = 1; st.rerun()
-        
-        # Lógica de Bloqueo y Seriación
         bloqueo = False
         if total_creditos > 36: bloqueo = True
         if num_selected != st.session_state.num_materias_deseadas: bloqueo = True
-        
-        # Validar Seriación
         conflicto_seriacion = []
         for materia in selected_in_this_step:
             m_clean = strip_emoji(materia)
             if m_clean in SERIACION:
                 for req in SERIACION[m_clean]:
                     for sel in selected_in_this_step:
-                        if strip_emoji(sel) == req:
-                            conflicto_seriacion.append(f"❌ {materia} requiere haber aprobado {sel}. No puedes llevar ambas.")
-                            bloqueo = True
-        
+                        if strip_emoji(sel) == req: conflicto_seriacion.append(f"❌ {materia} requiere haber aprobado {sel}. No puedes llevar ambas."); bloqueo = True
         if conflicto_seriacion:
             for conf in conflicto_seriacion: st.error(conf)
-
         if bloqueo:
             if col2.button("🔄 Corregir Selección (Borrar Todo)"):
-                st.session_state.materias_seleccionadas = []
-                st.rerun()
+                st.session_state.materias_seleccionadas = []; st.rerun()
         else:
             if col2.button("Siguiente ➡️", type="primary"):
-                st.session_state.materias_seleccionadas = selected_in_this_step
-                st.session_state.step = 3
-                st.rerun()
+                st.session_state.materias_seleccionadas = selected_in_this_step; st.session_state.step = 3; st.rerun()
+        if os.path.exists("reticula.pdf"):
+            with open("reticula.pdf", "rb") as pdf_file: st.sidebar.download_button(label="📄 Descargar Retícula", data=pdf_file, file_name="Reticula_Mecatronica.pdf", mime="application/pdf")
 
     # --- PASO 3: DISPONIBILIDAD ---
     elif st.session_state.step == 3:
@@ -621,7 +546,6 @@ if menu == "📅 Generador de Horarios":
     elif st.session_state.step == 4:
         st.title("👨‍🏫 Filtrado de Profesores")
         st.info("✅ Preferencia Alta | ➖ Normal | ❌ Descartar")
-        
         for mat in st.session_state.materias_seleccionadas:
             m_clean = strip_emoji(mat)
             if m_clean in oferta_academica:
@@ -639,7 +563,6 @@ if menu == "📅 Generador de Horarios":
                             if section_fits: fits = True; break
                         if fits: profes_validos.append(p_name)
                     if not profes_validos: st.warning(f"⚠️ Sin profes en tu rango para {mat}.")
-                    
                     cols = st.columns(3)
                     for i, p in enumerate(profes_validos):
                         key = f"{mat}_{p}"; 
@@ -649,7 +572,6 @@ if menu == "📅 Generador de Horarios":
                             if val == "✅": st.session_state.prefs[key] = 100
                             elif val == "❌": st.session_state.prefs[key] = 0
                             else: st.session_state.prefs[key] = 50
-                            
                             with st.expander("⭐ Ver Opiniones"):
                                 if p not in st.session_state.opiniones: st.session_state.opiniones[p] = {"suma": 0, "votos": 0, "comentarios": []}
                                 data = st.session_state.opiniones[p]
@@ -662,7 +584,6 @@ if menu == "📅 Generador de Horarios":
                                 new_c = st.text_input("Comentario:", key=f"t_{key}"); new_s = st.slider("Calif:",0,100,80,key=f"s_{key}")
                                 if st.button("Enviar", key=f"b_{key}"):
                                     data["suma"]+=new_s; data["votos"]+=1; data["comentarios"].insert(0,new_c); st.success("¡Enviado!"); st.rerun()
-
         col1, col2 = st.columns([1,1])
         if col1.button("⬅️ Atrás"): st.session_state.step = 3; st.rerun()
         if col2.button("🚀 GENERAR HORARIOS", type="primary"): st.session_state.step = 5; st.session_state.resultados = None; st.rerun()
@@ -678,12 +599,10 @@ if menu == "📅 Generador de Horarios":
             st.session_state.alumno_nc = c2.text_input("No. Control", st.session_state.alumno_nc)
             st.session_state.alumno_sem = c3.selectbox("Semestre", range(1, 15), index=0)
             st.session_state.alumno_per = c4.text_input("Periodo", st.session_state.alumno_per)
-        
         if st.session_state.resultados is None:
             res, msg = generar_combinaciones(st.session_state.materias_seleccionadas, st.session_state.rango_hora, st.session_state.prefs, st.session_state.horas_libres)
             if not res and msg != "OK": st.error(msg); st.session_state.resultados = []
             else: st.session_state.resultados = res
-            
         if st.session_state.resultados:
             res = st.session_state.resultados; st.success(f"¡{len(res)} opciones encontradas!")
             total_creditos_final = sum([CREDITOS.get(strip_emoji(m), 0) for m in st.session_state.materias_seleccionadas])
@@ -702,7 +621,7 @@ if menu == "📅 Generador de Horarios":
             st.rerun()
 
 # =============================================================================
-# VISTA 2: EVALUACIÓN DOCENTE (SIDEBAR)
+# VISTA 2: EVALUACIÓN DOCENTE
 # =============================================================================
 elif menu == "⭐ Evaluación Docente":
     st.title("⭐ Califica a tu Maestro")
