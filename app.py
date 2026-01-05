@@ -3,7 +3,6 @@ import pandas as pd
 import itertools
 from fpdf import FPDF
 import os
-import plotly.graph_objects as go # Necesario para la gráfica
 
 # -----------------------------------------------------------------------------
 # CONFIGURACIÓN VISUAL (MODO OSCURO NATIVO + TEMA ITS)
@@ -15,17 +14,20 @@ st.markdown("""
     /* VARIABLES DE COLOR */
     :root {
         --guinda: #800000;
+        --fondo-oscuro: #0e1117; /* Fondo default de Streamlit Dark */
+        --texto-blanco: #fafafa;
     }
 
-    /* TÍTULOS EN GUINDA (Se ven bien en dark y light) */
+    /* TÍTULOS EN GUINDA */
     h1, h2, h3, .stMarkdown h1, .stMarkdown h2, .stMarkdown h3 {
         color: var(--guinda) !important;
         font-family: 'Arial', sans-serif;
     }
 
-    /* ESTILO DE LOS CHECKBOXES (Adaptable) */
+    /* TARJETAS DE MATERIAS (CHECKBOXES) */
     .stCheckbox {
-        border: 1px solid rgba(128, 128, 128, 0.3);
+        background-color: #1c1f26; /* Fondo gris oscuro */
+        border: 1px solid #333;
         border-radius: 8px;
         padding: 10px;
         margin-bottom: 8px;
@@ -35,19 +37,12 @@ st.markdown("""
         align-items: center;
     }
     
-    /* Efecto Hover */
     .stCheckbox:hover {
         border-color: var(--guinda);
-        background-color: rgba(128, 0, 0, 0.1); 
+        background-color: #2b1d1d; /* Sutil toque guinda oscuro */
     }
 
-    /* Ocultar palomita original y estilizar el contenedor cuando está activo */
-    div[data-testid="stCheckbox"] label {
-        width: 100%;
-        cursor: pointer;
-    }
-    
-    /* EFECTO SELECCIONADO: FONDO GUINDA, TEXTO BLANCO */
+    /* EFECTO SELECCIONADO */
     div[data-testid="stCheckbox"]:has(input:checked) div[data-testid="stMarkdownContainer"] {
         background-color: var(--guinda);
         color: white !important;
@@ -55,12 +50,13 @@ st.markdown("""
         border-radius: 5px;
         font-weight: bold;
         text-align: center;
+        width: 100%;
     }
     
-    /* ESTADO NORMAL */
-    div[data-testid="stCheckbox"] div[data-testid="stMarkdownContainer"] {
-        text-align: center;
-        font-weight: 500;
+    /* TEXTO NORMAL DE MATERIA */
+    div[data-testid="stCheckbox"] div[data-testid="stMarkdownContainer"] p {
+        font-size: 0.9em;
+        color: #e0e0e0; /* Texto claro */
     }
 
     /* ENCABEZADOS DE SEMESTRE */
@@ -75,13 +71,14 @@ st.markdown("""
         text-transform: uppercase;
     }
 
-    /* BIENVENIDA (Fondo sutil para que se lea en dark mode) */
+    /* BIENVENIDA (Fondo oscuro para dark mode) */
     .welcome-box {
-        background-color: rgba(128, 128, 128, 0.1);
+        background-color: #1c1f26;
         padding: 25px;
         border-radius: 10px;
         border-left: 8px solid var(--guinda);
         margin-bottom: 20px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.3);
     }
     .welcome-greeting {
         font-size: 1.3em;
@@ -89,18 +86,18 @@ st.markdown("""
         color: var(--guinda) !important;
         margin-bottom: 15px;
     }
+    .welcome-text-content p {
+        color: #e0e0e0 !important;
+        line-height: 1.6;
+    }
     .welcome-lema {
         margin-top: 15px;
         font-style: italic;
         font-weight: bold;
         color: var(--guinda) !important;
         text-align: right;
-        opacity: 0.8;
-    }
-    .developer-credit {
-        margin-top: 20px;
-        font-size: 0.85em;
-        opacity: 0.6;
+        border-top: 1px solid #444;
+        padding-top: 10px;
     }
 
     /* BOTONES */
@@ -112,31 +109,36 @@ st.markdown("""
         border-radius: 6px;
     }
     .stButton>button:hover {
-        background-color: #5c0000 !important;
-        transform: scale(1.02);
+        background-color: #a00000 !important;
     }
 
-    /* TABLA VISUAL (Fondo blanco para contraste de colores pastel) */
-    .horario-grid { width: 100%; border-collapse: collapse; text-align: center; font-family: 'Arial', sans-serif; font-size: 0.8em; background-color: #ffffff; color: black; border-radius: 8px; overflow: hidden; }
+    /* TABLA VISUAL DE RESULTADOS */
+    .horario-grid { width: 100%; border-collapse: collapse; text-align: center; font-family: 'Arial', sans-serif; font-size: 0.8em; background-color: #1c1f26; color: white; border-radius: 8px; overflow: hidden; }
     .horario-grid th { background-color: var(--guinda); color: white; padding: 8px; border: 1px solid #444; }
-    .horario-grid td { border: 1px solid #ddd; height: 45px; vertical-align: middle; padding: 2px; color: #333; }
-    .hora-col { background-color: #e0e0e0; font-weight: bold; color: #000; width: 70px; }
+    .horario-grid td { border: 1px solid #444; height: 45px; vertical-align: middle; padding: 2px; }
+    .hora-col { background-color: #2d3035; font-weight: bold; color: #ddd; width: 70px; }
     
     .clase-cell { 
         border-radius: 4px; padding: 4px; color: #111; 
         font-weight: 700; font-size: 0.95em; height: 100%; 
         display: flex; flex-direction: column; justify-content: center; 
-        line-height: 1.2; box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        line-height: 1.2; box-shadow: 0 1px 2px rgba(0,0,0,0.5);
     }
-    
-    /* CREDIT BOXES */
-    .credit-box { padding: 10px; border-radius: 5px; text-align: center; font-weight: bold; }
-    .credit-ok { background-color: rgba(4, 95, 70, 0.3); color: #34d399; border: 1px solid #34d399; }
-    .credit-error { background-color: rgba(153, 27, 27, 0.3); color: #f87171; border: 1px solid #f87171; }
+
+    /* COMENTARIOS */
+    .comment-box {
+        background-color: #262730;
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 10px;
+        border-left: 4px solid var(--guinda);
+        color: #eee;
+    }
 
 </style>
 """, unsafe_allow_html=True)
 
+# Paleta de colores para materias (Pasteles brillantes para contrastar con modo oscuro)
 COLORS = ['#FFCDD2', '#F8BBD0', '#E1BEE7', '#D1C4E9', '#C5CAE9', '#BBDEFB', '#B3E5FC', '#B2EBF2', '#B2DFDB', '#C8E6C9', '#DCEDC8', '#F0F4C3', '#FFF9C4', '#FFECB3', '#FFE0B2', '#FFCCBC']
 
 # Inicializar estado
@@ -147,11 +149,11 @@ if 'rango_hora' not in st.session_state: st.session_state.rango_hora = (7, 22)
 if 'horas_libres' not in st.session_state: st.session_state.horas_libres = []
 if 'prefs' not in st.session_state: st.session_state.prefs = {}
 if 'resultados' not in st.session_state: st.session_state.resultados = None
-# Simulación de Base de Datos de Opiniones
+# Base de Datos de Opiniones (Simulada)
 if 'opiniones' not in st.session_state: 
     st.session_state.opiniones = {
-        "Ana Gabriela Gomez Muñoz": {"suma": 450, "votos": 5, "comentarios": ["Excelente maestra", "Muy estricta pero aprendes"]},
-        "Gerardo Jarquín Hernández": {"suma": 98, "votos": 1, "comentarios": ["El mejor para Robótica"]}
+        "Ana Gabriela Gomez Muñoz": {"suma": 450, "votos": 5, "comentarios": ["Excelente maestra, muy clara.", "Estricta pero justa."]},
+        "Gerardo Jarquín Hernández": {"suma": 98, "votos": 1, "comentarios": ["El mejor para Robótica, 100% recomendado."]}
     }
 
 # Datos alumno
@@ -161,7 +163,7 @@ if 'alumno_sem' not in st.session_state: st.session_state.alumno_sem = 1
 if 'alumno_per' not in st.session_state: st.session_state.alumno_per = "ENE-JUN 2026"
 
 # -----------------------------------------------------------------------------
-# CRÉDITOS Y BASE DE DATOS
+# CRÉDITOS ACADÉMICOS
 # -----------------------------------------------------------------------------
 CREDITOS = {
     "🧪 Química": 4, "📐 Cálculo Diferencial": 5, "⚖️ Taller de Ética": 4, "💻 Dibujo Asistido por Computadora": 4, "📏 Metrología y Normalización": 4, "🔎 Fundamentos de Investigación": 4,
@@ -175,6 +177,9 @@ CREDITOS = {
     "🦾 Robótica": 5, "🏭 Tópicos Selectos de Automatización Industrial": 6
 }
 
+# -----------------------------------------------------------------------------
+# BASE DE DATOS DE NOMBRES
+# -----------------------------------------------------------------------------
 database = {
     "Ingeniería Mecatrónica": {
         "Semestre 1": ["🧪 Química", "📐 Cálculo Diferencial", "⚖️ Taller de Ética", "💻 Dibujo Asistido por Computadora", "📏 Metrología y Normalización", "🔎 Fundamentos de Investigación"],
@@ -189,23 +194,25 @@ database = {
     }
 }
 
-# --- OFERTA ACADÉMICA COMPLETA ---
+# -----------------------------------------------------------------------------
+# OFERTA ACADÉMICA (COMPLETA)
+# -----------------------------------------------------------------------------
 oferta_academica = {
-    # ... (Pega aquí TU DICCIONARIO COMPLETO que usaste en la versión anterior para que funcione la generación)
-    # Por brevedad en la respuesta, asumo que tienes el diccionario V18.
-    # SI NO LO TIENES, DIME Y TE LO VUELVO A PONER COMPLETO.
-    # Usaré un dummy para que el código corra, PERO TÚ PEGA EL TUYO.
-    "🦾 Robótica": [{"profesor": "Gerardo Jarquín Hernández", "horario": [(d,7,8) for d in range(5)], "id":"ROB1"}],
-    "🏭 Tópicos Selectos de Automatización Industrial": [{"profesor": "Ana Gabriela Gomez Muñoz", "horario": [(0,12,13),(1,12,13),(2,12,13),(3,12,13),(4,12,14)], "id":"TS1"}],
-    "🎛️ Controladores Lógicos Programables": [{"profesor": "Ana Gabriela Gomez Muñoz", "horario": [(d,8,9) for d in range(5)], "id":"PLC1"}],
-    "🎮 Control": [{"profesor": "Cesar Gerardo Martinez Sanchez", "horario": [(0,9,10),(1,9,10),(2,9,10),(3,9,10),(4,9,11)], "id":"CTRL1"}],
-    "🤖 Sistemas Avanzados de Manufactura": [{"profesor": "Ada Karina Velarde Sanchez", "horario": [(d,9,10) for d in range(5)], "id":"SAM1"}],
-    "💾 Microcontroladores": [{"profesor": "Pedro Quintanilla Contreras", "horario": [(d,11,12) for d in range(5)], "id":"MICRO1"}, {"profesor": "Jozef Jesus Reyes Reyna", "horario": [(d,17,18) for d in range(5)], "id":"MICRO2"}]
+    # ... (TU BASE DE DATOS DEBE ESTAR AQUÍ, LA HE RESUMIDO PARA EL EJEMPLO PERO DEBES PEGAR LA COMPLETA)
+    "🦾 Robótica": [{"profesor": "Gerardo Jarquín Hernández", "horario": [(d,7,8) for d in range(5)], "id":"ROB1"}, {"profesor": "Gerardo Jarquín Hernández", "horario": [(d,14,15) for d in range(5)], "id":"ROB2"}],
+    "🏭 Tópicos Selectos de Automatización Industrial": [{"profesor": "Ana Gabriela Gomez Muñoz", "horario": [(0,12,13),(1,12,13),(2,12,13),(3,12,13),(4,12,14)], "id":"TS1"}, {"profesor": "Victor Manuel Retana Castillo", "horario": [(0,18,19),(1,18,19),(2,18,19),(3,18,19),(4,17,19)], "id":"TS2"}, {"profesor": "Victor Manuel Retana Castillo", "horario": [(0,20,21),(1,20,21),(2,20,21),(3,20,21),(4,20,22)], "id":"TS3"}, {"profesor": "Luis Rey Santos Saucedo", "horario": [(0,19,20),(1,19,20),(2,19,20),(3,19,20),(4,19,21)], "id":"TS4"}],
+    "📈 Formulación y Evaluación de Proyectos": [{"profesor": "Jose Ignacio Gonzalez Delgado", "horario": [(0,7,8),(1,7,8),(2,7,8)], "id":"FEP1"}, {"profesor": "Jose Ignacio Gonzalez Delgado", "horario": [(0,10,11),(1,10,11),(2,10,11)], "id":"FEP2"}, {"profesor": "Jose Ignacio Gonzalez Delgado", "horario": [(0,19,20),(1,19,20),(2,19,20)], "id":"FEP3"}, {"profesor": "Nadia Patricia Ramirez Santillan", "horario": [(0,8,9),(1,8,9),(2,8,9)], "id":"FEP4"}, {"profesor": "Perla Magdalena Garcia Her", "horario": [(0,11,12),(1,11,12),(2,11,12)], "id":"FEP5"}, {"profesor": "Jackeline Elizabeth Fernandez Flores", "horario": [(0,18,19),(1,18,19),(2,18,19)], "id":"FEP6"}],
+    "🎛️ Controladores Lógicos Programables": [{"profesor": "Ana Gabriela Gomez Muñoz", "horario": [(d,8,9) for d in range(5)], "id":"PLC1"}, {"profesor": "Ana Gabriela Gomez Muñoz", "horario": [(d,11,12) for d in range(5)], "id":"PLC2"}],
+    "🎮 Control": [{"profesor": "Cesar Gerardo Martinez Sanchez", "horario": [(0,9,10),(1,9,10),(2,9,10),(3,9,10),(4,9,11)], "id":"CTRL1"}, {"profesor": "Jesus Guerrero Contreras", "horario": [(0,15,16),(1,15,16),(2,15,16),(3,15,16),(4,15,17)], "id":"CTRL2"}, {"profesor": "Ricardo Martínez Alvarado", "horario": [(0,17,18),(1,17,18),(2,17,18),(3,17,18),(4,17,19)], "id":"CTRL3"}, {"profesor": "Isaac Ruiz Ramos", "horario": [(0,19,20),(1,19,20),(2,19,20),(3,19,20),(4,19,21)], "id":"CTRL4"}],
+    "🤖 Sistemas Avanzados de Manufactura": [{"profesor": "Ada Karina Velarde Sanchez", "horario": [(d,9,10) for d in range(5)], "id":"SAM1"}, {"profesor": "Ada Karina Velarde Sanchez", "horario": [(d,10,11) for d in range(5)], "id":"SAM2"}, {"profesor": "Maria Del Socorro Marines Leal", "horario": [(d,17,18) for d in range(5)], "id":"SAM3"}],
+    "🌐 Redes Industriales": [{"profesor": "Francisco Flores Sanmiguel", "horario": [(d,15,16) for d in range(5)], "id":"RI1"}, {"profesor": "Francisco Flores Sanmiguel", "horario": [(d,16,17) for d in range(5)], "id":"RI2"}, {"profesor": "Francisco Flores Sanmiguel", "horario": [(d,17,18) for d in range(5)], "id":"RI3"}, {"profesor": "Neider Gonzalez Roblero", "horario": [(d,18,19) for d in range(5)], "id":"RI4"}, {"profesor": "Neider Gonzalez Roblero", "horario": [(d,19,20) for d in range(5)], "id":"RI5"}],
+    "💾 Microcontroladores": [{"profesor": "Pedro Quintanilla Contreras", "horario": [(d,11,12) for d in range(5)], "id":"MICRO1"}, {"profesor": "Jozef Jesus Reyes Reyna", "horario": [(d,17,18) for d in range(5)], "id":"MICRO2"}],
+    # ... (IMPORTANTE: PEGA AQUÍ EL RESTO DE TU BASE DE DATOS DE LA V18) ...
 }
-# (Asegúrate de pegar el diccionario `oferta_academica` completo que te di en la V17 o V18 aquí)
+# --- ASEGÚRATE DE QUE LA OFERTA ACADÉMICA ESTÉ COMPLETA EN TU ARCHIVO ---
 
 # -----------------------------------------------------------------------------
-# FUNCIONES PDF Y HTML
+# FUNCIONES LÓGICAS Y PDF
 # -----------------------------------------------------------------------------
 class PDF(FPDF):
     def header(self):
@@ -219,10 +226,14 @@ class PDF(FPDF):
         self.set_text_color(0, 0, 0)
         self.cell(0, 8, 'INSTITUTO TECNOLÓGICO DE SALTILLO', 0, 1, 'C')
         self.ln(5)
-    def footer(self):
-        self.set_y(-15); self.set_font('Arial', 'I', 8); self.cell(0, 10, f'Página {self.page_no()}', 0, 0, 'C')
 
-def clean_text(text): return text.encode('latin-1', 'ignore').decode('latin-1')
+    def footer(self):
+        self.set_y(-15)
+        self.set_font('Arial', 'I', 8)
+        self.cell(0, 10, f'Página {self.page_no()}', 0, 0, 'C')
+
+def clean_text(text):
+    return text.encode('latin-1', 'ignore').decode('latin-1')
 
 def create_pro_pdf(horario, alumno_data, total_creditos):
     pdf = PDF(orientation='L', unit='mm', format='A4')
@@ -267,6 +278,13 @@ def create_pro_pdf(horario, alumno_data, total_creditos):
     pdf.cell(w_mat + w_prof, h_table, clean_text("TOTAL DE CRÉDITOS:"), 1, 0, 'R'); pdf.cell(w_cred, h_table, str(total_creditos), 1, 1, 'C')
     return pdf.output(dest='S').encode('latin-1')
 
+def traslape(horario1, horario2):
+    for h1 in horario1:
+        for h2 in horario2:
+            if h1[0] == h2[0]:
+                if h1[1] < h2[2] and h1[2] > h2[1]: return True
+    return False
+
 def generar_combinaciones(materias, rango, prefs, horas_libres):
     bloqueos = []
     for hl in horas_libres: inicio = int(hl.split(":")[0]); bloqueos.append(inicio)
@@ -294,13 +312,7 @@ def generar_combinaciones(materias, rango, prefs, horas_libres):
         for i in range(len(c)):
             score += c[i]['score']
             for j in range(i+1, len(c)):
-                # Lógica simplificada de traslape
-                h1 = c[i]['horario']; h2 = c[j]['horario']
-                for ses1 in h1:
-                    for ses2 in h2:
-                        if ses1[0] == ses2[0]: # Mismo dia
-                            if max(ses1[1], ses2[1]) < min(ses1[2], ses2[2]): ok=False; break
-                    if not ok: break
+                if traslape(c[i]['horario'], c[j]['horario']): ok=False; break
             if not ok: break
         if ok: validos.append((score, c))
     validos.sort(key=lambda x: x[0], reverse=True)
@@ -339,34 +351,6 @@ def create_timetable_html(horario):
         html += "</tr>"
     html += "</tbody></table>"
     return html
-
-def get_donut_chart(score):
-    # Color dinámico: Rojo (0) -> Amarillo (50) -> Verde (100)
-    if score < 50:
-        # Rojo a Amarillo
-        r = 255
-        g = int(255 * (score / 50))
-    else:
-        # Amarillo a Verde
-        r = int(255 * (1 - (score - 50) / 50))
-        g = 255
-    color_hex = f"rgb({r},{g},0)"
-    
-    fig = go.Figure(data=[go.Pie(
-        values=[score, 100-score],
-        hole=.7,
-        marker_colors=[color_hex, '#e0e0e0'],
-        textinfo='none',
-        hoverinfo='none'
-    )])
-    fig.update_layout(
-        showlegend=False,
-        margin=dict(t=0, b=0, l=0, r=0),
-        height=150,
-        width=150,
-        annotations=[dict(text=f"{score}/100", x=0.5, y=0.5, font_size=20, showarrow=False)]
-    )
-    return fig
 
 # -----------------------------------------------------------------------------
 # MENÚ LATERAL
@@ -526,67 +510,68 @@ if menu == "📅 Generador de Horarios":
             st.rerun()
 
 # =============================================================================
-# VISTA 2: EVALUACIÓN DOCENTE (NUEVO)
+# VISTA 2: EVALUACIÓN DOCENTE
 # =============================================================================
 elif menu == "⭐ Evaluación Docente":
     st.title("⭐ Califica a tu Maestro")
-    st.markdown("Tu opinión ayuda a otros compañeros. ¡Sé honesto!")
+    st.markdown("Comparte tu opinión con la comunidad.")
     
-    # 1. Obtener lista plana de todos los profes
+    # Obtener lista de profes
     all_profs = set()
     for lista in oferta_academica.values():
-        for grupo in lista:
-            all_profs.add(grupo['profesor'])
+        for grupo in lista: all_profs.add(grupo['profesor'])
     all_profs = sorted(list(all_profs))
     
-    # 2. Selección de Profe
     prof_selected = st.selectbox("Selecciona al profesor:", all_profs)
     
-    # 3. Interfaz de Calificación
     st.write("---")
     c1, c2 = st.columns([2, 1])
     
     with c1:
         st.subheader(f"Opina sobre: {prof_selected}")
-        nuevo_comentario = st.text_area("Deja tu comentario (Anónimo):")
-        nueva_calif = st.slider("Calificación General (0 - 100):", 0, 100, 80)
+        nuevo_comentario = st.text_area("Comentario (Anónimo):")
+        nueva_calif = st.slider("Calificación (0-100):", 0, 100, 80)
         
         if st.button("Enviar Opinión"):
-            # Guardar en "Simulación de Base de Datos"
             if prof_selected not in st.session_state.opiniones:
                 st.session_state.opiniones[prof_selected] = {"suma": 0, "votos": 0, "comentarios": []}
-            
             db = st.session_state.opiniones[prof_selected]
-            db["suma"] += nueva_calif
-            db["votos"] += 1
-            db["comentarios"].insert(0, nuevo_comentario) # El más reciente arriba
-            st.success("¡Gracias! Tu opinión ha sido registrada.")
+            db["suma"] += nueva_calif; db["votos"] += 1; db["comentarios"].insert(0, nuevo_comentario)
+            st.success("¡Opinión registrada!")
             st.rerun()
 
     with c2:
-        # 4. Mostrar Estadísticas (Gráfica de Donut)
         if prof_selected in st.session_state.opiniones:
             data = st.session_state.opiniones[prof_selected]
             promedio = int(data["suma"] / data["votos"])
-            st.markdown(f"<h3 style='text-align: center;'>Promedio: {promedio}</h3>", unsafe_allow_html=True)
             
-            # Gráfica Plotly
-            fig = get_donut_chart(promedio)
-            st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
-            
-            st.caption(f"Basado en {data['votos']} opiniones.")
+            # CSS DONUT CHART (NO PLOTLY)
+            color_chart = "#e74c3c" if promedio < 60 else "#f1c40f" if promedio < 90 else "#2ecc71"
+            st.markdown(f"""
+            <div style="display: flex; justify-content: center; margin-bottom: 10px;">
+                <div style="
+                    width: 150px; height: 150px; border-radius: 50%;
+                    background: conic-gradient({color_chart} {promedio}%, #444 0);
+                    display: flex; justify-content: center; align-items: center;
+                ">
+                    <div style="
+                        width: 120px; height: 120px; border-radius: 50%; background: #1c1f26;
+                        display: flex; justify-content: center; align-items: center; color: white;
+                        font-weight: bold; font-size: 1.5em;
+                    ">
+                        {promedio}/100
+                    </div>
+                </div>
+            </div>
+            <p style="text-align: center; color: #aaa;">Basado en {data['votos']} votos</p>
+            """, unsafe_allow_html=True)
         else:
-            st.info("Este profesor aún no tiene calificaciones. ¡Sé el primero!")
+            st.info("Sin calificaciones aún.")
 
-    # 5. Muro de Comentarios
     st.write("---")
     st.subheader("💬 Comentarios Recientes")
     if prof_selected in st.session_state.opiniones and st.session_state.opiniones[prof_selected]["comentarios"]:
         for com in st.session_state.opiniones[prof_selected]["comentarios"]:
-            st.markdown(f"""
-            <div style="background-color: rgba(255,255,255,0.05); padding: 10px; border-radius: 5px; margin-bottom: 10px; border-left: 3px solid #800000;">
-                {com}
-            </div>
-            """, unsafe_allow_html=True)
+            st.markdown(f"<div class='comment-box'>{com}</div>", unsafe_allow_html=True)
     else:
-        st.write("No hay comentarios escritos aún.")
+        st.write("No hay comentarios.")
