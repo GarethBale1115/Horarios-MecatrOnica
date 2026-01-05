@@ -37,11 +37,11 @@ st.markdown("""
     
     [data-testid="stCheckbox"] label {
         border: 1px solid rgba(128, 128, 128, 0.4);
-        background-color: transparent;
+        background-color: transparent; /* Fondo transparente para respetar modo oscuro */
         padding: 5px;
         border-radius: 6px;
         width: 100%;
-        min-height: 90px; 
+        min-height: 90px; /* Altura mínima FIJA para simetría */
         height: 100%;
         display: flex;
         align-items: center;
@@ -70,19 +70,19 @@ st.markdown("""
         font-weight: bold !important;
     }
 
-    /* 5. ARREGLO DE TEXTO */
+    /* 5. ARREGLO DE TEXTO (NO CORTAR PALABRAS) */
     [data-testid="stCheckbox"] div[data-testid="stMarkdownContainer"] p {
         font-size: 0.85em;
         line-height: 1.3;
         margin: 0;
         word-wrap: break-word !important;
-        white-space: normal !important;
-        color: #e0e0e0;
+        white-space: normal !important; /* Permite saltos de línea */
+        color: #e0e0e0; /* Color texto normal en dark mode */
         text-align: center;
         width: 100%;
     }
 
-    /* ENCABEZADOS DE SEMESTRE */
+    /* ENCABEZADOS DE SEMESTRE (COLUMNAS) */
     .semestre-header {
         color: var(--guinda) !important;
         font-weight: 900;
@@ -143,6 +143,26 @@ st.markdown("""
         padding: 8px; border-radius: 5px; margin-bottom: 5px;
         font-size: 0.9em; border-left: 3px solid var(--guinda);
     }
+    
+    /* CHECKBOX DENTRO DE EXPANDER (Para Horas) - RESTAURAR PALOMITA AQUI */
+    [data-testid="stExpander"] [data-testid="stCheckbox"] label span[role="checkbox"] {
+        display: block !important; /* Restaurar palomita en submenús */
+    }
+    [data-testid="stExpander"] [data-testid="stCheckbox"] label {
+        min-height: 30px !important;
+        border: none !important;
+        justify-content: flex-start !important;
+        text-align: left !important;
+    }
+    [data-testid="stExpander"] [data-testid="stCheckbox"]:has(input:checked) label {
+        background-color: transparent !important;
+        border-color: transparent !important;
+    }
+    [data-testid="stExpander"] [data-testid="stCheckbox"] div[data-testid="stMarkdownContainer"] p {
+        color: inherit !important;
+        font-weight: normal !important;
+        text-align: left !important;
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -171,7 +191,7 @@ if 'alumno_sem' not in st.session_state: st.session_state.alumno_sem = 1
 if 'alumno_per' not in st.session_state: st.session_state.alumno_per = "ENE-JUN 2026"
 
 # -----------------------------------------------------------------------------
-# 3. DATOS SINCRONIZADOS
+# 3. DATOS SINCRONIZADOS (TODOS CON EMOJIS EXACTOS)
 # -----------------------------------------------------------------------------
 CREDITOS = {
     "🧪 Química": 4, "📐 Cálculo Diferencial": 5, "⚖️ Taller de Ética": 4, "💻 Dibujo Asistido por Computadora": 4, "📏 Metrología y Normalización": 4, "🔎 Fundamentos de Investigación": 4,
@@ -209,6 +229,7 @@ database = {
     }
 }
 
+# --- OFERTA ACADÉMICA (COMPLETA, KEYS SIN EMOJIS) ---
 oferta_academica = {
     "Química": [{"profesor": "Norma Hernández Flores", "horario": [(d,7,8) for d in range(4)], "id":"Q1"}, {"profesor": "Norma Hernández Flores", "horario": [(d,8,9) for d in range(4)], "id":"Q2"}, {"profesor": "Norma Hernández Flores", "horario": [(d,11,12) for d in range(4)], "id":"Q3"}, {"profesor": "Norma Hernández Flores", "horario": [(d,12,13) for d in range(4)], "id":"Q4"}, {"profesor": "Hilda Araceli Torres Plata", "horario": [(d,8,9) for d in range(4)], "id":"Q5"}, {"profesor": "Hilda Araceli Torres Plata", "horario": [(d,9,10) for d in range(4)], "id":"Q6"}, {"profesor": "Alma Leticia Cázares Arreguin", "horario": [(d,13,14) for d in range(4)], "id":"Q7"}, {"profesor": "Alma Leticia Cázares Arreguin", "horario": [(d,14,15) for d in range(4)], "id":"Q8"}, {"profesor": "Alma Leticia Cázares Arreguin", "horario": [(d,16,17) for d in range(4)], "id":"Q9"}, {"profesor": "José Raymundo Garza Aldaco", "horario": [(d,15,16) for d in range(4)], "id":"Q10"}, {"profesor": "Alejandra Torres Ordaz", "horario": [(d,15,16) for d in range(4)], "id":"Q11"}, {"profesor": "Alejandra Torres Ordaz", "horario": [(d,16,17) for d in range(4)], "id":"Q12"}, {"profesor": "Alejandra Torres Ordaz", "horario": [(d,17,18) for d in range(4)], "id":"Q13"}, {"profesor": "Victor Martinez Rivera", "horario": [(d,15,16) for d in range(4)], "id":"Q14"}, {"profesor": "Victor Martinez Rivera", "horario": [(d,16,17) for d in range(4)], "id":"Q15"}, {"profesor": "Victor Martinez Rivera", "horario": [(d,17,18) for d in range(4)], "id":"Q16"}, {"profesor": "Silvia Susana Aguirre Sanchez", "horario": [(d,17,18) for d in range(4)], "id":"Q17"}, {"profesor": "Silvia Susana Aguirre Sanchez", "horario": [(d,18,19) for d in range(4)], "id":"Q18"}, {"profesor": "Karina Azucena Ayala Torres", "horario": [(d,17,18) for d in range(4)], "id":"Q19"}, {"profesor": "Karina Azucena Ayala Torres", "horario": [(d,18,19) for d in range(4)], "id":"Q20"}],
     "Cálculo Diferencial": [{"profesor": "Allen Epifanio Lopez", "horario": [(d,7,8) for d in range(5)], "id":"CD1"}, {"profesor": "Kevin Alberto Cordova Ventura", "horario": [(d,8,9) for d in range(5)], "id":"CD2"}, {"profesor": "Kevin Alberto Cordova Ventura", "horario": [(d,12,13) for d in range(5)], "id":"CD3"}, {"profesor": "Erwin Rommel Cerda Leon", "horario": [(d,8,9) for d in range(5)], "id":"CD4"}, {"profesor": "Brenda Zavala Aguillon", "horario": [(d,9,10) for d in range(5)], "id":"CD5"}, {"profesor": "Brenda Zavala Aguillon", "horario": [(d,12,13) for d in range(5)], "id":"CD6"}, {"profesor": "Alicia Guadalupe Del Bosque Martínez", "horario": [(d,10,11) for d in range(5)], "id":"CD7"}, {"profesor": "Alicia Guadalupe Del Bosque Martínez", "horario": [(d,11,12) for d in range(5)], "id":"CD8"}, {"profesor": "Eliana Sarahi Sanchez Gonzalez", "horario": [(d,11,12) for d in range(5)], "id":"CD9"}, {"profesor": "Ana Victoria Ferniza Sandoval", "horario": [(d,11,12) for d in range(5)], "id":"CD10"}, {"profesor": "Ana Victoria Ferniza Sandoval", "horario": [(d,13,14) for d in range(5)], "id":"CD11"}, {"profesor": "Edna Marina Gonzalez Martinez", "horario": [(d,11,12) for d in range(5)], "id":"CD12"}, {"profesor": "Rodrigo Juarez Martinez", "horario": [(d,15,16) for d in range(5)], "id":"CD13"}, {"profesor": "Jose Jesus Israel Ruiz Benitez", "horario": [(d,16,17) for d in range(5)], "id":"CD14"}, {"profesor": "Javier Guadalupe Cuellar Villarreal", "horario": [(d,16,17) for d in range(5)], "id":"CD15"}, {"profesor": "Irma Karina Olmedo Landeros", "horario": [(d,17,18) for d in range(5)], "id":"CD16"}],
@@ -363,12 +384,12 @@ def generar_combinaciones(materias, rango, prefs, horas_libres):
     # ALGORITMO DE ORDENAMIENTO INTELIGENTE
     def sort_key(item):
         puntos, horario = item
-        horas_ocupadas = []
+        horas = []
         for clase in horario:
-            for s in clase['horario']: horas_ocupadas.append(s[1])
+            for s in clase['horario']: horas.append(s[1])
         
-        if not horas_ocupadas: return (puntos, 0)
-        span = max(horas_ocupadas) - min(horas_ocupadas)
+        if not horas: return (puntos, 0)
+        span = max(horas) - min(horas)
         return (puntos, -span)
 
     validos.sort(key=sort_key, reverse=True)
@@ -671,7 +692,10 @@ if menu == "📅 Generador de Horarios":
                             with st.expander("⭐ Ver Opiniones"):
                                 if p not in st.session_state.opiniones: st.session_state.opiniones[p] = {"suma": 0, "votos": 0, "comentarios": []}
                                 data = st.session_state.opiniones[p]
-                                prom = int(data["suma"]/data["votos"]) if data["votos"]>0 else 0
+                                if data["votos"] > 0:
+                                    prom = int(data["suma"]/data["votos"])
+                                else:
+                                    prom = 0
                                 color = "#e74c3c" if prom<60 else "#f1c40f" if prom<90 else "#2ecc71"
                                 st.markdown(f"<div style='text-align:center; font-weight:bold; color:{color}; font-size:1.2em;'>{prom}/100</div>", unsafe_allow_html=True)
                                 if data["comentarios"]:
