@@ -5,102 +5,116 @@ from fpdf import FPDF
 import os
 
 # -----------------------------------------------------------------------------
-# CONFIGURACIÓN VISUAL (TEMA INSTITUCIONAL TECNM)
+# CONFIGURACIÓN VISUAL (MODO CLARO FORZADO + TEMA ITS)
 # -----------------------------------------------------------------------------
 st.set_page_config(page_title="Horario ITS", page_icon="🐴", layout="wide")
 
 st.markdown("""
 <style>
+    /* --- FUERZA BRUTA: MODO CLARO OBLIGATORIO --- */
+    [data-testid="stAppViewContainer"] {
+        background-color: #ffffff !important;
+        color: #000000 !important;
+    }
+    [data-testid="stHeader"] {
+        background-color: #ffffff !important;
+    }
+    [data-testid="stSidebar"] {
+        background-color: #f0f2f6 !important;
+    }
+    
     /* VARIABLES DE COLOR */
     :root {
-        --guinda-oficial: #800000;
-        --blanco-humo: #f5f5f5;
-        --texto-oscuro: #333333;
+        --guinda: #800000;
+        --gris-claro: #f5f5f5;
     }
 
-    /* FUERZA EL COLOR GUINDA EN TÍTULOS Y SUBTÍTULOS */
-    h1, h2, h3, .stMarkdown h1, .stMarkdown h2, .stMarkdown h3, h3[id^="ingenier-a-mecatr-nica"] {
-        color: var(--guinda-oficial) !important;
+    /* TEXTOS */
+    h1, h2, h3, .stMarkdown h1, .stMarkdown h2, .stMarkdown h3, p, div, span, label {
+        color: #333333; /* Texto base casi negro */
         font-family: 'Arial', sans-serif;
+    }
+    
+    /* TÍTULOS EN GUINDA */
+    h1, .welcome-title, .welcome-greeting {
+        color: #800000 !important;
+    }
+    
+    /* SEMESTRES (Encabezados de columnas) */
+    .semestre-header {
+        color: #800000 !important;
+        font-weight: bold;
+        font-size: 1.1em;
+        text-align: center;
+        border-bottom: 2px solid #800000;
+        margin-bottom: 10px;
+        padding-bottom: 5px;
     }
 
     /* ESTILO DEL CONTENEDOR DE BIENVENIDA */
     .welcome-box {
-        background-color: var(--blanco-humo) !important;
+        background-color: #f9f9f9 !important;
         padding: 25px;
         border-radius: 10px;
-        border-left: 8px solid var(--guinda-oficial);
-        box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
+        border-left: 8px solid #800000;
+        box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
         margin-bottom: 20px;
     }
     .welcome-text-content p {
-        color: var(--texto-oscuro) !important;
+        color: #000000 !important;
         font-size: 1.05em;
         line-height: 1.6;
-        font-weight: normal;
-    }
-    .welcome-greeting {
-        font-size: 1.2em;
-        font-weight: bold;
-        color: var(--guinda-oficial) !important;
-        margin-bottom: 15px;
     }
     .welcome-lema {
         margin-top: 15px;
         font-style: italic;
         font-weight: bold;
-        color: var(--guinda-oficial) !important;
+        color: #800000 !important;
         text-align: right;
-        border-top: 2px solid #e0e0e0;
+        border-top: 1px solid #ddd;
         padding-top: 10px;
     }
-    .developer-credit {
-        margin-top: 20px;
-        font-size: 0.9em;
-        color: #666 !important;
-    }
 
-    /* BOTONES PERSONALIZADOS */
+    /* BOTONES */
     .stButton>button {
         color: white !important;
-        background-color: var(--guinda-oficial) !important;
+        background-color: #800000 !important;
         border: none;
         font-weight: bold;
         border-radius: 6px;
-        padding: 0.5rem 1rem;
     }
     .stButton>button:hover {
         background-color: #5c0000 !important;
     }
-    
-    /* ESTILOS DE EXPANDERS (SEMESTRES) */
-    .streamlit-expanderHeader {
-        background-color: #f9f9f9 !important;
-        color: var(--guinda-oficial) !important;
-        font-weight: bold !important;
-        border: 1px solid #e0e0e0;
-        border-radius: 5px;
-    }
-    .streamlit-expanderContent {
-        background-color: white !important;
-        border: 1px solid #f0f0f0;
-        border-top: none;
-    }
 
-    /* ESTILOS DE MULTISELECT (CHIPS GUINDA) */
-    span[data-baseweb="tag"] {
-        background-color: var(--guinda-oficial) !important;
-        color: white !important;
+    /* CHECKBOXES (MATERIAS) */
+    /* Forzamos que se vean bien en fondo blanco */
+    .stCheckbox {
+        background-color: white;
+        padding: 5px;
+        border-radius: 5px;
+        border: 1px solid #eee;
+        margin-bottom: 5px;
+        transition: all 0.2s;
+    }
+    .stCheckbox:hover {
+        border-color: #800000;
+        background-color: #fff0f0;
+    }
+    /* Texto del checkbox */
+    .stCheckbox p {
+        font-size: 0.85em;
+        font-weight: 600;
     }
 
     /* CREDIT BOXES */
-    .credit-box { padding: 15px; border-radius: 8px; margin-bottom: 20px; font-weight: bold; text-align: center; border: 1px solid; }
+    .credit-box { padding: 15px; border-radius: 8px; margin-bottom: 20px; font-weight: bold; text-align: center; border: 1px solid #ccc; color: black; }
     .credit-ok { background-color: #d1fae5; color: #065f46; border-color: #34d399; }
     .credit-error { background-color: #fee2e2; color: #991b1b; border-color: #f87171; }
 
     /* TABLA VISUAL */
     .horario-grid { width: 100%; border-collapse: collapse; text-align: center; font-family: 'Arial', sans-serif; font-size: 0.8em; background-color: white; }
-    .horario-grid th { background-color: var(--guinda-oficial); color: white; padding: 6px; border: 1px solid #ddd; }
+    .horario-grid th { background-color: #800000; color: white; padding: 6px; border: 1px solid #ddd; }
     .horario-grid td { border: 1px solid #eee; height: 45px; vertical-align: middle; padding: 2px; color: #333; }
     .hora-col { background-color: #f9fafb; font-weight: bold; color: #333; width: 70px; font-size: 0.9em; }
     
@@ -301,23 +315,28 @@ if st.session_state.step == 1:
             st.session_state.step = 2
             st.rerun()
 
-# --- PASO 2: MATERIAS ---
+# --- PASO 2: MATERIAS (TABLERO GRID) ---
 elif st.session_state.step == 2:
     st.title("📚 Selección de Materias")
     
-    todas_materias = []
-    seleccion_previa = st.session_state.materias_seleccionadas
+    # LAYOUT GRID: 9 Columnas para 9 Semestres
+    cols = st.columns(9)
+    selected_in_this_step = []
     
-    for sem, lista in database["Ingeniería Mecatrónica"].items():
-        with st.expander(f"📌 {sem}", expanded=True):
-            default_val = [m for m in seleccion_previa if m in lista]
-            sel = st.multiselect(f"Materias de {sem}:", lista, default=default_val, label_visibility="collapsed")
-            todas_materias.extend(sel)
-    
-    total_creditos = sum([CREDITOS.get(m, 0) for m in todas_materias])
+    # Iterar semestres y colocar en columnas
+    for i, (sem, lista_materias) in enumerate(database["Ingeniería Mecatrónica"].items()):
+        with cols[i]:
+            st.markdown(f"<div class='semestre-header'>{i+1}°</div>", unsafe_allow_html=True)
+            for materia in lista_materias:
+                is_checked = materia in st.session_state.materias_seleccionadas
+                # Usar checkbox, es lo más parecido a un "cuadrito" funcional en Streamlit
+                if st.checkbox(materia, value=is_checked, key=f"chk_{materia}"):
+                    selected_in_this_step.append(materia)
+
+    total_creditos = sum([CREDITOS.get(m, 0) for m in selected_in_this_step])
     st.write("---")
-    c_info = st.container()
     
+    c_info = st.container()
     if total_creditos <= 36:
         c_info.markdown(f"<div class='credit-box credit-ok'>✅ Créditos Acumulados: {total_creditos} / 36</div>", unsafe_allow_html=True)
         st.progress(total_creditos / 36)
@@ -334,7 +353,7 @@ elif st.session_state.step == 2:
         if col2.button("Siguiente ➡️", type="primary"):
             if total_creditos == 0: st.error("Selecciona al menos una materia.")
             else:
-                st.session_state.materias_seleccionadas = todas_materias
+                st.session_state.materias_seleccionadas = selected_in_this_step
                 st.session_state.step = 3
                 st.rerun()
 
