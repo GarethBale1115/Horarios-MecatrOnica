@@ -3,7 +3,7 @@ import pandas as pd
 import itertools
 from fpdf import FPDF
 import os
-import re # Para validación de texto/números
+import re
 
 # -----------------------------------------------------------------------------
 # 1. CONFIGURACIÓN VISUAL
@@ -131,41 +131,48 @@ oferta_academica = {
     "💾 Programación Básica": [{"profesor": "Francisco Javier De Leon Macias", "horario": [(d,7,8) for d in range(5)], "id":"PB1"}, {"profesor": "Francisco Javier De Leon Macias", "horario": [(d,8,9) for d in range(5)], "id":"PB2"}, {"profesor": "Leticia Castillo Hernández", "horario": [(d,9,10) for d in range(5)], "id":"PB3"}, {"profesor": "Leticia Castillo Hernández", "horario": [(d,13,14) for d in range(5)], "id":"PB4"}, {"profesor": "Leticia Castillo Hernández", "horario": [(d,14,15) for d in range(5)], "id":"PB5"}, {"profesor": "Arturo Alejandro Domínguez Martínez", "horario": [(d,11,12) for d in range(5)], "id":"PB6"}, {"profesor": "Hector Garcia Hernandez", "horario": [(d,15,16) for d in range(5)], "id":"PB7"}, {"profesor": "Garcia Hernandez Hector", "horario": [(d,16,17) for d in range(5)], "id":"PB8"}, {"profesor": "Mario Alberto Jáuregui Sánchez", "horario": [(d,17,18) for d in range(5)], "id":"PB9"}, {"profesor": "Mario Alberto Jáuregui Sánchez", "horario": [(d,18,19) for d in range(5)], "id":"PB10"}],
     "📊 Estadística y Control de Calidad": [{"profesor": "Georgina Solis Rodriguez", "horario": [(d,8,9) for d in range(4)], "id":"ECC1"}, {"profesor": "Georgina Solis Rodriguez", "horario": [(d,9,10) for d in range(4)], "id":"ECC2"}, {"profesor": "Federico Zertuche Luis", "horario": [(d,10,11) for d in range(4)], "id":"ECC3"}, {"profesor": "Jose Sirahuen Velez Name", "horario": [(d,11,12) for d in range(4)], "id":"ECC4"}, {"profesor": "Jose Sirahuen Velez Name", "horario": [(d,13,14) for d in range(4)], "id":"ECC5"}, {"profesor": "Jose Sirahuen Velez Name", "horario": [(d,14,15) for d in range(4)], "id":"ECC6"}, {"profesor": "Irma Violeta García Pimentel", "horario": [(d,11,12) for d in range(4)], "id":"ECC7"}, {"profesor": "Irma Violeta García Pimentel", "horario": [(d,12,13) for d in range(4)], "id":"ECC8"}, {"profesor": "Alma Patricia Lopez De Leon", "horario": [(d,16,17) for d in range(4)], "id":"ECC9"}, {"profesor": "Alma Patricia Lopez De Leon", "horario": [(d,18,19) for d in range(4)], "id":"ECC10"}],
     "💰 Administración y Contabilidad": [{"profesor": "Dalia Veronica Aguillon Padilla", "horario": [(d,10,11) for d in range(4)], "id":"AC1"}, {"profesor": "Patricia Alejandra Fernandez Rangel", "horario": [(d,11,12) for d in range(4)], "id":"AC2"}, {"profesor": "Patricia Alejandra Fernandez Rangel", "horario": [(d,12,13) for d in range(4)], "id":"AC3"}, {"profesor": "Martin Rodriguez Contreras", "horario": [(d,13,14) for d in range(4)], "id":"AC4"}, {"profesor": "Martin Rodriguez Contreras", "horario": [(d,14,15) for d in range(4)], "id":"AC5"}, {"profesor": "Martin Rodriguez Contreras", "horario": [(d,15,16) for d in range(4)], "id":"AC6"}, {"profesor": "Martin Rodriguez Contreras", "horario": [(d,16,17) for d in range(4)], "id":"AC7"}, {"profesor": "Martin Rodriguez Contreras", "horario": [(d,17,18) for d in range(4)], "id":"AC8"}, {"profesor": "Francisco Alberto Galindo González", "horario": [(d,17,18) for d in range(4)], "id":"AC9"}, {"profesor": "Edgar Felipe Vazquez Siller", "horario": [(d,19,20) for d in range(4)], "id":"AC10"}],
+    # SEMESTRE 3
     "↗️ Cálculo Vectorial": [{"profesor": "Lucia Marisol Valdes Gonzalez", "horario": [(d,8,9) for d in range(5)], "id":"CV1"}, {"profesor": "Lucia Marisol Valdes Gonzalez", "horario": [(d,9,10) for d in range(5)], "id":"CV2"}, {"profesor": "Silvia Deyanira Rodriguez Luna", "horario": [(d,9,10) for d in range(5)], "id":"CV3"}, {"profesor": "Silvia Deyanira Rodriguez Luna", "horario": [(d,10,11) for d in range(5)], "id":"CV4"}, {"profesor": "Jose Ignacio Garcia Alvarez", "horario": [(d,13,14) for d in range(5)], "id":"CV5"}, {"profesor": "Jose Ignacio Garcia Alvarez", "horario": [(d,14,15) for d in range(5)], "id":"CV6"}, {"profesor": "Jose Ignacio Garcia Alvarez", "horario": [(d,15,16) for d in range(5)], "id":"CV7"}, {"profesor": "Jose Ignacio Garcia Alvarez", "horario": [(d,16,17) for d in range(5)], "id":"CV8"}, {"profesor": "Rene Sanchez Ramos", "horario": [(d,13,14) for d in range(5)], "id":"CV9"}, {"profesor": "Rene Sanchez Ramos", "horario": [(d,14,15) for d in range(5)], "id":"CV10"}, {"profesor": "Alicia Guadalupe Del Bosque Martínez", "horario": [(d,14,15) for d in range(5)], "id":"CV11"}, {"profesor": "Gloria Estela Martinez Montemayor", "horario": [(d,16,17) for d in range(5)], "id":"CV12"}, {"profesor": "Miguel Angel Flores Villa", "horario": [(d,19,20) for d in range(5)], "id":"CV13"}],
     "🔨 Procesos de Fabricación": [{"profesor": "Efrain Almanza Casas", "horario": [(d,8,9) for d in range(4)], "id":"PF1"}, {"profesor": "Efrain Almanza Casas", "horario": [(d,9,10) for d in range(4)], "id":"PF2"}, {"profesor": "Efrain Almanza Casas", "horario": [(d,13,14) for d in range(4)], "id":"PF3"}, {"profesor": "Anabel Azucena Hernandez Cortes", "horario": [(d,13,14) for d in range(4)], "id":"PF4"}, {"profesor": "Arnoldo Solis Covarrubias", "horario": [(d,16,17) for d in range(4)], "id":"PF5"}, {"profesor": "Arnoldo Solis Covarrubias", "horario": [(d,19,20) for d in range(4)], "id":"PF6"}],
     "⚡ Electromagnetismo": [{"profesor": "Christian Aldaco González", "horario": [(d,9,10) for d in range(5)], "id":"E1"}, {"profesor": "Christian Aldaco González", "horario": [(d,10,11) for d in range(5)], "id":"E2"}, {"profesor": "Benjamin Arellano Orozco", "horario": [(d,14,15) for d in range(5)], "id":"E3"}, {"profesor": "Benjamin Arellano Orozco", "horario": [(d,15,16) for d in range(5)], "id":"E4"}, {"profesor": "Benjamin Arellano Orozco", "horario": [(d,16,17) for d in range(5)], "id":"E5"}, {"profesor": "Benjamin Arellano Orozco", "horario": [(d,17,18) for d in range(5)], "id":"E6"}, {"profesor": "Benjamin Arellano Orozco", "horario": [(d,18,19) for d in range(5)], "id":"E7"}, {"profesor": "Benjamin Arellano Orozco", "horario": [(d,19,20) for d in range(5)], "id":"E8"}],
     "🏗️ Estática": [{"profesor": "Jorge Oyervides Valdez", "horario": [(d,8,9) for d in range(4)], "id":"ES1"}, {"profesor": "Jorge Oyervides Valdez", "horario": [(d,9,10) for d in range(4)], "id":"ES2"}, {"profesor": "Jorge Oyervides Valdez", "horario": [(d,12,13) for d in range(4)], "id":"ES3"}, {"profesor": "Jorge Oyervides Valdez", "horario": [(d,17,18) for d in range(4)], "id":"ES4"}, {"profesor": "Jorge Oyervides Valdez", "horario": [(d,18,19) for d in range(4)], "id":"ES5"}, {"profesor": "Leticia Urbina Valdes", "horario": [(d,10,11) for d in range(4)], "id":"ES6"}, {"profesor": "Leticia Urbina Valdes", "horario": [(d,11,12) for d in range(4)], "id":"ES7"}],
     "🔢 Métodos Numéricos": [{"profesor": "Gustavo Lopez Guarin", "horario": [(d,15,16) for d in range(4)], "id":"MN1"}, {"profesor": "Justino Barrales Montes", "horario": [(d,15,16) for d in range(4)], "id":"MN2"}, {"profesor": "Justino Barrales Montes", "horario": [(d,19,20) for d in range(4)], "id":"MN3"}, {"profesor": "Justino Barrales Montes", "horario": [(d,20,21) for d in range(4)], "id":"MN4"}, {"profesor": "Justino Barrales Montes", "horario": [(d,21,22) for d in range(4)], "id":"MN5"}],
     "🌱 Desarrollo Sustentable": [{"profesor": "Fernando Miguel Viesca Farias", "horario": [(d,7,8) for d in range(5)], "id":"DS1"}, {"profesor": "Virginia Flores Gaytan", "horario": [(d,8,9) for d in range(5)], "id":"DS2"}, {"profesor": "Virginia Flores Gaytan", "horario": [(d,9,10) for d in range(5)], "id":"DS3"}, {"profesor": "Virginia Flores Gaytan", "horario": [(d,11,12) for d in range(5)], "id":"DS4"}, {"profesor": "Virginia Flores Gaytan", "horario": [(d,12,13) for d in range(5)], "id":"DS5"}, {"profesor": "Aida Isolda Fernández De La Cerda", "horario": [(d,8,9) for d in range(5)], "id":"DS6"}, {"profesor": "Aida Isolda Fernández De La Cerda", "horario": [(d,9,10) for d in range(5)], "id":"DS7"}, {"profesor": "Marcela Guadalupe Moreno Padilla", "horario": [(d,9,10) for d in range(5)], "id":"DS8"}, {"profesor": "Marcela Guadalupe Moreno Padilla", "horario": [(d,10,11) for d in range(5)], "id":"DS9"}, {"profesor": "Marcela Guadalupe Moreno Padilla", "horario": [(d,13,14) for d in range(5)], "id":"DS10"}, {"profesor": "Alicia Orta Mendoza", "horario": [(d,11,12) for d in range(5)], "id":"DS11"}, {"profesor": "Alicia Orta Mendoza", "horario": [(d,12,13) for d in range(5)], "id":"DS12"}, {"profesor": "Alicia Orta Mendoza", "horario": [(d,15,16) for d in range(5)], "id":"DS13"}, {"profesor": "Alicia Orta Mendoza", "horario": [(d,16,17) for d in range(5)], "id":"DS14"}, {"profesor": "Pedro Angel Gonzalez Barrera", "horario": [(d,11,12) for d in range(5)], "id":"DS15"}, {"profesor": "Pedro Angel Gonzalez Barrera", "horario": [(d,12,13) for d in range(5)], "id":"DS16"}, {"profesor": "Pedro Angel Gonzalez Barrera", "horario": [(d,13,14) for d in range(5)], "id":"DS17"}, {"profesor": "Alexeyevich Flores Sanchez", "horario": [(d,11,12) for d in range(5)], "id":"DS18"}, {"profesor": "Alexeyevich Flores Sanchez", "horario": [(d,12,13) for d in range(5)], "id":"DS19"}, {"profesor": "Manuel Rodarte Carrillo", "horario": [(d,13,14) for d in range(5)], "id":"DS20"}, {"profesor": "Manuel Rodarte Carrillo", "horario": [(d,14,15) for d in range(5)], "id":"DS21"}, {"profesor": "Manuel Rodarte Carrillo", "horario": [(d,17,18) for d in range(5)], "id":"DS22"}, {"profesor": "Manuel Rodarte Carrillo", "horario": [(d,18,19) for d in range(5)], "id":"DS23"}, {"profesor": "Juan Carlos Loyola Licea", "horario": [(d,15,16) for d in range(5)], "id":"DS24"}, {"profesor": "Mario Alberto De La Rosa Cepeda", "horario": [(d,15,16) for d in range(5)], "id":"DS25"}, {"profesor": "Mario Alberto De La Rosa Cepeda", "horario": [(d,16,17) for d in range(5)], "id":"DS26"}, {"profesor": "Mario Alberto De La Rosa Cepeda", "horario": [(d,17,18) for d in range(5)], "id":"DS27"}, {"profesor": "Mario Alberto De La Rosa Cepeda", "horario": [(d,18,19) for d in range(5)], "id":"DS28"}, {"profesor": "Ramon Andres Durón Ibarra", "horario": [(d,16,17) for d in range(5)], "id":"DS29"}, {"profesor": "Veronica Amaro Hernandez", "horario": [(d,17,18) for d in range(5)], "id":"DS30"}, {"profesor": "Veronica Amaro Hernandez", "horario": [(d,18,19) for d in range(5)], "id":"DS31"}, {"profesor": "Rene Martinez Perez", "horario": [(d,18,19) for d in range(5)], "id":"DS32"}, {"profesor": "Rene Martinez Perez", "horario": [(d,19,20) for d in range(5)], "id":"DS33"}],
+    # SEMESTRE 4
     "📉 Ecuaciones Diferenciales": [{"profesor": "Ismael Luevano Martinez", "horario": [(d,8,9) for d in range(5)], "id":"ED1"}, {"profesor": "Romina Denisse Sanchez", "horario": [(d,8,9) for d in range(5)], "id":"ED2"}, {"profesor": "Romina Denisse Sanchez", "horario": [(d,10,11) for d in range(5)], "id":"ED3"}, {"profesor": "César Iván Cantú", "horario": [(d,9,10) for d in range(5)], "id":"ED4"}, {"profesor": "Lucia Marisol Valdes Gonzalez", "horario": [(d,10,11) for d in range(5)], "id":"ED5"}, {"profesor": "Lucia Marisol Valdes Gonzalez", "horario": [(d,11,12) for d in range(5)], "id":"ED6"}, {"profesor": "Olivia García Calvillo", "horario": [(d,10,11) for d in range(5)], "id":"ED7"}, {"profesor": "Olivia García Calvillo", "horario": [(d,11,12) for d in range(5)], "id":"ED8"}, {"profesor": "Olivia García Calvillo", "horario": [(d,13,14) for d in range(5)], "id":"ED9"}, {"profesor": "Olivia García Calvillo", "horario": [(d,14,15) for d in range(5)], "id":"ED10"}, {"profesor": "Jesus Cantú Perez", "horario": [(d,11,12) for d in range(5)], "id":"ED11"}, {"profesor": "Jesus Cantú Perez", "horario": [(d,13,14) for d in range(5)], "id":"ED12"}, {"profesor": "Alicia Guadalupe Del Bosque Martínez", "horario": [(d,13,14) for d in range(5)], "id":"ED13"}, {"profesor": "Jorge Alberto Ramos Oliveira", "horario": [(d,17,18) for d in range(5)], "id":"ED14"}],
     "🔥 Fundamentos de Termodinámica": [{"profesor": "Luis Miguel Veloz Pachicano", "horario": [(d,7,8) for d in range(4)], "id":"FT1"}, {"profesor": "Luis Miguel Veloz Pachicano", "horario": [(d,11,12) for d in range(4)], "id":"FT2"}, {"profesor": "Elena Guadalupe Luques Lopez", "horario": [(d,8,9) for d in range(4)], "id":"FT3"}, {"profesor": "Elena Guadalupe Luques Lopez", "horario": [(d,13,14) for d in range(4)], "id":"FT4"}, {"profesor": "Erendira Del Rocio Gamon Perales", "horario": [(d,10,11) for d in range(4)], "id":"FT5"}, {"profesor": "Erendira Del Rocio Gamon Perales", "horario": [(d,12,13) for d in range(4)], "id":"FT6"}, {"profesor": "Edgar Omar Resendiz Flores", "horario": [(d,12,13) for d in range(4)], "id":"FT7"}, {"profesor": "Massiel Cristina Cisneros Morales", "horario": [(d,15,16) for d in range(4)], "id":"FT8"}, {"profesor": "Massiel Cristina Cisneros Morales", "horario": [(d,18,19) for d in range(4)], "id":"FT9"}],
     "🦾 Mecánica de Materiales": [{"profesor": "Juan Carlos Cardenas Contreras", "horario": [(0,7,8),(1,7,8),(2,7,8),(3,7,8),(4,7,9)], "id":"MM1"}, {"profesor": "Juan Carlos Cardenas Contreras", "horario": [(0,9,10),(1,9,10),(2,9,10),(3,9,10),(4,9,11)], "id":"MM2"}, {"profesor": "Juan Carlos Cardenas Contreras", "horario": [(0,12,13),(1,12,13),(2,12,13),(3,12,13),(4,11,13)], "id":"MM3"}, {"profesor": "Juan Francisco Tovar Epifanio", "horario": [(0,13,14),(1,13,14),(2,13,14),(3,13,14),(4,12,14)], "id":"MM4"}, {"profesor": "Adolfo Galvan Avalos", "horario": [(0,17,18),(1,17,18),(2,17,18),(3,17,18),(4,17,19)], "id":"MM5"}],
     "🏎️ Dinámica": [{"profesor": "Claudia Yvonne Franco Martinez", "horario": [(d,8,9) for d in range(4)], "id":"DIN1"}, {"profesor": "Cipriano Alvarado González", "horario": [(d,10,11) for d in range(4)], "id":"DIN2"}, {"profesor": "Cipriano Alvarado González", "horario": [(d,11,12) for d in range(4)], "id":"DIN3"}, {"profesor": "Cipriano Alvarado González", "horario": [(d,12,13) for d in range(4)], "id":"DIN4"}, {"profesor": "Juan Arredondo Valdez", "horario": [(d,17,18) for d in range(4)], "id":"DIN5"}, {"profesor": "Ismene Guadalupe De La Peña Alcala", "horario": [(d,19,20) for d in range(4)], "id":"DIN6"}, {"profesor": "Ismene Guadalupe De La Peña Alcala", "horario": [(d,20,21) for d in range(4)], "id":"DIN7"}],
     "🔌 Análisis de Circuitos Eléctricos": [{"profesor": "Iván De Jesús Epifanio López", "horario": [(0,8,9),(1,8,9),(2,8,9),(3,8,9),(4,7,9)], "id":"ACE1"}, {"profesor": "Iván De Jesús Epifanio López", "horario": [(0,10,11),(1,10,11),(2,10,11),(3,10,11),(4,10,12)], "id":"ACE2"}, {"profesor": "Fernando Aguilar Gaona", "horario": [(0,13,14),(1,13,14),(2,13,14),(3,13,14),(4,13,15)], "id":"ACE3"}, {"profesor": "Alejandro Martínez Hernández", "horario": [(0,13,14),(1,13,14),(2,13,14),(3,13,14),(4,13,15)], "id":"ACE4"}, {"profesor": "Horacio Tolentino Quilantan", "horario": [(0,16,17),(1,16,17),(2,16,17),(3,16,17),(4,16,18)], "id":"ACE5"}, {"profesor": "Josue Isrrael Najera Diaz", "horario": [(0,16,17),(1,16,17),(2,16,17),(3,16,17),(4,16,18)], "id":"ACE6"}, {"profesor": "Josue Isrrael Najera Diaz", "horario": [(0,18,19),(1,18,19),(2,18,19),(3,18,19),(4,18,20)], "id":"ACE7"}, {"profesor": "Josue Isrrael Najera Diaz", "horario": [(0,20,21),(1,20,21),(2,20,21),(3,20,21),(4,20,22)], "id":"ACE8"}, {"profesor": "Obed Ramírez Gómez", "horario": [(0,19,20),(1,19,20),(2,19,20),(3,19,20),(4,19,21)], "id":"ACE9"}],
     "📝 Taller de Investigación I": [{"profesor": "Juana Maria Dueñaz Reyes", "horario": [(d,7,8) for d in range(4)], "id":"TI1"}, {"profesor": "Fernando Alfonso Ruiz Moreno", "horario": [(d,7,8) for d in range(4)], "id":"TI2"}, {"profesor": "Fernando Alfonso Ruiz Moreno", "horario": [(d,8,9) for d in range(4)], "id":"TI3"}, {"profesor": "Fernando Alfonso Ruiz Moreno", "horario": [(d,9,10) for d in range(4)], "id":"TI4"}, {"profesor": "Fernando Alfonso Ruiz Moreno", "horario": [(d,10,11) for d in range(4)], "id":"TI5"}, {"profesor": "Luis Manuel Navarro Huitron", "horario": [(d,13,14) for d in range(4)], "id":"TI6"}],
+    # SEMESTRE 5
     "⚙️ Máquinas Eléctricas": [{"profesor": "Gabriel Allende Sancho", "horario": [(d,8,9) for d in range(5)], "id":"ME1"}, {"profesor": "Mario Alberto Ponce Llamas", "horario": [(d,9,10) for d in range(5)], "id":"ME2"}, {"profesor": "Mario Alberto Ponce Llamas", "horario": [(d,11,12) for d in range(5)], "id":"ME3"}, {"profesor": "Alejandra Hernandez Rodriguez", "horario": [(d,15,16) for d in range(5)], "id":"ME4"}, {"profesor": "Daniel Ruiz Calderon", "horario": [(d,17,18) for d in range(5)], "id":"ME5"}],
     "📟 Electrónica Analógica": [{"profesor": "Fernando Aguilar Gaona", "horario": [(0,9,10),(1,9,10),(2,9,10),(3,9,10),(4,9,11)], "id":"EA1"}, {"profesor": "Fernando Aguilar Gaona", "horario": [(0,12,13),(1,12,13),(2,12,13),(3,12,13),(4,11,13)], "id":"EA2"}, {"profesor": "Rolando Rodriguez Pimentel", "horario": [(0,9,10),(1,9,10),(2,9,10),(3,9,10),(4,9,11)], "id":"EA3"}, {"profesor": "Joaquin Antonio Alvarado Bustos", "horario": [(0,10,11),(1,10,11),(2,10,11),(3,10,11),(4,9,11)], "id":"EA4"}, {"profesor": "Joaquin Antonio Alvarado Bustos", "horario": [(0,11,12),(1,11,12),(2,11,12),(3,11,12),(4,11,13)], "id":"EA5"}],
     "🔗 Mecanismos": [{"profesor": "Cipriano Alvarado González", "horario": [(d,9,10) for d in range(5)], "id":"MEC1"}, {"profesor": "Julian Javier Hernandez De La Rosa", "horario": [(d,11,12) for d in range(5)], "id":"MEC2"}, {"profesor": "Julian Javier Hernandez De La Rosa", "horario": [(d,12,13) for d in range(5)], "id":"MEC3"}, {"profesor": "Julian Javier Hernandez De La Rosa", "horario": [(d,15,16) for d in range(5)], "id":"MEC4"}],
     "💧 Análisis de Fluidos": [{"profesor": "Edgar Benito Martinez Mercado", "horario": [(d,7,8) for d in range(4)], "id":"AF1"}, {"profesor": "Edgar Benito Martinez Mercado", "horario": [(d,11,12) for d in range(4)], "id":"AF2"}, {"profesor": "Edgar Benito Martinez Mercado", "horario": [(d,13,14) for d in range(4)], "id":"AF3"}, {"profesor": "Luis Alejandro Gonzalez Valdez", "horario": [(d,16,17) for d in range(4)], "id":"AF4"}, {"profesor": "Luis Alejandro Gonzalez Valdez", "horario": [(d,19,20) for d in range(4)], "id":"AF5"}, {"profesor": "Ignacio Javier González Ordaz", "horario": [(d,18,19) for d in range(4)], "id":"AF6"}, {"profesor": "Ignacio Javier González Ordaz", "horario": [(d,19,20) for d in range(4)], "id":"AF7"}],
     "📑 Taller de Investigación II": [{"profesor": "Ada Karina Velarde Sanchez", "horario": [(d,7,8) for d in range(4)], "id":"TI2_1"}, {"profesor": "Juana Maria Dueñaz Reyes", "horario": [(d,8,9) for d in range(4)], "id":"TI2_2"}, {"profesor": "Ma. Elida Zavala Torres", "horario": [(d,17,18) for d in range(4)], "id":"TI2_3"}, {"profesor": "Ma. Elida Zavala Torres", "horario": [(d,18,19) for d in range(4)], "id":"TI2_4"}],
     "💻 Programación Avanzada": [{"profesor": "Juan Gilberto Navarro Rodriguez", "horario": [(0,7,8),(1,7,8),(2,7,8),(3,7,8),(4,7,9)], "id":"PA1"}, {"profesor": "Juan Gilberto Navarro Rodriguez", "horario": [(0,13,14),(1,13,14),(2,13,14),(3,13,14),(4,12,14)], "id":"PA2"}, {"profesor": "Olga Lidia Vidal Vazquez", "horario": [(0,8,9),(1,8,9),(2,8,9),(3,8,9),(4,8,10)], "id":"PA3"}, {"profesor": "Olga Lidia Vidal Vazquez", "horario": [(0,14,15),(1,14,15),(2,14,15),(3,14,15),(4,13,15)], "id":"PA4"}, {"profesor": "Yolanda Mexicano Reyes", "horario": [(0,9,10),(1,9,10),(2,9,10),(3,9,10),(4,8,10)], "id":"PA5"}, {"profesor": "Yolanda Mexicano Reyes", "horario": [(0,10,11),(1,10,11),(2,10,11),(3,10,11),(4,10,12)], "id":"PA6"}, {"profesor": "Yolanda Mexicano Reyes", "horario": [(0,12,13),(1,12,13),(2,12,13),(3,12,13),(4,12,14)], "id":"PA7"}, {"profesor": "Martha Patricia Piña Villanueva", "horario": [(0,11,12),(1,11,12),(2,11,12),(3,11,12),(4,10,12)], "id":"PA8"}, {"profesor": "Martha Patricia Piña Villanueva", "horario": [(0,12,13),(1,12,13),(2,12,13),(3,12,13),(4,12,14)], "id":"PA9"}, {"profesor": "Alfredo Salazar Garcia", "horario": [(0,17,18),(1,17,18),(2,17,18),(3,17,18),(4,16,18)], "id":"PA10"}],
+    # SEMESTRE 6
     "⚡ Electrónica de Potencia Aplicada": [{"profesor": "Iván De Jesús Epifanio López", "horario": [(0,13,14),(1,13,14),(2,13,14),(3,13,14),(4,13,15)], "id":"EPA1"}, {"profesor": "Alejandro Martínez Hernández", "horario": [(0,16,17),(1,16,17),(2,16,17),(3,16,17),(4,16,18)], "id":"EPA2"}],
     "🌡️ Instrumentación": [{"profesor": "Francisco Agustin Vazquez Esquivel", "horario": [(d,8,9) for d in range(5)], "id":"INS1"}, {"profesor": "Francisco Agustin Vazquez Esquivel", "horario": [(d,16,17) for d in range(5)], "id":"INS2"}, {"profesor": "Cecilia Mendoza Rivas", "horario": [(d,11,12) for d in range(5)], "id":"INS3"}, {"profesor": "Neider Gonzalez Roblero", "horario": [(d,15,16) for d in range(5)], "id":"INS4"}],
     "🔩 Diseño de Elementos Mecánicos": [{"profesor": "Nestor Roberto Saavedra Camacho", "horario": [(d,7,8) for d in range(5)], "id":"DEM1"}, {"profesor": "Lourdes Guadalupe Adame Oviedo", "horario": [(d,10,11) for d in range(5)], "id":"DEM2"}, {"profesor": "Juan Antonio Guerrero Hernández", "horario": [(d,16,17) for d in range(5)], "id":"DEM3"}, {"profesor": "Juan Antonio Guerrero Hernández", "horario": [(d,18,19) for d in range(5)], "id":"DEM4"}],
     "👾 Electrónica Digital": [{"profesor": "Karina Diaz Rosas", "horario": [(d,10,11) for d in range(5)], "id":"EDG1"}, {"profesor": "Francisco Flores Sanmiguel", "horario": [(d,12,13) for d in range(5)], "id":"EDG2"}, {"profesor": "Ewald Fritsche Ramírez", "horario": [(d,16,17) for d in range(5)], "id":"EDG3"}, {"profesor": "Miguel Maldonado Leza", "horario": [(d,20,22) for d in range(5)], "id":"EDG4"}],
     "〰️ Vibraciones Mecánicas": [{"profesor": "Ruben Flores Campos", "horario": [(d,7,8) for d in range(5)], "id":"VM1"}, {"profesor": "Ruben Flores Campos", "horario": [(d,10,11) for d in range(5)], "id":"VM2"}, {"profesor": "Ruben Flores Campos", "horario": [(d,11,12) for d in range(5)], "id":"VM3"}, {"profesor": "Ruben Flores Campos", "horario": [(d,12,13) for d in range(5)], "id":"VM4"}, {"profesor": "Juan Carlos Anaya Zavaleta", "horario": [(d,15,16) for d in range(5)], "id":"VM5"}, {"profesor": "Luis Uriel García Bustos", "horario": [(d,15,16) for d in range(5)], "id":"VM6"}, {"profesor": "Luis Uriel García Bustos", "horario": [(d,18,19) for d in range(5)], "id":"VM7"}, {"profesor": "Erendira Guadalupe Reyna Valdes", "horario": [(d,19,20) for d in range(5)], "id":"VM8"}],
     "🛠️ Administración del Mantenimiento": [{"profesor": "Juan Manuel Saucedo Alonso", "horario": [(d,8,9) for d in range(4)], "id":"ADM1"}, {"profesor": "Iván De Jesús Contreras Silva", "horario": [(d,10,11) for d in range(4)], "id":"ADM2"}, {"profesor": "Orquidea Esmeralda Velarde Sánchez", "horario": [(d,11,12) for d in range(4)], "id":"ADM3"}, {"profesor": "Orquidea Esmeralda Velarde Sánchez", "horario": [(d,12,13) for d in range(4)], "id":"ADM4"}, {"profesor": "Cesar Humberto Avendaño Malacara", "horario": [(d,19,20) for d in range(4)], "id":"ADM5"}, {"profesor": "Cesar Humberto Avendaño Malacara", "horario": [(d,20,21) for d in range(4)], "id":"ADM6"}],
+    # SEMESTRE 7
     "🏭 Manufactura Avanzada": [{"profesor": "Ana Gabriela Gomez Muñoz", "horario": [(d,9,10) for d in range(5)], "id":"MA1"}, {"profesor": "Ana Gabriela Gomez Muñoz", "horario": [(d,10,11) for d in range(5)], "id":"MA2"}, {"profesor": "Maria Del Socorro Marines Leal", "horario": [(d,12,13) for d in range(5)], "id":"MA3"}, {"profesor": "Maria Del Socorro Marines Leal", "horario": [(d,15,16) for d in range(5)], "id":"MA4"}, {"profesor": "Maria Del Socorro Marines Leal", "horario": [(d,16,17) for d in range(5)], "id":"MA5"}],
     "🖥️ Diseño Asistido por Computadora": [{"profesor": "José Santos Avendaño Méndez", "horario": [(d,9,10) for d in range(5)], "id":"DAC1"}, {"profesor": "Ana Laura Saucedo Jimenez", "horario": [(d,10,11) for d in range(5)], "id":"DAC2"}, {"profesor": "Juan Carlos Anaya Zavaleta", "horario": [(d,16,17) for d in range(5)], "id":"DAC3"}, {"profesor": "Luis Uriel García Bustos", "horario": [(d,19,20) for d in range(5)], "id":"DAC4"}, {"profesor": "Luis Uriel García Bustos", "horario": [(d,20,21) for d in range(5)], "id":"DAC5"}],
     "🔄 Dinámica de Sistemas": [{"profesor": "Karla Ivonne Fernandez Ramirez", "horario": [(d,11,12) for d in range(5)], "id":"DSYS1"}, {"profesor": "Gerardo Jarquín Hernández", "horario": [(d,13,14) for d in range(5)], "id":"DSYS2"}],
     "🌬️ Circuitos Hidráulicos y Neumáticos": [{"profesor": "Luis Rey Santos Saucedo", "horario": [(0,13,14),(1,13,14),(2,13,14),(3,13,14),(4,13,15)], "id":"CHN1"}, {"profesor": "Luis Rey Santos Saucedo", "horario": [(0,17,18),(1,17,18),(2,17,18),(3,17,18),(4,16,18)], "id":"CHN2"}, {"profesor": "Cecilia Mendoza Rivas", "horario": [(0,14,15),(1,14,15),(2,14,15),(3,14,15),(4,14,16)], "id":"CHN3"}, {"profesor": "Manuel Enrique Sandoval Lopez", "horario": [(0,18,19),(1,18,19),(2,18,19),(3,18,19),(4,17,19)], "id":"CHN4"}],
     "🔧 Mantenimiento": [{"profesor": "Jose Maria Resendiz Vielma", "horario": [(d,15,16) for d in range(5)], "id":"MANT1"}, {"profesor": "Jose Maria Resendiz Vielma", "horario": [(d,16,17) for d in range(5)], "id":"MANT2"}, {"profesor": "Luis Gerardo Sanchez Chavez", "horario": [(d,16,17) for d in range(5)], "id":"MANT3"}, {"profesor": "Luis Gerardo Sanchez Chavez", "horario": [(d,18,19) for d in range(5)], "id":"MANT4"}, {"profesor": "Luis Gerardo Sanchez Chavez", "horario": [(d,19,20) for d in range(5)], "id":"MANT5"}, {"profesor": "Francisco Jesus Ramos Garcia", "horario": [(d,17,18) for d in range(5)], "id":"MANT6"}, {"profesor": "Pedro Celedonio Lopez Lara", "horario": [(d,20,21) for d in range(5)], "id":"MANT7"}],
     "💾 Microcontroladores": [{"profesor": "Pedro Quintanilla Contreras", "horario": [(d,11,12) for d in range(5)], "id":"MICRO1"}, {"profesor": "Jozef Jesus Reyes Reyna", "horario": [(d,17,18) for d in range(5)], "id":"MICRO2"}],
+    # SEMESTRE 8
     "📈 Formulación y Evaluación de Proyectos": [{"profesor": "Jose Ignacio Gonzalez Delgado", "horario": [(0,7,8),(1,7,8),(2,7,8)], "id":"FEP1"}, {"profesor": "Jose Ignacio Gonzalez Delgado", "horario": [(0,10,11),(1,10,11),(2,10,11)], "id":"FEP2"}, {"profesor": "Jose Ignacio Gonzalez Delgado", "horario": [(0,19,20),(1,19,20),(2,19,20)], "id":"FEP3"}, {"profesor": "Nadia Patricia Ramirez Santillan", "horario": [(0,8,9),(1,8,9),(2,8,9)], "id":"FEP4"}, {"profesor": "Perla Magdalena Garcia Her", "horario": [(0,11,12),(1,11,12),(2,11,12)], "id":"FEP5"}, {"profesor": "Jackeline Elizabeth Fernandez Flores", "horario": [(0,18,19),(1,18,19),(2,18,19)], "id":"FEP6"}],
     "🎛️ Controladores Lógicos Programables": [{"profesor": "Ana Gabriela Gomez Muñoz", "horario": [(d,8,9) for d in range(5)], "id":"PLC1"}, {"profesor": "Ana Gabriela Gomez Muñoz", "horario": [(d,11,12) for d in range(5)], "id":"PLC2"}],
     "🎮 Control": [{"profesor": "Cesar Gerardo Martinez Sanchez", "horario": [(0,9,10),(1,9,10),(2,9,10),(3,9,10),(4,9,11)], "id":"CTRL1"}, {"profesor": "Jesus Guerrero Contreras", "horario": [(0,15,16),(1,15,16),(2,15,16),(3,15,16),(4,15,17)], "id":"CTRL2"}, {"profesor": "Ricardo Martínez Alvarado", "horario": [(0,17,18),(1,17,18),(2,17,18),(3,17,18),(4,17,19)], "id":"CTRL3"}, {"profesor": "Isaac Ruiz Ramos", "horario": [(0,19,20),(1,19,20),(2,19,20),(3,19,20),(4,19,21)], "id":"CTRL4"}],
     "🤖 Sistemas Avanzados de Manufactura": [{"profesor": "Ada Karina Velarde Sanchez", "horario": [(d,9,10) for d in range(5)], "id":"SAM1"}, {"profesor": "Ada Karina Velarde Sanchez", "horario": [(d,10,11) for d in range(5)], "id":"SAM2"}, {"profesor": "Maria Del Socorro Marines Leal", "horario": [(d,17,18) for d in range(5)], "id":"SAM3"}],
     "🌐 Redes Industriales": [{"profesor": "Francisco Flores Sanmiguel", "horario": [(d,15,16) for d in range(5)], "id":"RI1"}, {"profesor": "Francisco Flores Sanmiguel", "horario": [(d,16,17) for d in range(5)], "id":"RI2"}, {"profesor": "Francisco Flores Sanmiguel", "horario": [(d,17,18) for d in range(5)], "id":"RI3"}, {"profesor": "Neider Gonzalez Roblero", "horario": [(d,18,19) for d in range(5)], "id":"RI4"}, {"profesor": "Neider Gonzalez Roblero", "horario": [(d,19,20) for d in range(5)], "id":"RI5"}],
+    # SEMESTRE 9
     "🦾 Robótica": [{"profesor": "Gerardo Jarquín Hernández", "horario": [(d,7,8) for d in range(5)], "id":"ROB1"}, {"profesor": "Gerardo Jarquín Hernández", "horario": [(d,14,15) for d in range(5)], "id":"ROB2"}],
     "🏭 Tópicos Selectos de Automatización Industrial": [{"profesor": "Ana Gabriela Gomez Muñoz", "horario": [(0,12,13),(1,12,13),(2,12,13),(3,12,13),(4,12,14)], "id":"TS1"}, {"profesor": "Victor Manuel Retana Castillo", "horario": [(0,18,19),(1,18,19),(2,18,19),(3,18,19),(4,17,19)], "id":"TS2"}, {"profesor": "Victor Manuel Retana Castillo", "horario": [(0,20,21),(1,20,21),(2,20,21),(3,20,21),(4,20,22)], "id":"TS3"}, {"profesor": "Luis Rey Santos Saucedo", "horario": [(0,19,20),(1,19,20),(2,19,20),(3,19,20),(4,19,21)], "id":"TS4"}]
 }
@@ -270,10 +277,11 @@ def create_pro_pdf(horario, alumno_data, total_creditos):
     horario_ordenado = sorted(horario, key=get_start_hour)
     
     for clase in horario_ordenado:
-        materia_nome = clean_text(clase['materia'])
+        materia_clean = clase['materia']
+        materia_nome = clean_text(materia_clean)
         if len(materia_nome) > 38: materia_nome = materia_nome[:35] + "..."
         profesor_nome = clean_text(clase['profesor'].split('(')[0][:30])
-        creditos = str(CREDITOS.get(clase['materia'], 0))
+        creditos = str(CREDITOS.get(materia_clean, 0))
         pdf.cell(w_mat, h_table, materia_nome, 1); pdf.cell(w_prof, h_table, profesor_nome, 1); pdf.cell(w_cred, h_table, creditos, 1, 0, 'C')
         for d in range(5):
             txt_hora = ""
@@ -306,9 +314,11 @@ def create_timetable_html(horario):
         prof_name = f"{parts[0]} {parts[1]}" if len(parts) > 1 else parts[0]
         color = subject_colors[clase['materia']]
         for sesion in clase['horario']:
-            dia = sesion[0]; hora_ini = sesion[1]
-            if hora_ini in grid:
-                grid[hora_ini][dia] = {'text': f"<div class='clase-cell' style='background-color: {color};'><span>{mat_name}</span><span class='clase-prof'>{prof_name}</span></div>"}
+            dia = sesion[0]; h_inicio = sesion[1]; h_fin = sesion[2]
+            # BUCLE PARA LLENAR TODOS LOS BLOQUES DE LA CLASE
+            for h in range(h_inicio, h_fin):
+                if h in grid:
+                    grid[h][dia] = {'text': f"<div class='clase-cell' style='background-color: {color};'><span>{mat_name}</span><span class='clase-prof'>{prof_name}</span></div>"}
     html = """<table class="horario-grid"><thead><tr><th class='hora-col'>Hora</th><th>Lun</th><th>Mar</th><th>Mié</th><th>Jue</th><th>Vie</th></tr></thead><tbody>"""
     for h in range(min_h, max_h):
         html += f"<tr><td class='hora-col'>{h}-{h+1}</td>"
@@ -332,10 +342,9 @@ if os.path.exists("reticula.pdf"):
         st.sidebar.download_button(label="📄 Descargar Retícula", data=pdf_file, file_name="Reticula_Mecatronica.pdf", mime="application/pdf")
 
 # =============================================================================
-# VISTA 1: GENERADOR DE HORARIOS
+# VISTA 1: GENERADOR
 # =============================================================================
 if menu == "📅 Generador de Horarios":
-    # --- PASO 1: BIENVENIDA ---
     if st.session_state.step == 1:
         col_tec, col_centro, col_its = st.columns([1.5, 3, 1.5], gap="medium")
         with col_tec:
@@ -353,10 +362,11 @@ if menu == "📅 Generador de Horarios":
             <div class="welcome-box">
                 <div class="welcome-greeting">¡Bienvenido, futuro ingeniero! 🦅</div>
                 <div class="welcome-text-content">
-                    <p>Esta herramienta ha sido diseñada para la comunidad estudiantil de Ingeniería Mecatrónica 
+                    <p>Esta herramienta ha sido diseñada PARA la comunidad estudiantil de Ingeniería Mecatrónica 
                     del Instituto Tecnológico de Saltillo. Su objetivo principal es ayudarte a 
                     visualizar todas las posibles opciones de horario disponibles, facilitando la 
                     toma de decisiones para tu próxima carga académica.</p>
+                    <p>Encuentra la combinación perfecta de materias y maestros que se ajuste a tus necesidades sin complicaciones.</p>
                     <div class="developer-credit">Desarrollado por: Néstor Alexis Piña Rodríguez</div>
                 </div>
                 <div class="welcome-lema">"La Técnica por la Grandeza de México"</div>
@@ -372,12 +382,10 @@ if menu == "📅 Generador de Horarios":
             if st.button("Comenzar ➡️", use_container_width=True):
                 st.session_state.num_materias_deseadas = cant; st.session_state.step = 2; st.rerun()
 
-    # --- PASO 2: MATERIAS ---
     elif st.session_state.step == 2:
         st.title("📚 Selección de Materias")
         cols = st.columns(9); selected_in_this_step = []
         all_semesters = list(database["Ingeniería Mecatrónica"].items())
-
         for i in range(9):
             if i < len(all_semesters):
                 sem_name, materias = all_semesters[i]
@@ -387,28 +395,22 @@ if menu == "📅 Generador de Horarios":
                         cr = CREDITOS.get(m, 0)
                         if st.checkbox(f"{m} ({cr} Cr)", value=(m in st.session_state.materias_seleccionadas), key=f"chk_{m}"):
                             selected_in_this_step.append(m)
-
         total_creditos = sum([CREDITOS.get(m, 0) for m in selected_in_this_step])
         num_selected = len(selected_in_this_step)
-        
         st.write("---")
         c_info = st.container()
         msg_cred = f"✅ Créditos: {total_creditos} / 36" if total_creditos <= 36 else f"⛔ Exceso: {total_creditos} / 36"
         style_cred = "credit-ok" if total_creditos <= 36 else "credit-error"
         msg_cant = f"Materias: {num_selected} / {st.session_state.num_materias_deseadas}"
         if num_selected != st.session_state.num_materias_deseadas: style_cred = "credit-error"; msg_cant = f"⚠️ Debes elegir exactamente {st.session_state.num_materias_deseadas} materias."
-
         c_info.markdown(f"<div class='credit-box {style_cred}'>{msg_cred} | {msg_cant}</div>", unsafe_allow_html=True)
         if total_creditos > 36: st.progress(1.0)
         else: st.progress(total_creditos / 36)
-
         col1, col2 = st.columns([1,1])
         if col1.button("⬅️ Atrás"): st.session_state.step = 1; st.rerun()
-        
         bloqueo = False
         if total_creditos > 36: bloqueo = True
         if num_selected != st.session_state.num_materias_deseadas: bloqueo = True
-        
         conflicto_seriacion = []
         for materia in selected_in_this_step:
             if materia in SERIACION:
@@ -418,7 +420,6 @@ if menu == "📅 Generador de Horarios":
                             conflicto_seriacion.append(f"❌ {materia} requiere haber aprobado {sel}. No puedes llevar ambas."); bloqueo = True
         if conflicto_seriacion:
             for conf in conflicto_seriacion: st.error(conf)
-
         if bloqueo:
             if col2.button("🔄 Corregir Selección (Borrar Todo)"):
                 st.session_state.materias_seleccionadas = []; st.rerun()
@@ -426,7 +427,6 @@ if menu == "📅 Generador de Horarios":
             if col2.button("Siguiente ➡️", type="primary"):
                 st.session_state.materias_seleccionadas = selected_in_this_step; st.session_state.step = 3; st.rerun()
 
-    # --- PASO 3: DISPONIBILIDAD ---
     elif st.session_state.step == 3:
         st.title("⏰ Disponibilidad")
         col_rang, col_free = st.columns(2)
@@ -443,11 +443,9 @@ if menu == "📅 Generador de Horarios":
         if col1.button("⬅️ Atrás"): st.session_state.step = 2; st.rerun()
         if col2.button("Siguiente ➡️", type="primary"): st.session_state.step = 4; st.rerun()
 
-    # --- PASO 4: PROFESORES ---
     elif st.session_state.step == 4:
         st.title("👨‍🏫 Filtrado de Profesores")
         st.info("✅ Preferencia Alta | ➖ Normal | ❌ Descartar")
-        
         for mat in st.session_state.materias_seleccionadas:
             if mat in oferta_academica:
                 with st.container(border=True):
@@ -464,7 +462,6 @@ if menu == "📅 Generador de Horarios":
                             if section_fits: fits = True; break
                         if fits: profes_validos.append(p_name)
                     if not profes_validos: st.warning(f"⚠️ Sin profes en tu rango para {mat}.")
-                    
                     cols = st.columns(3)
                     for i, p in enumerate(profes_validos):
                         key = f"{mat}_{p}"; 
@@ -475,18 +472,17 @@ if menu == "📅 Generador de Horarios":
                             elif val == "❌": st.session_state.prefs[key] = 0
                             else: st.session_state.prefs[key] = 50
                             
-                            with st.expander("🕒 Horas"):
+                            with st.expander("🕒 Horas Disponibles"):
                                 teacher_sections = [s for s in oferta_academica[mat] if s['profesor'] == p]
                                 start_times = sorted(list(set([s['horario'][0][1] for s in teacher_sections])))
                                 for t in start_times:
                                     t_key = f"time_{mat}_{p}_{t}"
                                     st.checkbox(f"{t}:00 - {t+1}:00", value=True, key=t_key)
 
-                            with st.expander("⭐ Opiniones"):
+                            with st.expander("⭐ Ver Opiniones"):
                                 if p not in st.session_state.opiniones: st.session_state.opiniones[p] = {"suma": 0, "votos": 0, "comentarios": []}
                                 data = st.session_state.opiniones[p]
-                                if data["votos"] > 0: prom = int(data["suma"]/data["votos"])
-                                else: prom = 0
+                                prom = int(data["suma"]/data["votos"]) if data["votos"]>0 else 0
                                 color = "#e74c3c" if prom<60 else "#f1c40f" if prom<90 else "#2ecc71"
                                 st.markdown(f"<div style='text-align:center; font-weight:bold; color:{color}; font-size:1.2em;'>{prom}/100</div>", unsafe_allow_html=True)
                                 if data["comentarios"]:
@@ -500,27 +496,21 @@ if menu == "📅 Generador de Horarios":
         if col1.button("⬅️ Atrás"): st.session_state.step = 3; st.rerun()
         if col2.button("🚀 GENERAR HORARIOS", type="primary"): st.session_state.step = 5; st.session_state.resultados = None; st.rerun()
 
-    # --- PASO 5: RESULTADOS ---
     elif st.session_state.step == 5:
         st.title("✅ Resultados Finales")
         col_back, _ = st.columns([1, 4])
         if col_back.button("⬅️ Ajustar Filtros"): st.session_state.step = 4; st.rerun()
         with st.expander("📝 Datos del Alumno (Para el PDF)", expanded=True):
             c1, c2, c3, c4 = st.columns(4)
-            # VALIDACIÓN DE INPUTS EN TIEMPO REAL (Sanitización)
-            
-            # Nombre: Solo letras y espacios
+            # Validación: Nombre solo letras
             raw_name = c1.text_input("Nombre", st.session_state.alumno_nombre)
-            clean_name = re.sub(r'[^a-zA-Z\s]', '', raw_name) # Regex para solo letras
-            if raw_name != clean_name:
-                st.warning("Solo se permiten letras en el nombre.")
+            clean_name = re.sub(r'[^a-zA-Z\s]', '', raw_name)
+            if raw_name != clean_name: st.warning("Solo se permiten letras en el nombre.")
             st.session_state.alumno_nombre = clean_name
-            
-            # No Control: Solo números
+            # Validación: No Control solo números
             raw_nc = c2.text_input("No. Control", st.session_state.alumno_nc)
-            clean_nc = re.sub(r'\D', '', raw_nc) # Regex para solo digitos
-            if raw_nc != clean_nc:
-                st.warning("Solo se permiten números en el No. Control.")
+            clean_nc = re.sub(r'\D', '', raw_nc)
+            if raw_nc != clean_nc: st.warning("Solo se permiten números en el No. Control.")
             st.session_state.alumno_nc = clean_nc
             
             st.session_state.alumno_sem = c3.selectbox("Semestre", range(1, 15), index=0)
@@ -573,10 +563,7 @@ elif menu == "⭐ Evaluación Docente":
     with c2:
         if prof_selected in st.session_state.opiniones:
             data = st.session_state.opiniones[prof_selected]
-            if data["votos"] > 0:
-                promedio = int(data["suma"] / data["votos"])
-            else:
-                promedio = 0
+            promedio = int(data["suma"] / data["votos"]) if data["votos"] > 0 else 0
             color_chart = "#e74c3c" if promedio < 60 else "#f1c40f" if promedio < 90 else "#2ecc71"
             st.markdown(f"""
             <div style="display: flex; justify-content: center; margin-bottom: 10px;">
