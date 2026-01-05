@@ -37,7 +37,7 @@ st.markdown("""
     
     [data-testid="stCheckbox"] label {
         border: 1px solid rgba(128, 128, 128, 0.4);
-        background-color: transparent; /* Fondo transparente para respetar modo oscuro */
+        background-color: transparent; /* Fondo transparente */
         padding: 5px;
         border-radius: 6px;
         width: 100%;
@@ -146,7 +146,7 @@ st.markdown("""
     
     /* CHECKBOX DENTRO DE EXPANDER (Para Horas) - RESTAURAR PALOMITA AQUI */
     [data-testid="stExpander"] [data-testid="stCheckbox"] label span[role="checkbox"] {
-        display: block !important; /* Restaurar palomita en submenús */
+        display: block !important; 
     }
     [data-testid="stExpander"] [data-testid="stCheckbox"] label {
         min-height: 30px !important;
@@ -191,7 +191,7 @@ if 'alumno_sem' not in st.session_state: st.session_state.alumno_sem = 1
 if 'alumno_per' not in st.session_state: st.session_state.alumno_per = "ENE-JUN 2026"
 
 # -----------------------------------------------------------------------------
-# 3. DATOS SINCRONIZADOS (TODOS CON EMOJIS EXACTOS)
+# 3. DATOS SINCRONIZADOS
 # -----------------------------------------------------------------------------
 CREDITOS = {
     "🧪 Química": 4, "📐 Cálculo Diferencial": 5, "⚖️ Taller de Ética": 4, "💻 Dibujo Asistido por Computadora": 4, "📏 Metrología y Normalización": 4, "🔎 Fundamentos de Investigación": 4,
@@ -229,7 +229,6 @@ database = {
     }
 }
 
-# --- OFERTA ACADÉMICA (COMPLETA, KEYS SIN EMOJIS) ---
 oferta_academica = {
     "Química": [{"profesor": "Norma Hernández Flores", "horario": [(d,7,8) for d in range(4)], "id":"Q1"}, {"profesor": "Norma Hernández Flores", "horario": [(d,8,9) for d in range(4)], "id":"Q2"}, {"profesor": "Norma Hernández Flores", "horario": [(d,11,12) for d in range(4)], "id":"Q3"}, {"profesor": "Norma Hernández Flores", "horario": [(d,12,13) for d in range(4)], "id":"Q4"}, {"profesor": "Hilda Araceli Torres Plata", "horario": [(d,8,9) for d in range(4)], "id":"Q5"}, {"profesor": "Hilda Araceli Torres Plata", "horario": [(d,9,10) for d in range(4)], "id":"Q6"}, {"profesor": "Alma Leticia Cázares Arreguin", "horario": [(d,13,14) for d in range(4)], "id":"Q7"}, {"profesor": "Alma Leticia Cázares Arreguin", "horario": [(d,14,15) for d in range(4)], "id":"Q8"}, {"profesor": "Alma Leticia Cázares Arreguin", "horario": [(d,16,17) for d in range(4)], "id":"Q9"}, {"profesor": "José Raymundo Garza Aldaco", "horario": [(d,15,16) for d in range(4)], "id":"Q10"}, {"profesor": "Alejandra Torres Ordaz", "horario": [(d,15,16) for d in range(4)], "id":"Q11"}, {"profesor": "Alejandra Torres Ordaz", "horario": [(d,16,17) for d in range(4)], "id":"Q12"}, {"profesor": "Alejandra Torres Ordaz", "horario": [(d,17,18) for d in range(4)], "id":"Q13"}, {"profesor": "Victor Martinez Rivera", "horario": [(d,15,16) for d in range(4)], "id":"Q14"}, {"profesor": "Victor Martinez Rivera", "horario": [(d,16,17) for d in range(4)], "id":"Q15"}, {"profesor": "Victor Martinez Rivera", "horario": [(d,17,18) for d in range(4)], "id":"Q16"}, {"profesor": "Silvia Susana Aguirre Sanchez", "horario": [(d,17,18) for d in range(4)], "id":"Q17"}, {"profesor": "Silvia Susana Aguirre Sanchez", "horario": [(d,18,19) for d in range(4)], "id":"Q18"}, {"profesor": "Karina Azucena Ayala Torres", "horario": [(d,17,18) for d in range(4)], "id":"Q19"}, {"profesor": "Karina Azucena Ayala Torres", "horario": [(d,18,19) for d in range(4)], "id":"Q20"}],
     "Cálculo Diferencial": [{"profesor": "Allen Epifanio Lopez", "horario": [(d,7,8) for d in range(5)], "id":"CD1"}, {"profesor": "Kevin Alberto Cordova Ventura", "horario": [(d,8,9) for d in range(5)], "id":"CD2"}, {"profesor": "Kevin Alberto Cordova Ventura", "horario": [(d,12,13) for d in range(5)], "id":"CD3"}, {"profesor": "Erwin Rommel Cerda Leon", "horario": [(d,8,9) for d in range(5)], "id":"CD4"}, {"profesor": "Brenda Zavala Aguillon", "horario": [(d,9,10) for d in range(5)], "id":"CD5"}, {"profesor": "Brenda Zavala Aguillon", "horario": [(d,12,13) for d in range(5)], "id":"CD6"}, {"profesor": "Alicia Guadalupe Del Bosque Martínez", "horario": [(d,10,11) for d in range(5)], "id":"CD7"}, {"profesor": "Alicia Guadalupe Del Bosque Martínez", "horario": [(d,11,12) for d in range(5)], "id":"CD8"}, {"profesor": "Eliana Sarahi Sanchez Gonzalez", "horario": [(d,11,12) for d in range(5)], "id":"CD9"}, {"profesor": "Ana Victoria Ferniza Sandoval", "horario": [(d,11,12) for d in range(5)], "id":"CD10"}, {"profesor": "Ana Victoria Ferniza Sandoval", "horario": [(d,13,14) for d in range(5)], "id":"CD11"}, {"profesor": "Edna Marina Gonzalez Martinez", "horario": [(d,11,12) for d in range(5)], "id":"CD12"}, {"profesor": "Rodrigo Juarez Martinez", "horario": [(d,15,16) for d in range(5)], "id":"CD13"}, {"profesor": "Jose Jesus Israel Ruiz Benitez", "horario": [(d,16,17) for d in range(5)], "id":"CD14"}, {"profesor": "Javier Guadalupe Cuellar Villarreal", "horario": [(d,16,17) for d in range(5)], "id":"CD15"}, {"profesor": "Irma Karina Olmedo Landeros", "horario": [(d,17,18) for d in range(5)], "id":"CD16"}],
@@ -310,68 +309,36 @@ def strip_emoji(text):
     return text
 
 def generar_combinaciones(materias, rango, prefs, horas_libres):
-    # Convertir horas libres a lista de inicios
     bloqueos = []
-    for hl in horas_libres:
-        inicio = int(hl.split(":")[0])
-        bloqueos.append(inicio)
-
+    for hl in horas_libres: inicio = int(hl.split(":")[0]); bloqueos.append(inicio)
     pool = []
     for mat_display in materias:
-        # Limpiar nombre para buscar en oferta_academica
         mat_key = strip_emoji(mat_display)
-        
         if mat_key not in oferta_academica: 
-            # Fallback por si el nombre no tiene emoji o no coincide
-            if mat_display in oferta_academica:
-                mat_key = mat_display
-            else:
-                continue
-
+            if mat_display in oferta_academica: mat_key = mat_display
+            else: continue
         opciones = []
         for sec in oferta_academica[mat_key]:
             prof_name = sec['profesor']
-            key = f"{mat_display}_{prof_name}" # Key de preferencia
+            key = f"{mat_display}_{prof_name}"
             puntos = prefs.get(key, 50)
-            
-            # 1. Filtro: Profesor Descartado (❌ = 0 puntos)
             if puntos == 0: continue 
-            
             dentro = True
             for h in sec['horario']:
-                # 2. Filtro: Rango de Hora General
-                if h[1] < rango[0] or h[2] > rango[1]: 
-                    dentro = False; break
-                
-                # 3. Filtro: Horas Libres Especificas (Bloques)
+                if h[1] < rango[0] or h[2] > rango[1]: dentro = False; break
                 for b in bloqueos:
-                    if max(h[1], b) < min(h[2], b+1):
-                        dentro = False; break
+                    if max(h[1], b) < min(h[2], b+1): dentro = False; break
                 
-                # 4. NUEVO FILTRO: HORAS ESPECIFICAS DESMARCADAS POR EL USUARIO
-                # Clave unica de la hora: time_{materia}_{prof}_{hora}
-                # La hora es h[1] (inicio)
+                # FILTRO DE HORAS ESPECIFICAS
                 time_key = f"time_{mat_display}_{prof_name}_{h[1]}"
-                
-                # Revisar en session_state si esa hora fue desmarcada (False)
-                # Si no existe la key (porque no se ha interactuado), asumimos True (marcada)
-                if not st.session_state.get(time_key, True):
-                    dentro = False; break
-                    
+                if not st.session_state.get(time_key, True): dentro = False; break
+
                 if not dentro: break
-            
-            if dentro:
-                s = sec.copy(); s['materia'] = mat_display; s['score'] = puntos # Guardamos nombre display
-                opciones.append(s)
-        
-        if not opciones:
-            return [], f"❌ **{mat_display}**: No tiene horarios disponibles con tus filtros (Hora, Rango, Profe u Horas Específicas)."
+            if dentro: s = sec.copy(); s['materia'] = mat_display; s['score'] = puntos; opciones.append(s)
+        if not opciones: return [], f"❌ **{mat_display}**: No tiene horarios disponibles con tus filtros."
         pool.append(opciones)
-    
-    # Generar combinaciones
     combos = list(itertools.product(*pool))
     validos = []
-    
     for c in combos:
         ok = True; score = 0
         for i in range(len(c)):
@@ -381,40 +348,29 @@ def generar_combinaciones(materias, rango, prefs, horas_libres):
             if not ok: break
         if ok: validos.append((score, c))
     
-    # ALGORITMO DE ORDENAMIENTO INTELIGENTE
     def sort_key(item):
         puntos, horario = item
         horas = []
         for clase in horario:
             for s in clase['horario']: horas.append(s[1])
-        
         if not horas: return (puntos, 0)
         span = max(horas) - min(horas)
         return (puntos, -span)
-
     validos.sort(key=sort_key, reverse=True)
     return validos, "OK"
 
 class PDF(FPDF):
     def header(self):
-        # LOGOS EN PDF
         if os.path.exists("logo_tec.png"): self.image('logo_tec.png', 10, 5, 55)
         if os.path.exists("logo_its.png"): self.image('logo_its.png', 250, 5, 25)
-        if os.path.exists("horarioits.png"): self.image('horarioits.png', 120, 5, 60) # Logo nuestro centrado
-        
-        # AJUSTE PARA QUE NO CHOQUE EL TEXTO CON EL LOGO
-        self.set_y(65) # Bajamos el cursor MAS
-        self.set_font('Arial', 'B', 16)
-        self.set_text_color(128, 0, 0)
+        if os.path.exists("horarioits.png"): self.image('horarioits.png', 120, 5, 60)
+        self.set_y(65)
+        self.set_font('Arial', 'B', 16); self.set_text_color(128, 0, 0)
         self.cell(0, 10, 'TECNOLÓGICO NACIONAL DE MÉXICO', 0, 1, 'C')
-        self.set_font('Arial', 'B', 12)
-        self.set_text_color(0, 0, 0)
-        self.cell(0, 8, 'INSTITUTO TECNOLÓGICO DE SALTILLO', 0, 1, 'C')
-        self.ln(5)
-
+        self.set_font('Arial', 'B', 12); self.set_text_color(0, 0, 0)
+        self.cell(0, 8, 'INSTITUTO TECNOLÓGICO DE SALTILLO', 0, 1, 'C'); self.ln(5)
     def footer(self):
-        self.set_y(-15)
-        self.set_font('Arial', 'I', 8)
+        self.set_y(-15); self.set_font('Arial', 'I', 8)
         self.cell(0, 10, clean_text('Desarrollado por: Néstor Alexis Piña Rodríguez | Página ') + str(self.page_no()), 0, 0, 'C')
 
 def create_pro_pdf(horario, alumno_data, total_creditos):
@@ -427,15 +383,12 @@ def create_pro_pdf(horario, alumno_data, total_creditos):
     pdf.cell(30, h_row, "No. Control:", 1, 0, 'L', 1); pdf.cell(40, h_row, clean_text(alumno_data.get("nc", "")), 1, 0, 'L')
     pdf.cell(30, h_row, "Nombre:", 1, 0, 'L', 1); pdf.cell(100, h_row, clean_text(alumno_data.get("nombre", "").upper()), 1, 0, 'L')
     pdf.cell(30, h_row, "Semestre:", 1, 0, 'L', 1); pdf.cell(30, h_row, str(alumno_data.get("semestre", "")), 1, 1, 'L')
-    
     especialidad = "SIN ESPECIALIDAD"
     try:
         if int(alumno_data.get("semestre", 1)) >= 6: especialidad = "AUTOMATIZACIÓN DE PROCESOS DE MANUFACTURA"
     except: pass
-    
-    pdf.cell(30, h_row, "Carrera:", 1, 0, 'L', 1); pdf.cell(100, h_row, clean_text("INGENIERÍA MECATRÓNICA"), 1, 0, 'L')
+    pdf.cell(30, h_row, "Carrera:", 1, 0, 'L', 1); pdf.cell(100, h_row, "INGENIERÍA MECATRÓNICA", 1, 0, 'L')
     pdf.cell(30, h_row, "Especialidad:", 1, 0, 'L', 1); pdf.cell(100, h_row, clean_text(especialidad), 1, 1, 'L'); pdf.ln(8)
-    
     pdf.set_font("Arial", 'B', 9); pdf.set_fill_color(128, 0, 0); pdf.set_text_color(255, 255, 255)
     w_mat, w_prof, w_dia, w_cred = 70, 60, 22, 15; h_table = 8
     pdf.cell(w_mat, h_table, "Materia", 1, 0, 'C', 1); pdf.cell(w_prof, h_table, "Profesor", 1, 0, 'C', 1); pdf.cell(w_cred, h_table, "Créd.", 1, 0, 'C', 1)
@@ -448,14 +401,11 @@ def create_pro_pdf(horario, alumno_data, total_creditos):
     horario_ordenado = sorted(horario, key=get_start_hour)
     
     for clase in horario_ordenado:
-        # Limpiar emojis para el PDF
         materia_clean = strip_emoji(clase['materia'])
         materia_nome = clean_text(materia_clean)
         if len(materia_nome) > 38: materia_nome = materia_nome[:35] + "..."
         profesor_nome = clean_text(clase['profesor'].split('(')[0][:30])
-        # Usar key limpia para creditos
         creditos = str(CREDITOS.get(materia_clean, 0))
-        
         pdf.cell(w_mat, h_table, materia_nome, 1); pdf.cell(w_prof, h_table, profesor_nome, 1); pdf.cell(w_cred, h_table, creditos, 1, 0, 'C')
         for d in range(5):
             txt_hora = ""
@@ -548,12 +498,12 @@ if menu == "📅 Generador de Horarios":
             st.write(""); st.write("")
             if os.path.exists("burro.png"): st.image("burro.png", width=120)
 
-    st.write(""); st.write("")
-    col_btn, _ = st.columns([1, 2])
-    with col_btn:
-        cant = st.number_input("Materias a cursar:", min_value=1, max_value=9, value=6, label_visibility="collapsed")
-        if st.button("Comenzar ➡️", use_container_width=True):
-            st.session_state.num_materias_deseadas = cant; st.session_state.step = 2; st.rerun()
+        st.write(""); st.write("")
+        col_btn, _ = st.columns([1, 2])
+        with col_btn:
+            cant = st.number_input("Materias a cursar:", min_value=1, max_value=9, value=6, label_visibility="collapsed")
+            if st.button("Comenzar ➡️", use_container_width=True):
+                st.session_state.num_materias_deseadas = cant; st.session_state.step = 2; st.rerun()
 
     # --- PASO 2: MATERIAS ---
     elif st.session_state.step == 2:
@@ -677,14 +627,11 @@ if menu == "📅 Generador de Horarios":
                             elif val == "❌": st.session_state.prefs[key] = 0
                             else: st.session_state.prefs[key] = 50
                             
-                            # EXPANDER DE HORAS (NUEVO)
+                            # EXPANDER DE HORAS
                             with st.expander("🕒 Horas Disponibles"):
                                 teacher_sections = [s for s in oferta_academica[m_clean] if s['profesor'] == p]
-                                # Obtener horas de inicio únicas
                                 start_times = sorted(list(set([s['horario'][0][1] for s in teacher_sections])))
                                 for t in start_times:
-                                    # Checkbox marcada por defecto
-                                    # Si se desmarca, se excluye
                                     t_key = f"time_{mat}_{p}_{t}"
                                     st.checkbox(f"{t}:00 - {t+1}:00", value=True, key=t_key)
 
