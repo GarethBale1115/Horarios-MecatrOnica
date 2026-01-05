@@ -5,48 +5,93 @@ from fpdf import FPDF
 import os
 
 # -----------------------------------------------------------------------------
-# CONFIGURACIÓN VISUAL (TEMA ITS - GUINDA)
+# CONFIGURACIÓN VISUAL (TEMA INSTITUCIONAL TECNM)
 # -----------------------------------------------------------------------------
 st.set_page_config(page_title="Carga Académica ITS", page_icon="🐴", layout="wide")
 
 st.markdown("""
 <style>
-    :root { --guinda: #800000; }
-    h1, h2, h3, .stMarkdown h1, .stMarkdown h2, .stMarkdown h3 { color: #800000 !important; }
-    .stButton>button { color: white; background-color: #800000; border-color: #800000; }
-    .stButton>button:hover { background-color: #5c0000; border-color: #5c0000; }
-    .stExpander .streamlit-expanderHeader { background-color: #ffe6e6; color: #800000; font-weight: bold; }
+    /* VARIABLES DE COLOR */
+    :root {
+        --guinda: #1B396A; /* Ajuste visual web */
+        --guinda-tec: #800000; /* Guinda Oficial */
+        --dorado: #D4AF37;
+    }
     
-    /* Alertas de Créditos */
+    /* FONDO Y TEXTOS */
+    .stApp {
+        background-color: #FFFFFF;
+    }
+    
+    h1, h2, h3 {
+        color: #800000 !important;
+        font-family: 'Arial', sans-serif;
+    }
+    
+    /* BOTONES */
+    .stButton>button {
+        color: white;
+        background-color: #800000;
+        border: 2px solid #800000;
+        border-radius: 5px;
+        font-weight: bold;
+        transition: all 0.3s ease;
+    }
+    .stButton>button:hover {
+        background-color: white;
+        color: #800000;
+        border-color: #800000;
+        transform: scale(1.02);
+    }
+
+    /* CONTENEDOR DE BIENVENIDA (HERO) */
+    .welcome-container {
+        background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+        border-left: 10px solid #800000;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        margin-bottom: 20px;
+    }
+    .welcome-title {
+        color: #800000;
+        font-size: 2.5em;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+    .welcome-subtitle {
+        color: #333;
+        font-size: 1.2em;
+        margin-bottom: 20px;
+    }
+    .lema {
+        color: #666;
+        font-style: italic;
+        font-weight: bold;
+        margin-top: 20px;
+        text-align: right;
+        border-top: 1px solid #ddd;
+        padding-top: 10px;
+    }
+
+    /* CREDIT BOXES */
     .credit-box { padding: 15px; border-radius: 8px; margin-bottom: 20px; font-weight: bold; text-align: center; border: 1px solid; }
     .credit-ok { background-color: #d1fae5; color: #065f46; border-color: #34d399; }
     .credit-error { background-color: #fee2e2; color: #991b1b; border-color: #f87171; }
 
-    /* Tabla Visual Mejorada */
+    /* TABLA VISUAL */
     .horario-grid { width: 100%; border-collapse: collapse; text-align: center; font-family: 'Arial', sans-serif; font-size: 0.8em; background-color: white; }
     .horario-grid th { background-color: #800000; color: white; padding: 6px; border: 1px solid #ddd; }
     .horario-grid td { border: 1px solid #eee; height: 45px; vertical-align: middle; padding: 2px; }
     .hora-col { background-color: #f9fafb; font-weight: bold; color: #333; width: 70px; font-size: 0.9em; }
     
     .clase-cell { 
-        border-radius: 4px; 
-        padding: 4px; 
-        color: #111; 
-        font-weight: 700; 
-        font-size: 0.95em; 
-        height: 100%; 
-        display: flex; 
-        flex-direction: column; 
-        justify-content: center; 
-        line-height: 1.2; 
-        box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        border-radius: 4px; padding: 4px; color: #111; 
+        font-weight: 700; font-size: 0.95em; height: 100%; 
+        display: flex; flex-direction: column; justify-content: center; 
+        line-height: 1.2; box-shadow: 0 1px 2px rgba(0,0,0,0.1);
     }
-    .clase-prof { 
-        font-weight: 500; 
-        font-size: 0.8em; 
-        color: #333; 
-        margin-top: 2px;
-    }
+    .clase-prof { font-weight: 500; font-size: 0.8em; color: #333; margin-top: 2px; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -100,7 +145,7 @@ database = {
 }
 
 # -----------------------------------------------------------------------------
-# OFERTA ACADÉMICA
+# OFERTA ACADÉMICA (COMPLETA)
 # -----------------------------------------------------------------------------
 oferta_academica = {
     # SEMESTRE 1
@@ -168,28 +213,22 @@ oferta_academica = {
 # -----------------------------------------------------------------------------
 class PDF(FPDF):
     def header(self):
-        # LOGO TECNM GIGANTE (Ancho 55mm)
-        if os.path.exists("logo_tec.png"): 
-            self.image('logo_tec.png', 10, 5, 55)
-        # LOGO ITS (Mismo tamaño, ajustado a la derecha)
-        if os.path.exists("logo_its.png"): 
-            self.image('logo_its.png', 250, 5, 25)
-            
+        if os.path.exists("logo_tec.png"): self.image('logo_tec.png', 10, 8, 33)
+        if os.path.exists("logo_its.png"): self.image('logo_its.png', 240, 8, 33)
         self.set_font('Arial', 'B', 16)
         self.set_text_color(128, 0, 0)
-        self.set_y(12) # Ajuste vertical
         self.cell(0, 10, 'TECNOLÓGICO NACIONAL DE MÉXICO', 0, 1, 'C')
         self.set_font('Arial', 'B', 12)
         self.set_text_color(0, 0, 0)
-        self.cell(0, 8, 'INSTITUTO TECNOLÓGICO DE SALTILLO', 0, 1, 'C')
-        self.ln(5)
-
+        self.cell(0, 10, 'INSTITUTO TECNOLÓGICO DE SALTILLO', 0, 1, 'C')
+        self.ln(15)
     def footer(self):
         self.set_y(-15)
         self.set_font('Arial', 'I', 8)
         self.cell(0, 10, f'Página {self.page_no()}', 0, 0, 'C')
 
 def clean_text(text):
+    # Eliminar emojis y caracteres especiales para el PDF
     return text.encode('latin-1', 'ignore').decode('latin-1')
 
 def create_pro_pdf(horario, alumno_data, total_creditos):
@@ -200,22 +239,19 @@ def create_pro_pdf(horario, alumno_data, total_creditos):
     pdf.set_font("Arial", 'B', 14)
     pdf.set_text_color(128, 0, 0)
     pdf.cell(0, 10, "Carga Académica", 0, 1, 'C')
-    pdf.ln(2)
+    pdf.ln(5)
     
-    pdf.set_font("Arial", size=9) # Letra un poco más chica
+    pdf.set_font("Arial", size=10)
     pdf.set_text_color(0, 0, 0)
     pdf.set_fill_color(245, 245, 245)
     
-    # Altura reducida (Compacto)
-    h_row = 6 
-    
     # Fila 1
-    pdf.cell(30, h_row, "No. Control:", 1, 0, 'L', 1)
-    pdf.cell(40, h_row, clean_text(alumno_data.get("nc", "")), 1, 0, 'L')
-    pdf.cell(30, h_row, "Nombre:", 1, 0, 'L', 1)
-    pdf.cell(100, h_row, clean_text(alumno_data.get("nombre", "").upper()), 1, 0, 'L')
-    pdf.cell(30, h_row, "Semestre:", 1, 0, 'L', 1)
-    pdf.cell(30, h_row, str(alumno_data.get("semestre", "")), 1, 1, 'L')
+    pdf.cell(30, 8, "No. Control:", 1, 0, 'L', 1)
+    pdf.cell(40, 8, clean_text(alumno_data.get("nc", "")), 1, 0, 'L')
+    pdf.cell(30, 8, "Nombre:", 1, 0, 'L', 1)
+    pdf.cell(100, 8, clean_text(alumno_data.get("nombre", "").upper()), 1, 0, 'L')
+    pdf.cell(30, 8, "Semestre:", 1, 0, 'L', 1)
+    pdf.cell(30, 8, str(alumno_data.get("semestre", "")), 1, 1, 'L')
     
     # Fila 2
     especialidad = "SIN ESPECIALIDAD"
@@ -224,25 +260,23 @@ def create_pro_pdf(horario, alumno_data, total_creditos):
             especialidad = "AUTOMATIZACIÓN DE PROCESOS DE MANUFACTURA"
     except: pass
 
-    pdf.cell(30, h_row, "Carrera:", 1, 0, 'L', 1)
-    pdf.cell(100, h_row, "INGENIERÍA MECATRÓNICA", 1, 0, 'L')
-    pdf.cell(30, h_row, "Especialidad:", 1, 0, 'L', 1)
-    pdf.cell(100, h_row, clean_text(especialidad), 1, 1, 'L')
-    pdf.ln(8) # Espacio reducido
+    pdf.cell(30, 8, "Carrera:", 1, 0, 'L', 1)
+    pdf.cell(100, 8, "INGENIERÍA MECATRÓNICA", 1, 0, 'L')
+    pdf.cell(30, 8, "Especialidad:", 1, 0, 'L', 1)
+    pdf.cell(100, 8, clean_text(especialidad), 1, 1, 'L')
+    pdf.ln(10)
 
-    # Tabla Header
+    # Tabla
     pdf.set_font("Arial", 'B', 9)
     pdf.set_fill_color(128, 0, 0)
     pdf.set_text_color(255, 255, 255)
     
     w_mat, w_prof, w_dia, w_cred = 70, 60, 22, 15
-    h_table = 8 # Altura reducida de tabla
-    
-    pdf.cell(w_mat, h_table, "Materia", 1, 0, 'C', 1)
-    pdf.cell(w_prof, h_table, "Profesor", 1, 0, 'C', 1)
-    pdf.cell(w_cred, h_table, "Créd.", 1, 0, 'C', 1)
+    pdf.cell(w_mat, 10, "Materia", 1, 0, 'C', 1)
+    pdf.cell(w_prof, 10, "Profesor", 1, 0, 'C', 1)
+    pdf.cell(w_cred, 10, "Créd.", 1, 0, 'C', 1)
     for dia in ["Lun", "Mar", "Mié", "Jue", "Vie"]:
-        pdf.cell(w_dia, h_table, clean_text(dia), 1, 0, 'C', 1)
+        pdf.cell(w_dia, 10, clean_text(dia), 1, 0, 'C', 1)
     pdf.ln()
     
     pdf.set_font("Arial", size=8)
@@ -254,26 +288,27 @@ def create_pro_pdf(horario, alumno_data, total_creditos):
     horario_ordenado = sorted(horario, key=get_start_hour)
     
     for clase in horario_ordenado:
+        h = 10
         materia_nome = clean_text(clase['materia'])
         if len(materia_nome) > 38: materia_nome = materia_nome[:35] + "..."
         profesor_nome = clean_text(clase['profesor'].split('(')[0][:30])
         creditos = str(CREDITOS.get(clase['materia'], 0))
         
-        pdf.cell(w_mat, h_table, materia_nome, 1)
-        pdf.cell(w_prof, h_table, profesor_nome, 1)
-        pdf.cell(w_cred, h_table, creditos, 1, 0, 'C')
+        pdf.cell(w_mat, h, materia_nome, 1)
+        pdf.cell(w_prof, h, profesor_nome, 1)
+        pdf.cell(w_cred, h, creditos, 1, 0, 'C')
         
         for d in range(5):
             txt_hora = ""
             for sesion in clase['horario']:
                 if sesion[0] == d: txt_hora = f"{sesion[1]}:00-{sesion[2]}:00"
-            pdf.cell(w_dia, h_table, txt_hora, 1, 0, 'C')
+            pdf.cell(w_dia, h, txt_hora, 1, 0, 'C')
         pdf.ln()
         
     # Total
     pdf.set_font("Arial", 'B', 9)
-    pdf.cell(w_mat + w_prof, h_table, clean_text("TOTAL DE CRÉDITOS:"), 1, 0, 'R')
-    pdf.cell(w_cred, h_table, str(total_creditos), 1, 1, 'C')
+    pdf.cell(w_mat + w_prof, 8, clean_text("TOTAL DE CRÉDITOS:"), 1, 0, 'R')
+    pdf.cell(w_cred, 8, str(total_creditos), 1, 1, 'C')
         
     return pdf.output(dest='S').encode('latin-1')
 
@@ -371,15 +406,28 @@ def create_timetable_html(horario):
 
 # --- PASO 1: BIENVENIDA ---
 if st.session_state.step == 1:
-    st.title("Generador de Cargas ITS 🇲🇽")
-    st.markdown("### ¡Bienvenido Ingeniero!")
-    st.write("Arma tu horario ideal respetando el límite de créditos.")
-    st.write("---")
-    st.info("💡 **Regla de Oro:** El máximo de créditos permitidos por semestre es **36**.")
-    
-    if st.button("Comenzar ➡️"):
-        st.session_state.step = 2
-        st.rerun()
+    # HERO SECTION (Bienvenida)
+    st.markdown("""
+    <div class="welcome-container">
+        <div class="welcome-title">Generador de Cargas ITS</div>
+        <div class="welcome-subtitle">Ingeniería Mecatrónica - Enero Junio 2026</div>
+        <p>
+            Bienvenido, futuro ingeniero. Esta herramienta ha sido diseñada por la comunidad estudiantil 
+            para optimizar tu proceso de reinscripción. Encuentra la combinación perfecta de materias y 
+            maestros sin complicaciones.
+        </p>
+        <p><strong>Desarrollado por: Néstor Alexis Piña Rodríguez</strong></p>
+        <div class="lema">"La Técnica por la Grandeza de México"</div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    col_btn, _ = st.columns([1, 2])
+    with col_btn:
+        cant = st.number_input("Materias a cursar:", min_value=1, max_value=9, value=6)
+        if st.button("Comenzar ➡️"):
+            st.session_state.num_materias_deseadas = cant
+            st.session_state.step = 2
+            st.rerun()
 
 # --- PASO 2: MATERIAS ---
 elif st.session_state.step == 2:
