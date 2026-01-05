@@ -5,13 +5,13 @@ from fpdf import FPDF
 import os
 
 # -----------------------------------------------------------------------------
-# CONFIGURACIÓN VISUAL (TÍTULO NUEVO Y TEMA BLINDADO)
+# CONFIGURACIÓN VISUAL (TEMA INSTITUCIONAL TECNM)
 # -----------------------------------------------------------------------------
 st.set_page_config(page_title="Horario ITS", page_icon="🐴", layout="wide")
 
 st.markdown("""
 <style>
-    /* COLORES OFICIALES FORZADOS */
+    /* VARIABLES DE COLOR */
     :root {
         --guinda-oficial: #800000;
         --blanco-humo: #f5f5f5;
@@ -33,12 +33,11 @@ st.markdown("""
         box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
         margin-bottom: 20px;
     }
-    /* Texto del cuerpo limpio, sin negritas forzadas, color oscuro */
     .welcome-text-content p {
         color: var(--texto-oscuro) !important;
         font-size: 1.05em;
         line-height: 1.6;
-        font-weight: normal; /* Asegura que no haya negritas */
+        font-weight: normal;
     }
     .welcome-greeting {
         font-size: 1.2em;
@@ -72,6 +71,26 @@ st.markdown("""
     }
     .stButton>button:hover {
         background-color: #5c0000 !important;
+    }
+    
+    /* ESTILOS DE EXPANDERS (SEMESTRES) */
+    .streamlit-expanderHeader {
+        background-color: #f9f9f9 !important;
+        color: var(--guinda-oficial) !important;
+        font-weight: bold !important;
+        border: 1px solid #e0e0e0;
+        border-radius: 5px;
+    }
+    .streamlit-expanderContent {
+        background-color: white !important;
+        border: 1px solid #f0f0f0;
+        border-top: none;
+    }
+
+    /* ESTILOS DE MULTISELECT (CHIPS GUINDA) */
+    span[data-baseweb="tag"] {
+        background-color: var(--guinda-oficial) !important;
+        color: white !important;
     }
 
     /* CREDIT BOXES */
@@ -207,202 +226,6 @@ oferta_academica = {
     "🦾 Robótica": [{"profesor": "Gerardo Jarquín Hernández", "horario": [(d,7,8) for d in range(5)], "id":"ROB1"}, {"profesor": "Gerardo Jarquín Hernández", "horario": [(d,14,15) for d in range(5)], "id":"ROB2"}],
     "🏭 Tópicos Selectos de Automatización Industrial": [{"profesor": "Ana Gabriela Gomez Muñoz", "horario": [(0,12,13),(1,12,13),(2,12,13),(3,12,13),(4,12,14)], "id":"TS1"}, {"profesor": "Victor Manuel Retana Castillo", "horario": [(0,18,19),(1,18,19),(2,18,19),(3,18,19),(4,17,19)], "id":"TS2"}, {"profesor": "Victor Manuel Retana Castillo", "horario": [(0,20,21),(1,20,21),(2,20,21),(3,20,21),(4,20,22)], "id":"TS3"}, {"profesor": "Luis Rey Santos Saucedo", "horario": [(0,19,20),(1,19,20),(2,19,20),(3,19,20),(4,19,21)], "id":"TS4"}]
 }
-
-# -----------------------------------------------------------------------------
-# FUNCIONES LÓGICAS Y PDF
-# -----------------------------------------------------------------------------
-class PDF(FPDF):
-    def header(self):
-        if os.path.exists("logo_tec.png"): self.image('logo_tec.png', 10, 5, 55)
-        if os.path.exists("logo_its.png"): self.image('logo_its.png', 250, 5, 25)
-        self.set_font('Arial', 'B', 16)
-        self.set_text_color(128, 0, 0)
-        self.set_y(12)
-        self.cell(0, 10, 'TECNOLÓGICO NACIONAL DE MÉXICO', 0, 1, 'C')
-        self.set_font('Arial', 'B', 12)
-        self.set_text_color(0, 0, 0)
-        self.cell(0, 8, 'INSTITUTO TECNOLÓGICO DE SALTILLO', 0, 1, 'C')
-        self.ln(5)
-
-    def footer(self):
-        self.set_y(-15)
-        self.set_font('Arial', 'I', 8)
-        self.cell(0, 10, f'Página {self.page_no()}', 0, 0, 'C')
-
-def clean_text(text):
-    return text.encode('latin-1', 'ignore').decode('latin-1')
-
-def create_pro_pdf(horario, alumno_data, total_creditos):
-    pdf = PDF(orientation='L', unit='mm', format='A4')
-    pdf.add_page()
-    
-    # Datos Alumno
-    pdf.set_font("Arial", 'B', 14)
-    pdf.set_text_color(128, 0, 0)
-    pdf.cell(0, 10, "Carga Académica", 0, 1, 'C')
-    pdf.ln(2)
-    
-    pdf.set_font("Arial", size=9)
-    pdf.set_text_color(0, 0, 0)
-    pdf.set_fill_color(245, 245, 245)
-    
-    h_row = 6 
-    
-    # Fila 1
-    pdf.cell(30, h_row, "No. Control:", 1, 0, 'L', 1)
-    pdf.cell(40, h_row, clean_text(alumno_data.get("nc", "")), 1, 0, 'L')
-    pdf.cell(30, h_row, "Nombre:", 1, 0, 'L', 1)
-    pdf.cell(100, h_row, clean_text(alumno_data.get("nombre", "").upper()), 1, 0, 'L')
-    pdf.cell(30, h_row, "Semestre:", 1, 0, 'L', 1)
-    pdf.cell(30, h_row, str(alumno_data.get("semestre", "")), 1, 1, 'L')
-    
-    # Fila 2
-    especialidad = "SIN ESPECIALIDAD"
-    try:
-        if int(alumno_data.get("semestre", 1)) >= 6:
-            especialidad = "AUTOMATIZACIÓN DE PROCESOS DE MANUFACTURA"
-    except: pass
-
-    pdf.cell(30, h_row, "Carrera:", 1, 0, 'L', 1)
-    pdf.cell(100, h_row, "INGENIERÍA MECATRÓNICA", 1, 0, 'L')
-    pdf.cell(30, h_row, "Especialidad:", 1, 0, 'L', 1)
-    pdf.cell(100, h_row, clean_text(especialidad), 1, 1, 'L')
-    pdf.ln(8)
-
-    # Tabla
-    pdf.set_font("Arial", 'B', 9)
-    pdf.set_fill_color(128, 0, 0)
-    pdf.set_text_color(255, 255, 255)
-    
-    w_mat, w_prof, w_dia, w_cred = 70, 60, 22, 15
-    h_table = 8
-    
-    pdf.cell(w_mat, h_table, "Materia", 1, 0, 'C', 1)
-    pdf.cell(w_prof, h_table, "Profesor", 1, 0, 'C', 1)
-    pdf.cell(w_cred, h_table, "Créd.", 1, 0, 'C', 1)
-    for dia in ["Lun", "Mar", "Mié", "Jue", "Vie"]:
-        pdf.cell(w_dia, h_table, clean_text(dia), 1, 0, 'C', 1)
-    pdf.ln()
-    
-    pdf.set_font("Arial", size=8)
-    pdf.set_text_color(0, 0, 0)
-    
-    def get_start_hour(clase):
-        if not clase['horario']: return 24
-        return min([h[1] for h in clase['horario']])
-    horario_ordenado = sorted(horario, key=get_start_hour)
-    
-    for clase in horario_ordenado:
-        materia_nome = clean_text(clase['materia'])
-        if len(materia_nome) > 38: materia_nome = materia_nome[:35] + "..."
-        profesor_nome = clean_text(clase['profesor'].split('(')[0][:30])
-        creditos = str(CREDITOS.get(clase['materia'], 0))
-        
-        pdf.cell(w_mat, h_table, materia_nome, 1)
-        pdf.cell(w_prof, h_table, profesor_nome, 1)
-        pdf.cell(w_cred, h_table, creditos, 1, 0, 'C')
-        
-        for d in range(5):
-            txt_hora = ""
-            for sesion in clase['horario']:
-                if sesion[0] == d: txt_hora = f"{sesion[1]}:00-{sesion[2]}:00"
-            pdf.cell(w_dia, h_table, txt_hora, 1, 0, 'C')
-        pdf.ln()
-        
-    # Total
-    pdf.set_font("Arial", 'B', 9)
-    pdf.cell(w_mat + w_prof, h_table, clean_text("TOTAL DE CRÉDITOS:"), 1, 0, 'R')
-    pdf.cell(w_cred, h_table, str(total_creditos), 1, 1, 'C')
-        
-    return pdf.output(dest='S').encode('latin-1')
-
-def traslape(horario1, horario2):
-    for h1 in horario1:
-        for h2 in horario2:
-            if h1[0] == h2[0]:
-                if h1[1] < h2[2] and h1[2] > h2[1]: return True
-    return False
-
-def generar_combinaciones(materias, rango, prefs, horas_libres):
-    bloqueos = []
-    for hl in horas_libres:
-        inicio = int(hl.split(":")[0])
-        bloqueos.append(inicio)
-
-    pool = []
-    for mat in materias:
-        if mat not in oferta_academica: continue
-        opciones = []
-        for sec in oferta_academica[mat]:
-            key = f"{mat}_{sec['profesor']}"
-            puntos = prefs.get(key, 50)
-            if puntos == 0: continue 
-            dentro = True
-            for h in sec['horario']:
-                if h[1] < rango[0] or h[2] > rango[1]: dentro = False; break
-                for b in bloqueos:
-                    if max(h[1], b) < min(h[2], b+1): dentro = False; break
-                if not dentro: break
-            if dentro:
-                s = sec.copy(); s['materia'] = mat; s['score'] = puntos
-                opciones.append(s)
-        if not opciones:
-            return [], f"❌ **{mat}**: No tiene horarios disponibles con tus filtros."
-        pool.append(opciones)
-    
-    combos = list(itertools.product(*pool))
-    validos = []
-    for c in combos:
-        ok = True; score = 0
-        for i in range(len(c)):
-            score += c[i]['score']
-            for j in range(i+1, len(c)):
-                if traslape(c[i]['horario'], c[j]['horario']): ok=False; break
-            if not ok: break
-        if ok: validos.append((score, c))
-    
-    validos.sort(key=lambda x: x[0], reverse=True)
-    return validos, "OK"
-
-def create_timetable_html(horario):
-    horas_ocupadas = []
-    for clase in horario:
-        for sesion in clase['horario']:
-            horas_ocupadas.append(sesion[1]); horas_ocupadas.append(sesion[2])
-    if not horas_ocupadas: return ""
-    min_h = min(horas_ocupadas); max_h = max(horas_ocupadas)
-    
-    subject_colors = {}
-    for i, clase in enumerate(horario): subject_colors[clase['materia']] = COLORS[i % len(COLORS)]
-    grid = {h: [None]*5 for h in range(min_h, max_h)} 
-    
-    for clase in horario:
-        full_name = clase['materia']
-        if "Controladores Lógicos" in full_name: mat_name = "PLC"
-        elif "Formulación y Evaluación" in full_name: mat_name = "Formulación"
-        elif "Sistemas Avanzados" in full_name: mat_name = "Sistemas Av. Man."
-        else:
-            mat_name = full_name.split(' ')[1] if " " in full_name else full_name
-            if len(mat_name) > 20: mat_name = mat_name[:20] + "..."
-            
-        parts = clase['profesor'].split('(')[0].split()
-        prof_name = f"{parts[0]} {parts[1]}" if len(parts) > 1 else parts[0]
-        
-        color = subject_colors[clase['materia']]
-        for sesion in clase['horario']:
-            dia = sesion[0]; hora_ini = sesion[1]
-            if hora_ini in grid:
-                grid[hora_ini][dia] = {'text': f"<div class='clase-cell' style='background-color: {color};'><span>{mat_name}</span><span class='clase-prof'>{prof_name}</span></div>"}
-
-    html = """<table class="horario-grid"><thead><tr><th class='hora-col'>Hora</th><th>Lun</th><th>Mar</th><th>Mié</th><th>Jue</th><th>Vie</th></tr></thead><tbody>"""
-    for h in range(min_h, max_h):
-        html += f"<tr><td class='hora-col'>{h}-{h+1}</td>"
-        for d in range(5):
-            cell = grid[h][d]
-            html += f"<td>{cell['text']}</td>" if cell else "<td></td>"
-        html += "</tr>"
-    html += "</tbody></table>"
-    return html
 
 # -----------------------------------------------------------------------------
 # INTERFAZ WIZARD
