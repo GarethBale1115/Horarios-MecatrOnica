@@ -89,7 +89,7 @@ if 'alumno_sem' not in st.session_state: st.session_state.alumno_sem = 1
 if 'alumno_per' not in st.session_state: st.session_state.alumno_per = "ENE-JUN 2026"
 
 # -----------------------------------------------------------------------------
-# 3. DATOS SINCRONIZADOS
+# 3. DATOS SINCRONIZADOS (TODO CON EMOJIS - CERO FALLAS)
 # -----------------------------------------------------------------------------
 CREDITOS = {
     "🧪 Química": 4, "📐 Cálculo Diferencial": 5, "⚖️ Taller de Ética": 4, "💻 Dibujo Asistido por Computadora": 4, "📏 Metrología y Normalización": 4, "🔎 Fundamentos de Investigación": 4,
@@ -189,7 +189,7 @@ oferta_academica = {
 }
 
 # -----------------------------------------------------------------------------
-# 4. FUNCIONES LÓGICAS
+# 4. FUNCIONES LÓGICAS (DEFINIDAS AL INICIO)
 # -----------------------------------------------------------------------------
 def clean_text(text):
     return text.encode('latin-1', 'ignore').decode('latin-1')
@@ -212,10 +212,11 @@ def generar_combinaciones(materias, rango, prefs, horas_libres):
     for hl in horas_libres: inicio = int(hl.split(":")[0]); bloqueos.append(inicio)
     pool = []
     for mat_display in materias:
-        mat_key = strip_emoji(mat_display)
-        if mat_key not in oferta_academica: 
-            if mat_display in oferta_academica: mat_key = mat_display
-            else: continue
+        # Clave exacta (con emoji)
+        mat_key = mat_display
+        
+        if mat_key not in oferta_academica: continue
+
         opciones = []
         for sec in oferta_academica[mat_key]:
             prof_name = sec['profesor']
@@ -283,7 +284,7 @@ def create_pro_pdf(horario, alumno_data, total_creditos):
     try:
         if int(alumno_data.get("semestre", 1)) >= 6: especialidad = "AUTOMATIZACIÓN DE PROCESOS DE MANUFACTURA"
     except: pass
-    pdf.cell(30, h_row, "Carrera:", 1, 0, 'L', 1); pdf.cell(100, h_row, clean_text("INGENIERÍA MECATRÓNICA"), 1, 0, 'L')
+    pdf.cell(30, h_row, "Carrera:", 1, 0, 'L', 1); pdf.cell(100, h_row, "INGENIERÍA MECATRÓNICA", 1, 0, 'L')
     pdf.cell(30, h_row, "Especialidad:", 1, 0, 'L', 1); pdf.cell(100, h_row, clean_text(especialidad), 1, 1, 'L'); pdf.ln(8)
     pdf.set_font("Arial", 'B', 9); pdf.set_fill_color(128, 0, 0); pdf.set_text_color(255, 255, 255)
     w_mat, w_prof, w_dia, w_cred = 70, 60, 22, 15; h_table = 8
@@ -297,11 +298,12 @@ def create_pro_pdf(horario, alumno_data, total_creditos):
     horario_ordenado = sorted(horario, key=get_start_hour)
     
     for clase in horario_ordenado:
-        materia_clean = strip_emoji(clase['materia'])
-        materia_nome = clean_text(materia_clean)
+        # Nombre exacto
+        materia_nome = clean_text(clase['materia'])
         if len(materia_nome) > 38: materia_nome = materia_nome[:35] + "..."
         profesor_nome = clean_text(clase['profesor'].split('(')[0][:30])
-        creditos = str(CREDITOS.get(materia_clean, 0))
+        # Creditos directos usando la llave exacta
+        creditos = str(CREDITOS.get(clase['materia'], 0))
         pdf.cell(w_mat, h_table, materia_nome, 1); pdf.cell(w_prof, h_table, profesor_nome, 1); pdf.cell(w_cred, h_table, creditos, 1, 0, 'C')
         for d in range(5):
             txt_hora = ""
@@ -323,12 +325,15 @@ def create_timetable_html(horario):
     for i, clase in enumerate(horario): subject_colors[clase['materia']] = COLORS[i % len(COLORS)]
     grid = {h: [None]*5 for h in range(min_h, max_h)} 
     for clase in horario:
-        full_name = strip_emoji(clase['materia'])
+        full_name = clase['materia']
         if "Controladores Lógicos" in full_name: mat_name = "PLC"
         elif "Formulación y Evaluación" in full_name: mat_name = "Formulación"
         elif "Sistemas Avanzados" in full_name: mat_name = "Sistemas Av. Man."
         else:
-            mat_name = full_name.split(' ')[1] if " " in full_name else full_name
+            # Quitamos emoji solo para la vista de tabla HTML si es necesario, 
+            # pero aqui podemos dejarlo o usar strip_emoji solo para display visual
+            mat_name_display = strip_emoji(full_name)
+            mat_name = mat_name_display.split(' ')[1] if " " in mat_name_display else mat_name_display
             if len(mat_name) > 20: mat_name = mat_name[:20] + "..."
         parts = clase['profesor'].split('(')[0].split()
         prof_name = f"{parts[0]} {parts[1]}" if len(parts) > 1 else parts[0]
@@ -405,68 +410,48 @@ if menu == "📅 Generador de Horarios":
     # --- PASO 2: MATERIAS ---
     elif st.session_state.step == 2:
         st.title("📚 Selección de Materias")
-        
         cols = st.columns(9); selected_in_this_step = []
         all_semesters = list(database["Ingeniería Mecatrónica"].items())
-
         for i in range(9):
             if i < len(all_semesters):
                 sem_name, materias = all_semesters[i]
                 with cols[i]:
                     st.markdown(f"<div class='semestre-header'>{i+1}°</div>", unsafe_allow_html=True)
                     for m in materias:
-                        # Limpiar nombre para buscar creditos
-                        m_clean = strip_emoji(m)
-                        cr = CREDITOS.get(m_clean, 0)
-                        
+                        # Busqueda DIRECTA con nombre exacto (con emoji)
+                        cr = CREDITOS.get(m, 0)
                         if st.checkbox(f"{m} ({cr} Cr)", value=(m in st.session_state.materias_seleccionadas), key=f"chk_{m}"):
                             selected_in_this_step.append(m)
-
-        total_creditos = sum([CREDITOS.get(strip_emoji(m), 0) for m in selected_in_this_step])
-        num_selected = len(selected_in_this_step)
         
+        # Suma DIRECTA con nombre exacto
+        total_creditos = sum([CREDITOS.get(m, 0) for m in selected_in_this_step])
+        num_selected = len(selected_in_this_step)
         st.write("---")
         c_info = st.container()
-        
-        # Mensajes de validación
         msg_cred = f"✅ Créditos: {total_creditos} / 36" if total_creditos <= 36 else f"⛔ Exceso: {total_creditos} / 36"
         style_cred = "credit-ok" if total_creditos <= 36 else "credit-error"
         msg_cant = f"Materias: {num_selected} / {st.session_state.num_materias_deseadas}"
-        
-        if num_selected != st.session_state.num_materias_deseadas:
-            style_cred = "credit-error"
-            msg_cant = f"⚠️ Debes elegir exactamente {st.session_state.num_materias_deseadas} materias."
-
+        if num_selected != st.session_state.num_materias_deseadas: style_cred = "credit-error"; msg_cant = f"⚠️ Debes elegir exactamente {st.session_state.num_materias_deseadas} materias."
         c_info.markdown(f"<div class='credit-box {style_cred}'>{msg_cred} | {msg_cant}</div>", unsafe_allow_html=True)
-        
         if total_creditos > 36: st.progress(1.0)
         else: st.progress(total_creditos / 36)
-
         col1, col2 = st.columns([1,1])
         if col1.button("⬅️ Atrás"): st.session_state.step = 1; st.rerun()
-        
-        # Lógica de Bloqueo y Seriación
         bloqueo = False
         if total_creditos > 36: bloqueo = True
         if num_selected != st.session_state.num_materias_deseadas: bloqueo = True
-        
         conflicto_seriacion = []
         for materia in selected_in_this_step:
-            m_clean = strip_emoji(materia)
-            if m_clean in SERIACION:
-                for req in SERIACION[m_clean]:
+            if materia in SERIACION:
+                for req in SERIACION[materia]:
                     for sel in selected_in_this_step:
-                        if strip_emoji(sel) == req:
-                            conflicto_seriacion.append(f"❌ {materia} requiere haber aprobado {sel}. No puedes llevar ambas.")
-                            bloqueo = True
-        
+                        if sel == req:
+                            conflicto_seriacion.append(f"❌ {materia} requiere haber aprobado {sel}. No puedes llevar ambas."); bloqueo = True
         if conflicto_seriacion:
             for conf in conflicto_seriacion: st.error(conf)
-
         if bloqueo:
             if col2.button("🔄 Corregir Selección (Borrar Todo)"):
-                st.session_state.materias_seleccionadas = []
-                st.rerun()
+                st.session_state.materias_seleccionadas = []; st.rerun()
         else:
             if col2.button("Siguiente ➡️", type="primary"):
                 st.session_state.materias_seleccionadas = selected_in_this_step; st.session_state.step = 3; st.rerun()
@@ -492,16 +477,14 @@ if menu == "📅 Generador de Horarios":
     elif st.session_state.step == 4:
         st.title("👨‍🏫 Filtrado de Profesores")
         st.info("✅ Preferencia Alta | ➖ Normal | ❌ Descartar")
-        
         for mat in st.session_state.materias_seleccionadas:
-            m_clean = strip_emoji(mat)
-            if m_clean in oferta_academica:
+            if mat in oferta_academica:
                 with st.container(border=True):
                     st.subheader(f"{mat}")
                     profes_validos = []
-                    all_profes = sorted(list(set([p['profesor'] for p in oferta_academica[m_clean]])))
+                    all_profes = sorted(list(set([p['profesor'] for p in oferta_academica[mat]])))
                     for p_name in all_profes:
-                        sections = [s for s in oferta_academica[m_clean] if s['profesor'] == p_name]
+                        sections = [s for s in oferta_academica[mat] if s['profesor'] == p_name]
                         fits = False
                         for s in sections:
                             section_fits = True
@@ -510,7 +493,6 @@ if menu == "📅 Generador de Horarios":
                             if section_fits: fits = True; break
                         if fits: profes_validos.append(p_name)
                     if not profes_validos: st.warning(f"⚠️ Sin profes en tu rango para {mat}.")
-                    
                     cols = st.columns(3)
                     for i, p in enumerate(profes_validos):
                         key = f"{mat}_{p}"; 
@@ -521,18 +503,13 @@ if menu == "📅 Generador de Horarios":
                             elif val == "❌": st.session_state.prefs[key] = 0
                             else: st.session_state.prefs[key] = 50
                             
-                            # EXPANDER DE HORAS (NUEVO)
                             with st.expander("🕒 Horas Disponibles"):
-                                teacher_sections = [s for s in oferta_academica[m_clean] if s['profesor'] == p]
-                                # Obtener horas de inicio únicas
+                                teacher_sections = [s for s in oferta_academica[mat] if s['profesor'] == p]
                                 start_times = sorted(list(set([s['horario'][0][1] for s in teacher_sections])))
                                 for t in start_times:
-                                    # Checkbox marcada por defecto
-                                    # Si se desmarca, se excluye
                                     t_key = f"time_{mat}_{p}_{t}"
                                     st.checkbox(f"{t}:00 - {t+1}:00", value=True, key=t_key)
 
-                            # EXPANDER DE EVALUACIÓN
                             with st.expander("⭐ Ver Opiniones"):
                                 if p not in st.session_state.opiniones: st.session_state.opiniones[p] = {"suma": 0, "votos": 0, "comentarios": []}
                                 data = st.session_state.opiniones[p]
@@ -558,12 +535,12 @@ if menu == "📅 Generador de Horarios":
         if col_back.button("⬅️ Ajustar Filtros"): st.session_state.step = 4; st.rerun()
         with st.expander("📝 Datos del Alumno (Para el PDF)", expanded=True):
             c1, c2, c3, c4 = st.columns(4)
-            # Validación: Nombre solo letras
+            # Validación regex
             raw_name = c1.text_input("Nombre", st.session_state.alumno_nombre)
             clean_name = re.sub(r'[^a-zA-Z\s]', '', raw_name)
             if raw_name != clean_name: st.warning("Solo se permiten letras en el nombre.")
             st.session_state.alumno_nombre = clean_name
-            # Validación: No Control solo números
+            
             raw_nc = c2.text_input("No. Control", st.session_state.alumno_nc)
             clean_nc = re.sub(r'\D', '', raw_nc)
             if raw_nc != clean_nc: st.warning("Solo se permiten números en el No. Control.")
@@ -579,7 +556,8 @@ if menu == "📅 Generador de Horarios":
             
         if st.session_state.resultados:
             res = st.session_state.resultados; st.success(f"¡{len(res)} opciones encontradas!")
-            total_creditos_final = sum([CREDITOS.get(strip_emoji(m), 0) for m in st.session_state.materias_seleccionadas])
+            # SUMA DIRECTA CON EMOJIS (Ya no hay conversion)
+            total_creditos_final = sum([CREDITOS.get(m, 0) for m in st.session_state.materias_seleccionadas])
             alumno_data = { "nombre": st.session_state.alumno_nombre, "nc": st.session_state.alumno_nc, "semestre": st.session_state.alumno_sem, "periodo": st.session_state.alumno_per }
             for i, (score, horario) in enumerate(res):
                 with st.container(border=True):
@@ -595,7 +573,7 @@ if menu == "📅 Generador de Horarios":
             st.rerun()
 
 # =============================================================================
-# VISTA 2: EVALUACIÓN DOCENTE (SIDEBAR)
+# VISTA 2: EVALUACIÓN DOCENTE
 # =============================================================================
 elif menu == "⭐ Evaluación Docente":
     st.title("⭐ Califica a tu Maestro")
@@ -619,15 +597,13 @@ elif menu == "⭐ Evaluación Docente":
     with c2:
         if prof_selected in st.session_state.opiniones:
             data = st.session_state.opiniones[prof_selected]
-            if data["votos"] > 0:
-                promedio = int(data["suma"] / data["votos"])
-            else:
-                promedio = 0
-            color_chart = "#e74c3c" if promedio < 60 else "#f1c40f" if promedio < 90 else "#2ecc71"
+            if data["votos"] > 0: prom = int(data["suma"] / data["votos"])
+            else: prom = 0
+            color_chart = "#e74c3c" if prom < 60 else "#f1c40f" if prom < 90 else "#2ecc71"
             st.markdown(f"""
             <div style="display: flex; justify-content: center; margin-bottom: 10px;">
-                <div style="width: 150px; height: 150px; border-radius: 50%; background: conic-gradient({color_chart} {promedio}%, #444 0); display: flex; justify-content: center; align-items: center;">
-                    <div style="width: 120px; height: 120px; border-radius: 50%; background: #1c1f26; display: flex; justify-content: center; align-items: center; color: white; font-weight: bold; font-size: 1.5em;">{promedio}/100</div>
+                <div style="width: 150px; height: 150px; border-radius: 50%; background: conic-gradient({color_chart} {prom}%, #444 0); display: flex; justify-content: center; align-items: center;">
+                    <div style="width: 120px; height: 120px; border-radius: 50%; background: #1c1f26; display: flex; justify-content: center; align-items: center; color: white; font-weight: bold; font-size: 1.5em;">{prom}/100</div>
                 </div>
             </div>
             <p style="text-align: center; color: #aaa;">Basado en {data['votos']} votos</p>""", unsafe_allow_html=True)
@@ -651,7 +627,7 @@ elif menu == "🤖 Asistente IA":
     else:
         try:
             genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
-            model = genai.GenerativeModel('gemini-1.5-flash')
+            model = genai.GenerativeModel('gemini-pro') # Modelo estable
             
             for message in st.session_state.chat_history:
                 with st.chat_message(message["role"]):
