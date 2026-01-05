@@ -51,6 +51,13 @@ st.markdown("""
         width: 100%;
     }
     
+    /* TEXTO NORMAL DE MATERIA */
+    div[data-testid="stCheckbox"] div[data-testid="stMarkdownContainer"] p {
+        font-size: 0.85em; /* Letra un poco más chica para que quepan créditos */
+        color: #e0e0e0; 
+        line-height: 1.2;
+    }
+
     /* ENCABEZADOS DE SEMESTRE */
     .semestre-header {
         color: var(--guinda) !important;
@@ -77,6 +84,10 @@ st.markdown("""
         font-weight: bold;
         color: var(--guinda) !important;
         margin-bottom: 15px;
+    }
+    .welcome-text-content p {
+        color: #e0e0e0 !important;
+        line-height: 1.6;
     }
     .welcome-lema {
         margin-top: 15px;
@@ -153,7 +164,7 @@ if 'horas_libres' not in st.session_state: st.session_state.horas_libres = []
 if 'prefs' not in st.session_state: st.session_state.prefs = {}
 if 'resultados' not in st.session_state: st.session_state.resultados = None
 
-# Base de Datos de Opiniones (Simulada para persistencia en sesión)
+# Base de Datos de Opiniones
 if 'opiniones' not in st.session_state: 
     st.session_state.opiniones = {
         "Ana Gabriela Gomez Muñoz": {"suma": 450, "votos": 5, "comentarios": ["Excelente maestra, muy clara.", "Estricta pero justa."]},
@@ -179,6 +190,34 @@ CREDITOS = {
     "🏭 Manufactura Avanzada": 5, "🖥️ Diseño Asistido por Computadora": 5, "🔄 Dinámica de Sistemas": 5, "🌬️ Circuitos Hidráulicos y Neumáticos": 6, "🔧 Mantenimiento": 5, "💾 Microcontroladores": 5,
     "📈 Formulación y Evaluación de Proyectos": 3, "🎛️ Controladores Lógicos Programables": 5, "🎮 Control": 6, "🤖 Sistemas Avanzados de Manufactura": 5, "🌐 Redes Industriales": 5,
     "🦾 Robótica": 5, "🏭 Tópicos Selectos de Automatización Industrial": 6
+}
+
+# -----------------------------------------------------------------------------
+# REGLAS DE SERIACIÓN (Prerrequisitos que impiden llevar materias juntas)
+# Key: Materia a cursar. Value: Lista de materias que NO puedes cursar al mismo tiempo (porque son requisito)
+# -----------------------------------------------------------------------------
+SERIACION = {
+    "∫ Cálculo Integral": ["📐 Cálculo Diferencial"],
+    "🧱 Ciencia e Ingeniería de Materiales": ["🧪 Química"],
+    "↗️ Cálculo Vectorial": ["∫ Cálculo Integral"],
+    "🔨 Procesos de Fabricación": ["🧱 Ciencia e Ingeniería de Materiales"],
+    "💻 Programación Avanzada": ["💾 Programación Básica"],
+    "🏎️ Dinámica": ["↗️ Cálculo Vectorial"],
+    "📉 Ecuaciones Diferenciales": ["↗️ Cálculo Vectorial"],
+    "🏭 Manufactura Avanzada": ["🔨 Procesos de Fabricación"],
+    "🔌 Análisis de Circuitos Eléctricos": ["⚡ Electromagnetismo"],
+    "🦾 Mecánica de Materiales": ["🏗️ Estática"],
+    "📑 Taller de Investigación II": ["📝 Taller de Investigación I"],
+    "🔗 Mecanismos": ["🏎️ Dinámica"],
+    "📟 Electrónica Analógica": ["🔌 Análisis de Circuitos Eléctricos"],
+    "🔩 Diseño de Elementos Mecánicos": ["🦾 Mecánica de Materiales"],
+    "⚡ Electrónica de Potencia Aplicada": ["⚙️ Máquinas Eléctricas"],
+    "〰️ Vibraciones Mecánicas": ["🔗 Mecanismos"],
+    "👾 Electrónica Digital": ["📟 Electrónica Analógica"],
+    "🎛️ Controladores Lógicos Programables": ["⚡ Electrónica de Potencia Aplicada", "🌬️ Circuitos Hidráulicos y Neumáticos"],
+    "💾 Microcontroladores": ["👾 Electrónica Digital"],
+    "🎮 Control": ["🔄 Dinámica de Sistemas"],
+    "🏭 Tópicos Selectos de Automatización Industrial": ["🎛️ Controladores Lógicos Programables"]
 }
 
 # -----------------------------------------------------------------------------
@@ -459,77 +498,192 @@ def create_timetable_html(horario):
     return html
 
 # -----------------------------------------------------------------------------
-# INTERFAZ WIZARD (SIN MENÚ LATERAL)
+# INTERFAZ WIZARD
 # -----------------------------------------------------------------------------
 
 # --- PASO 1: BIENVENIDA ---
 if st.session_state.step == 1:
+    # HEADER CON LOGOS GIGANTES Y CENTRADOS
     col_tec, col_centro, col_its = st.columns([1.5, 3, 1.5], gap="medium")
     with col_tec:
-        if os.path.exists("logo_tec.png"): st.image("logo_tec.png", width=180)
+        if os.path.exists("logo_tec.png"):
+            st.image("logo_tec.png", width=180) # Logo TecNM Grande
     with col_centro:
-        if os.path.exists("horarioits.png"): st.image("horarioits.png", use_container_width=True)
-        else: st.markdown("<h1 style='text-align: center;'>Horario ITS</h1>", unsafe_allow_html=True)
-        st.markdown("<h3 style='text-align: center; margin-top: -10px;'>Ingeniería Mecatrónica - Enero Junio 2026</h3>", unsafe_allow_html=True)
+        # LOGO PRINCIPAL HORARIO ITS GIGANTE
+        if os.path.exists("horarioits.png"):
+            st.image("horarioits.png", use_container_width=True)
+        else:
+            # Fallback por si acaso
+            st.markdown("<h1 style='text-align: center; font-size: 3em;'>Horario ITS</h1>", unsafe_allow_html=True)
+        st.markdown("<h3 style='text-align: center; color: #800000; margin-top: -10px;'>Ingeniería Mecatrónica - Enero Junio 2026</h3>", unsafe_allow_html=True)
     with col_its:
-        if os.path.exists("logo_its.png"): st.image("logo_its.png", width=150)
-        
+        if os.path.exists("logo_its.png"):
+            st.image("logo_its.png", width=150) # Logo ITS Grande
+            
     st.write("---")
 
+    # CONTENEDOR DE BIENVENIDA + MASCOTA (Pequeña)
     col_texto, col_mascota = st.columns([3, 1])
+    
     with col_texto:
         st.markdown("""
         <div class="welcome-box">
-            <div class="welcome-greeting">¡Bienvenido, futuro ingeniero! 🦅</div>
-            <div class="welcome-text-content">
-                <p>Esta herramienta ha sido diseñada PARA la comunidad estudiantil de Ingeniería Mecatrónica del ITS. Su objetivo es ayudarte a visualizar todas las posibles opciones de horario, facilitando la toma de decisiones.</p>
-                <div class="developer-credit">Desarrollado por: Néstor Alexis Piña Rodríguez</div>
+            <div class="welcome-greeting">
+                ¡Bienvenido, futuro ingeniero! 🦅
             </div>
-            <div class="welcome-lema">"La Técnica por la Grandeza de México"</div>
-        </div>""", unsafe_allow_html=True)
+            <div class="welcome-text-content">
+                <p>
+                    Esta herramienta ha sido diseñada para la comunidad estudiantil de Ingeniería Mecatrónica 
+                    del Instituto Tecnológico de Saltillo. Su objetivo principal es ayudarte a 
+                    visualizar todas las posibles opciones de horario disponibles, facilitando la 
+                    toma de decisiones para tu próxima carga académica.
+                </p>
+                <p>
+                    Encuentra la combinación perfecta de materias y maestros que se ajuste a tus necesidades sin complicaciones.
+                </p>
+                <div class="developer-credit">
+                    Desarrollado por: Néstor Alexis Piña Rodríguez
+                </div>
+            </div>
+            <div class="welcome-lema">
+                "La Técnica por la Grandeza de México"
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+        
     with col_mascota:
-        st.write(""); st.write("")
-        if os.path.exists("burro.png"): st.image("burro.png", width=120)
+        st.write("") # Espacio superior
+        st.write("")
+        if os.path.exists("burro.png"):
+            # Mascota más pequeña para no robar protagonismo
+            st.image("burro.png", width=120)
 
-    st.write(""); st.write("")
+    # BOTÓN DE INICIO
+    st.write("")
+    st.write("")
     col_btn, _ = st.columns([1, 2])
     with col_btn:
-        cant = st.number_input("Materias a cursar:", min_value=1, max_value=9, value=6, label_visibility="collapsed")
+        st.markdown("##### ¿Cuántas materias deseas cursar?")
+        cant = st.number_input("Cantidad:", min_value=1, max_value=9, value=6, label_visibility="collapsed")
+        st.write("")
         if st.button("Comenzar ➡️", use_container_width=True):
-            st.session_state.num_materias_deseadas = cant; st.session_state.step = 2; st.rerun()
+            st.session_state.num_materias_deseadas = cant
+            st.session_state.step = 2
+            st.rerun()
 
-# --- PASO 2: MATERIAS ---
+# --- PASO 2: MATERIAS (TABLERO GRID 2 FILAS) ---
 elif st.session_state.step == 2:
     st.title("📚 Selección de Materias")
-    cols_top = st.columns(5); selected_in_this_step = []
+    
+    # ESTRATEGIA GRID: 2 FILAS GRANDES PARA QUE EL TEXTO QUEPA
+    # Fila 1: Semestres 1 al 5 (5 columnas)
+    st.subheader("Ciclo Básico e Intermedio")
+    cols_top = st.columns(5)
+    
+    selected_in_this_step = []
+    
     all_semesters = list(database["Ingeniería Mecatrónica"].items())
+    
+    # Render Semestres 1-5
     for i in range(5):
         sem_name, materias = all_semesters[i]
         with cols_top[i]:
             st.markdown(f"<div class='semestre-header'>{i+1}°</div>", unsafe_allow_html=True)
             for m in materias:
-                if st.checkbox(m, value=(m in st.session_state.materias_seleccionadas), key=f"chk_{m}"): selected_in_this_step.append(m)
+                is_checked = m in st.session_state.materias_seleccionadas
+                # MOSTRAR CREDITOS EN LA ETIQUETA
+                label_text = f"{m} ({CREDITOS.get(m, 0)} Cr)"
+                if st.checkbox(label_text, value=is_checked, key=f"chk_{m}"):
+                    selected_in_this_step.append(m)
+
     st.write("---")
+    
+    # Fila 2: Semestres 6 al 9 (4 columnas) -> MÁS ESPACIO
+    st.subheader("Ciclo de Especialización")
     cols_bottom = st.columns(4)
+    
     for i in range(4):
-        idx_real = i + 5; sem_name, materias = all_semesters[idx_real]
+        idx_real = i + 5 # Empezamos en el 6to semestre (index 5)
+        sem_name, materias = all_semesters[idx_real]
         with cols_bottom[i]:
             st.markdown(f"<div class='semestre-header'>{idx_real+1}°</div>", unsafe_allow_html=True)
             for m in materias:
-                if st.checkbox(m, value=(m in st.session_state.materias_seleccionadas), key=f"chk_{m}"): selected_in_this_step.append(m)
-    
+                is_checked = m in st.session_state.materias_seleccionadas
+                # MOSTRAR CREDITOS EN LA ETIQUETA
+                label_text = f"{m} ({CREDITOS.get(m, 0)} Cr)"
+                if st.checkbox(label_text, value=is_checked, key=f"chk_{m}"):
+                    selected_in_this_step.append(m)
+
     total_creditos = sum([CREDITOS.get(m, 0) for m in selected_in_this_step])
+    num_selected = len(selected_in_this_step)
+    
     st.write("---")
+    
     c_info = st.container()
-    if total_creditos <= 36: c_info.markdown(f"<div class='credit-box credit-ok'>✅ Créditos Acumulados: {total_creditos} / 36</div>", unsafe_allow_html=True); st.progress(total_creditos / 36)
-    else: c_info.markdown(f"<div class='credit-box credit-error'>⛔ ¡EXCESO DE CRÉDITOS! ({total_creditos} / 36)</div>", unsafe_allow_html=True); st.progress(1.0)
+    
+    # Validacion Visual
+    msg_creditos = f"✅ Créditos: {total_creditos} / 36" if total_creditos <= 36 else f"⛔ Exceso de Créditos: {total_creditos} / 36"
+    style_cred = "credit-ok" if total_creditos <= 36 else "credit-error"
+    
+    msg_cant = f"Materias: {num_selected} / {st.session_state.num_materias_deseadas}"
+    if num_selected != st.session_state.num_materias_deseadas:
+        msg_cant = f"⚠️ Debes seleccionar exactamente {st.session_state.num_materias_deseadas} materias (Llevas {num_selected})"
+        style_cred = "credit-error" # Force error style if count is wrong
+
+    c_info.markdown(f"""
+        <div class='credit-box {style_cred}'>
+            {msg_creditos} | {msg_cant}
+        </div>
+    """, unsafe_allow_html=True)
+
     col1, col2 = st.columns([1,1])
     if col1.button("⬅️ Atrás"): st.session_state.step = 1; st.rerun()
-    if total_creditos > 36: col2.button("🚫 Límite Excedido", disabled=True)
+    
+    # VALIDACIÓN MULTIPLE PARA AVANZAR
+    bloqueo = False
+    error_msg = ""
+    
+    # 1. Cantidad exacta
+    if num_selected != st.session_state.num_materias_deseadas:
+        bloqueo = True
+    
+    # 2. Créditos maximos
+    if total_creditos > 36:
+        bloqueo = True
+        
+    # 3. SERIACIÓN (Prerrequisitos)
+    conflicto_seriacion = []
+    # Revisar si se seleccionó una materia Y su prerrequisito al mismo tiempo
+    # (Esto asume que "No puedes llevar X si no llevaste Y" implica que no pueden ser simultaneas)
+    for materia in selected_in_this_step:
+        if materia in SERIACION:
+            prerrequisitos = SERIACION[materia]
+            for pre in prerrequisitos:
+                if pre in selected_in_this_step:
+                    conflicto_seriacion.append(f"❌ {materia} requiere haber aprobado {pre}.")
+                    bloqueo = True
+
+    if conflicto_seriacion:
+        for conf in conflicto_seriacion:
+            st.error(conf)
+
+    if bloqueo:
+        col2.button("🚫 Corregir Selección", disabled=True)
     else:
         if col2.button("Siguiente ➡️", type="primary"):
-            if total_creditos == 0: st.error("Selecciona al menos una materia.")
-            else: st.session_state.materias_seleccionadas = selected_in_this_step; st.session_state.step = 3; st.rerun()
+            st.session_state.materias_seleccionadas = selected_in_this_step
+            st.session_state.step = 3
+            st.rerun()
+            
+    # BOTÓN RETÍCULA (SIDEBAR O ABAJO)
+    if os.path.exists("reticula.pdf"):
+        with open("reticula.pdf", "rb") as pdf_file:
+            st.sidebar.download_button(
+                label="📄 Descargar Retícula",
+                data=pdf_file,
+                file_name="Reticula_Mecatronica.pdf",
+                mime="application/pdf"
+            )
 
 # --- PASO 3: DISPONIBILIDAD ---
 elif st.session_state.step == 3:
@@ -548,7 +702,7 @@ elif st.session_state.step == 3:
     if col1.button("⬅️ Atrás"): st.session_state.step = 2; st.rerun()
     if col2.button("Siguiente ➡️", type="primary"): st.session_state.step = 4; st.rerun()
 
-# --- PASO 4: PROFESORES + EVALUACIÓN ---
+# --- PASO 4: PROFESORES ---
 elif st.session_state.step == 4:
     st.title("👨‍🏫 Filtrado de Profesores")
     st.info("✅ Preferencia Alta | ➖ Normal | ❌ Descartar")
@@ -556,9 +710,8 @@ elif st.session_state.step == 4:
     for mat in st.session_state.materias_seleccionadas:
         if mat in oferta_academica:
             with st.container(border=True):
-                st.subheader(f"{mat} ({CREDITOS.get(mat,0)} Cr)")
-                
-                # Obtener lista de profes válidos por horario
+                # SIN CREDITOS EN EL HEADER DEL PASO 4 (SOLO NOMBRE)
+                st.subheader(f"{mat}") 
                 profes_validos = []
                 all_profes = sorted(list(set([p['profesor'] for p in oferta_academica[mat]])))
                 for p_name in all_profes:
@@ -576,56 +729,19 @@ elif st.session_state.step == 4:
                 cols = st.columns(3)
                 for i, p in enumerate(profes_validos):
                     key = f"{mat}_{p}"
-                    with cols[i % 3]:
-                        st.write(f"**{p}**")
-                        # 1. Radio Button (Filtro)
-                        val = st.radio("Pref", ["✅", "➖", "❌"], index=1, key=key, horizontal=True, label_visibility="collapsed")
-                        if val == "✅": st.session_state.prefs[key] = 100
-                        elif val == "❌": st.session_state.prefs[key] = 0
-                        else: st.session_state.prefs[key] = 50
-                        
-                        # 2. Expander de Evaluación (DENTRO DEL MISMO LUGAR)
-                        with st.expander("⭐ Ver Opiniones / Calificar"):
-                            # Lógica de Evaluación
-                            if p not in st.session_state.opiniones:
-                                st.session_state.opiniones[p] = {"suma": 0, "votos": 0, "comentarios": []}
-                            
-                            data = st.session_state.opiniones[p]
-                            promedio = int(data["suma"] / data["votos"]) if data["votos"] > 0 else 0
-                            
-                            # Gráfica Dona CSS (Plug & Play)
-                            color_chart = "#e74c3c" if promedio < 60 else "#f1c40f" if promedio < 90 else "#2ecc71"
-                            st.markdown(f"""
-                                <div style="display: flex; flex-direction: column; align-items: center; margin-bottom: 10px;">
-                                    <div style="width: 80px; height: 80px; border-radius: 50%; background: conic-gradient({color_chart} {promedio}%, #444 0); display: flex; justify-content: center; align-items: center;">
-                                        <div style="width: 60px; height: 60px; border-radius: 50%; background: #262730; display: flex; justify-content: center; align-items: center; color: white; font-weight: bold;">
-                                            {promedio}
-                                        </div>
-                                    </div>
-                                    <small style="color: #aaa;">({data['votos']} votos)</small>
-                                </div>
-                            """, unsafe_allow_html=True)
-                            
-                            # Comentarios existentes
-                            if data["comentarios"]:
-                                for com in data["comentarios"][:3]: # Solo mostrar ultimos 3
-                                    st.markdown(f"<div class='comment-bubble'>{com}</div>", unsafe_allow_html=True)
-                            else:
-                                st.caption("Sin comentarios aún.")
-                                
-                            # Formulario Nuevo
-                            new_c = st.text_input("Comentario:", key=f"txt_{key}")
-                            new_s = st.slider("Calif:", 0, 100, 80, key=f"sld_{key}")
-                            if st.button("Enviar", key=f"btn_{key}"):
-                                data["suma"] += new_s
-                                data["votos"] += 1
-                                data["comentarios"].insert(0, new_c)
-                                st.success("¡Enviado!")
-                                st.rerun()
+                    c = cols[i % 3]
+                    c.write(f"**{p}**")
+                    val = c.radio("P", ["✅", "➖", "❌"], index=1, key=key, horizontal=True, label_visibility="collapsed")
+                    if val == "✅": st.session_state.prefs[key] = 100
+                    elif val == "❌": st.session_state.prefs[key] = 0
+                    else: st.session_state.prefs[key] = 50
 
     col1, col2 = st.columns([1,1])
     if col1.button("⬅️ Atrás"): st.session_state.step = 3; st.rerun()
-    if col2.button("🚀 GENERAR HORARIOS", type="primary"): st.session_state.step = 5; st.session_state.resultados = None; st.rerun()
+    if col2.button("🚀 GENERAR HORARIOS", type="primary"):
+        st.session_state.step = 5
+        st.session_state.resultados = None
+        st.rerun()
 
 # --- PASO 5: RESULTADOS ---
 elif st.session_state.step == 5:
