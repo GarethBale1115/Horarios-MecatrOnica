@@ -4,7 +4,6 @@ import itertools
 from fpdf import FPDF
 import os
 import re
-import google.generativeai as genai
 
 # -----------------------------------------------------------------------------
 # 1. CONFIGURACIÓN VISUAL
@@ -55,9 +54,8 @@ st.markdown("""
     [data-testid="stExpander"] [data-testid="stCheckbox"]:has(input:checked) label { background-color: transparent !important; }
     [data-testid="stExpander"] [data-testid="stCheckbox"] div[data-testid="stMarkdownContainer"] p { color: inherit !important; font-weight: normal !important; text-align: left !important; }
     
-    /* COMENTARIOS & CHAT */
+    /* COMENTARIOS */
     .comment-bubble { background-color: rgba(128, 128, 128, 0.1); padding: 8px; border-radius: 5px; margin-bottom: 5px; font-size: 0.9em; border-left: 3px solid var(--guinda); }
-    .stChatMessage { background-color: rgba(255,255,255,0.05); border-radius: 10px; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -74,8 +72,6 @@ if 'horas_libres' not in st.session_state: st.session_state.horas_libres = []
 if 'prefs' not in st.session_state: st.session_state.prefs = {}
 if 'resultados' not in st.session_state: st.session_state.resultados = None
 
-if "chat_history" not in st.session_state: st.session_state.chat_history = []
-
 if 'opiniones' not in st.session_state: 
     st.session_state.opiniones = {
         "Ana Gabriela Gomez Muñoz": {"suma": 450, "votos": 5, "comentarios": ["Excelente maestra, muy clara.", "Estricta pero justa."]},
@@ -88,7 +84,7 @@ if 'alumno_sem' not in st.session_state: st.session_state.alumno_sem = 1
 if 'alumno_per' not in st.session_state: st.session_state.alumno_per = "ENE-JUN 2026"
 
 # -----------------------------------------------------------------------------
-# 3. DATOS (AHORA SÍ CON EMOJIS PARA QUE COINCIDAN)
+# 3. DATOS SINCRONIZADOS (CON EMOJIS)
 # -----------------------------------------------------------------------------
 CREDITOS = {
     "🧪 Química": 4, "📐 Cálculo Diferencial": 5, "⚖️ Taller de Ética": 4, "💻 Dibujo Asistido por Computadora": 4, "📏 Metrología y Normalización": 4, "🔎 Fundamentos de Investigación": 4,
@@ -126,7 +122,6 @@ database = {
     }
 }
 
-# --- OFERTA ACADÉMICA (CON EMOJIS - CORREGIDO PARA QUE COINCIDA) ---
 oferta_academica = {
     "🧪 Química": [{"profesor": "Norma Hernández Flores", "horario": [(d,7,8) for d in range(4)], "id":"Q1"}, {"profesor": "Norma Hernández Flores", "horario": [(d,8,9) for d in range(4)], "id":"Q2"}, {"profesor": "Norma Hernández Flores", "horario": [(d,11,12) for d in range(4)], "id":"Q3"}, {"profesor": "Norma Hernández Flores", "horario": [(d,12,13) for d in range(4)], "id":"Q4"}, {"profesor": "Hilda Araceli Torres Plata", "horario": [(d,8,9) for d in range(4)], "id":"Q5"}, {"profesor": "Hilda Araceli Torres Plata", "horario": [(d,9,10) for d in range(4)], "id":"Q6"}, {"profesor": "Alma Leticia Cázares Arreguin", "horario": [(d,13,14) for d in range(4)], "id":"Q7"}, {"profesor": "Alma Leticia Cázares Arreguin", "horario": [(d,14,15) for d in range(4)], "id":"Q8"}, {"profesor": "Alma Leticia Cázares Arreguin", "horario": [(d,16,17) for d in range(4)], "id":"Q9"}, {"profesor": "José Raymundo Garza Aldaco", "horario": [(d,15,16) for d in range(4)], "id":"Q10"}, {"profesor": "Alejandra Torres Ordaz", "horario": [(d,15,16) for d in range(4)], "id":"Q11"}, {"profesor": "Alejandra Torres Ordaz", "horario": [(d,16,17) for d in range(4)], "id":"Q12"}, {"profesor": "Alejandra Torres Ordaz", "horario": [(d,17,18) for d in range(4)], "id":"Q13"}, {"profesor": "Victor Martinez Rivera", "horario": [(d,15,16) for d in range(4)], "id":"Q14"}, {"profesor": "Victor Martinez Rivera", "horario": [(d,16,17) for d in range(4)], "id":"Q15"}, {"profesor": "Victor Martinez Rivera", "horario": [(d,17,18) for d in range(4)], "id":"Q16"}, {"profesor": "Silvia Susana Aguirre Sanchez", "horario": [(d,17,18) for d in range(4)], "id":"Q17"}, {"profesor": "Silvia Susana Aguirre Sanchez", "horario": [(d,18,19) for d in range(4)], "id":"Q18"}, {"profesor": "Karina Azucena Ayala Torres", "horario": [(d,17,18) for d in range(4)], "id":"Q19"}, {"profesor": "Karina Azucena Ayala Torres", "horario": [(d,18,19) for d in range(4)], "id":"Q20"}],
     "📐 Cálculo Diferencial": [{"profesor": "Allen Epifanio Lopez", "horario": [(d,7,8) for d in range(5)], "id":"CD1"}, {"profesor": "Kevin Alberto Cordova Ventura", "horario": [(d,8,9) for d in range(5)], "id":"CD2"}, {"profesor": "Kevin Alberto Cordova Ventura", "horario": [(d,12,13) for d in range(5)], "id":"CD3"}, {"profesor": "Erwin Rommel Cerda Leon", "horario": [(d,8,9) for d in range(5)], "id":"CD4"}, {"profesor": "Brenda Zavala Aguillon", "horario": [(d,9,10) for d in range(5)], "id":"CD5"}, {"profesor": "Brenda Zavala Aguillon", "horario": [(d,12,13) for d in range(5)], "id":"CD6"}, {"profesor": "Alicia Guadalupe Del Bosque Martínez", "horario": [(d,10,11) for d in range(5)], "id":"CD7"}, {"profesor": "Alicia Guadalupe Del Bosque Martínez", "horario": [(d,11,12) for d in range(5)], "id":"CD8"}, {"profesor": "Eliana Sarahi Sanchez Gonzalez", "horario": [(d,11,12) for d in range(5)], "id":"CD9"}, {"profesor": "Ana Victoria Ferniza Sandoval", "horario": [(d,11,12) for d in range(5)], "id":"CD10"}, {"profesor": "Ana Victoria Ferniza Sandoval", "horario": [(d,13,14) for d in range(5)], "id":"CD11"}, {"profesor": "Edna Marina Gonzalez Martinez", "horario": [(d,11,12) for d in range(5)], "id":"CD12"}, {"profesor": "Rodrigo Juarez Martinez", "horario": [(d,15,16) for d in range(5)], "id":"CD13"}, {"profesor": "Jose Jesus Israel Ruiz Benitez", "horario": [(d,16,17) for d in range(5)], "id":"CD14"}, {"profesor": "Javier Guadalupe Cuellar Villarreal", "horario": [(d,16,17) for d in range(5)], "id":"CD15"}, {"profesor": "Irma Karina Olmedo Landeros", "horario": [(d,17,18) for d in range(5)], "id":"CD16"}],
@@ -182,12 +177,13 @@ oferta_academica = {
     "🎮 Control": [{"profesor": "Cesar Gerardo Martinez Sanchez", "horario": [(0,9,10),(1,9,10),(2,9,10),(3,9,10),(4,9,11)], "id":"CTRL1"}, {"profesor": "Jesus Guerrero Contreras", "horario": [(0,15,16),(1,15,16),(2,15,16),(3,15,16),(4,15,17)], "id":"CTRL2"}, {"profesor": "Ricardo Martínez Alvarado", "horario": [(0,17,18),(1,17,18),(2,17,18),(3,17,18),(4,17,19)], "id":"CTRL3"}, {"profesor": "Isaac Ruiz Ramos", "horario": [(0,19,20),(1,19,20),(2,19,20),(3,19,20),(4,19,21)], "id":"CTRL4"}],
     "🤖 Sistemas Avanzados de Manufactura": [{"profesor": "Ada Karina Velarde Sanchez", "horario": [(d,9,10) for d in range(5)], "id":"SAM1"}, {"profesor": "Ada Karina Velarde Sanchez", "horario": [(d,10,11) for d in range(5)], "id":"SAM2"}, {"profesor": "Maria Del Socorro Marines Leal", "horario": [(d,17,18) for d in range(5)], "id":"SAM3"}],
     "🌐 Redes Industriales": [{"profesor": "Francisco Flores Sanmiguel", "horario": [(d,15,16) for d in range(5)], "id":"RI1"}, {"profesor": "Francisco Flores Sanmiguel", "horario": [(d,16,17) for d in range(5)], "id":"RI2"}, {"profesor": "Francisco Flores Sanmiguel", "horario": [(d,17,18) for d in range(5)], "id":"RI3"}, {"profesor": "Neider Gonzalez Roblero", "horario": [(d,18,19) for d in range(5)], "id":"RI4"}, {"profesor": "Neider Gonzalez Roblero", "horario": [(d,19,20) for d in range(5)], "id":"RI5"}],
+    # SEMESTRE 9
     "🦾 Robótica": [{"profesor": "Gerardo Jarquín Hernández", "horario": [(d,7,8) for d in range(5)], "id":"ROB1"}, {"profesor": "Gerardo Jarquín Hernández", "horario": [(d,14,15) for d in range(5)], "id":"ROB2"}],
     "🏭 Tópicos Selectos de Automatización Industrial": [{"profesor": "Ana Gabriela Gomez Muñoz", "horario": [(0,12,13),(1,12,13),(2,12,13),(3,12,13),(4,12,14)], "id":"TS1"}, {"profesor": "Victor Manuel Retana Castillo", "horario": [(0,18,19),(1,18,19),(2,18,19),(3,18,19),(4,17,19)], "id":"TS2"}, {"profesor": "Victor Manuel Retana Castillo", "horario": [(0,20,21),(1,20,21),(2,20,21),(3,20,21),(4,20,22)], "id":"TS3"}, {"profesor": "Luis Rey Santos Saucedo", "horario": [(0,19,20),(1,19,20),(2,19,20),(3,19,20),(4,19,21)], "id":"TS4"}]
 }
 
 # -----------------------------------------------------------------------------
-# 4. FUNCIONES LÓGICAS
+# 4. FUNCIONES LÓGICAS (DEFINIDAS AL INICIO)
 # -----------------------------------------------------------------------------
 def clean_text(text):
     return text.encode('latin-1', 'ignore').decode('latin-1')
@@ -199,16 +195,23 @@ def traslape(horario1, horario2):
                 if max(h1[1], h2[1]) < min(h1[2], h2[2]): return True
     return False
 
+def strip_emoji(text):
+    if " " in text:
+        parts = text.split(" ", 1)
+        if len(parts) > 1: return parts[1]
+    return text
+
 def generar_combinaciones(materias, rango, prefs, horas_libres):
     bloqueos = []
     for hl in horas_libres: inicio = int(hl.split(":")[0]); bloqueos.append(inicio)
     pool = []
-    for mat in materias:
-        if mat not in oferta_academica: continue
+    for mat_display in materias:
+        mat_key = mat_display
+        if mat_key not in oferta_academica: continue
         opciones = []
-        for sec in oferta_academica[mat]:
+        for sec in oferta_academica[mat_key]:
             prof_name = sec['profesor']
-            key = f"{mat}_{prof_name}"
+            key = f"{mat_display}_{prof_name}"
             puntos = prefs.get(key, 50)
             if puntos == 0: continue 
             dentro = True
@@ -216,11 +219,11 @@ def generar_combinaciones(materias, rango, prefs, horas_libres):
                 if h[1] < rango[0] or h[2] > rango[1]: dentro = False; break
                 for b in bloqueos:
                     if max(h[1], b) < min(h[2], b+1): dentro = False; break
-                time_key = f"time_{mat}_{prof_name}_{h[1]}"
+                time_key = f"time_{mat_display}_{prof_name}_{h[1]}"
                 if not st.session_state.get(time_key, True): dentro = False; break
                 if not dentro: break
-            if dentro: s = sec.copy(); s['materia'] = mat; s['score'] = puntos; opciones.append(s)
-        if not opciones: return [], f"❌ **{mat}**: No tiene horarios disponibles con tus filtros."
+            if dentro: s = sec.copy(); s['materia'] = mat_display; s['score'] = puntos; opciones.append(s)
+        if not opciones: return [], f"❌ **{mat_display}**: No tiene horarios disponibles con tus filtros."
         pool.append(opciones)
     combos = list(itertools.product(*pool))
     validos = []
@@ -286,10 +289,11 @@ def create_pro_pdf(horario, alumno_data, total_creditos):
     horario_ordenado = sorted(horario, key=get_start_hour)
     
     for clase in horario_ordenado:
-        materia_nome = clean_text(clase['materia'])
+        materia_clean = clase['materia'] 
+        materia_nome = clean_text(materia_clean)
         if len(materia_nome) > 38: materia_nome = materia_nome[:35] + "..."
         profesor_nome = clean_text(clase['profesor'].split('(')[0][:30])
-        creditos = str(CREDITOS.get(clase['materia'], 0))
+        creditos = str(CREDITOS.get(materia_clean, 0))
         pdf.cell(w_mat, h_table, materia_nome, 1); pdf.cell(w_prof, h_table, profesor_nome, 1); pdf.cell(w_cred, h_table, creditos, 1, 0, 'C')
         for d in range(5):
             txt_hora = ""
@@ -339,7 +343,7 @@ def create_timetable_html(horario):
 # -----------------------------------------------------------------------------
 # 5. MENÚ LATERAL
 # -----------------------------------------------------------------------------
-menu = st.sidebar.radio("Menú", ["📅 Generador de Horarios", "⭐ Evaluación Docente", "🤖 Asistente IA"])
+menu = st.sidebar.radio("Menú", ["📅 Generador de Horarios", "⭐ Evaluación Docente"])
 
 if os.path.exists("burro.png"):
     st.sidebar.image("burro.png", use_container_width=True)
@@ -493,8 +497,7 @@ if menu == "📅 Generador de Horarios":
                             with st.expander("⭐ Ver Opiniones"):
                                 if p not in st.session_state.opiniones: st.session_state.opiniones[p] = {"suma": 0, "votos": 0, "comentarios": []}
                                 data = st.session_state.opiniones[p]
-                                if data["votos"] > 0: prom = int(data["suma"]/data["votos"])
-                                else: prom = 0
+                                prom = int(data["suma"]/data["votos"]) if data["votos"]>0 else 0
                                 color = "#e74c3c" if prom<60 else "#f1c40f" if prom<90 else "#2ecc71"
                                 st.markdown(f"<div style='text-align:center; font-weight:bold; color:{color}; font-size:1.2em;'>{prom}/100</div>", unsafe_allow_html=True)
                                 if data["comentarios"]:
@@ -515,14 +518,17 @@ if menu == "📅 Generador de Horarios":
         if col_back.button("⬅️ Ajustar Filtros"): st.session_state.step = 4; st.rerun()
         with st.expander("📝 Datos del Alumno (Para el PDF)", expanded=True):
             c1, c2, c3, c4 = st.columns(4)
+            # Validación: Nombre con acentos y ñ
             raw_name = c1.text_input("Nombre", st.session_state.alumno_nombre)
-            clean_name = re.sub(r'[^a-zA-Z\s]', '', raw_name)
+            clean_name = re.sub(r'[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]', '', raw_name)
             if raw_name != clean_name: st.warning("Solo se permiten letras en el nombre.")
             st.session_state.alumno_nombre = clean_name
+            # Validación: No Control solo números
             raw_nc = c2.text_input("No. Control", st.session_state.alumno_nc)
             clean_nc = re.sub(r'\D', '', raw_nc)
             if raw_nc != clean_nc: st.warning("Solo se permiten números en el No. Control.")
             st.session_state.alumno_nc = clean_nc
+            
             st.session_state.alumno_sem = c3.selectbox("Semestre", range(1, 15), index=0)
             st.session_state.alumno_per = c4.text_input("Periodo", st.session_state.alumno_per)
         
@@ -573,13 +579,12 @@ elif menu == "⭐ Evaluación Docente":
     with c2:
         if prof_selected in st.session_state.opiniones:
             data = st.session_state.opiniones[prof_selected]
-            if data["votos"] > 0: prom = int(data["suma"] / data["votos"])
-            else: prom = 0
-            color_chart = "#e74c3c" if prom < 60 else "#f1c40f" if prom < 90 else "#2ecc71"
+            promedio = int(data["suma"] / data["votos"]) if data["votos"] > 0 else 0
+            color_chart = "#e74c3c" if promedio < 60 else "#f1c40f" if promedio < 90 else "#2ecc71"
             st.markdown(f"""
             <div style="display: flex; justify-content: center; margin-bottom: 10px;">
-                <div style="width: 150px; height: 150px; border-radius: 50%; background: conic-gradient({color_chart} {prom}%, #444 0); display: flex; justify-content: center; align-items: center;">
-                    <div style="width: 120px; height: 120px; border-radius: 50%; background: #1c1f26; display: flex; justify-content: center; align-items: center; color: white; font-weight: bold; font-size: 1.5em;">{prom}/100</div>
+                <div style="width: 150px; height: 150px; border-radius: 50%; background: conic-gradient({color_chart} {promedio}%, #444 0); display: flex; justify-content: center; align-items: center;">
+                    <div style="width: 120px; height: 120px; border-radius: 50%; background: #1c1f26; display: flex; justify-content: center; align-items: center; color: white; font-weight: bold; font-size: 1.5em;">{promedio}/100</div>
                 </div>
             </div>
             <p style="text-align: center; color: #aaa;">Basado en {data['votos']} votos</p>""", unsafe_allow_html=True)
@@ -589,56 +594,3 @@ elif menu == "⭐ Evaluación Docente":
     if prof_selected in st.session_state.opiniones and st.session_state.opiniones[prof_selected]["comentarios"]:
         for com in st.session_state.opiniones[prof_selected]["comentarios"]: st.markdown(f"<div class='comment-bubble'>{com}</div>", unsafe_allow_html=True)
     else: st.write("No hay comentarios.")
-
-# =============================================================================
-# VISTA 3: ASISTENTE IA
-# =============================================================================
-elif menu == "🤖 Asistente IA":
-    st.title("🤖 Asistente Académico ITS")
-    st.markdown("Pregúntame sobre materias, créditos o consejos para tu horario.")
-
-    if "GEMINI_API_KEY" not in st.secrets:
-        st.error("⚠️ No se ha configurado la API Key de Gemini.")
-        st.info("Por favor, agrega tu `GEMINI_API_KEY` en los 'Secrets' de Streamlit.")
-    else:
-        try:
-            genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
-            model = genai.GenerativeModel('gemini-1.5-flash')
-            
-            for message in st.session_state.chat_history:
-                with st.chat_message(message["role"]):
-                    st.markdown(message["content"])
-            
-            if prompt := st.chat_input("Escribe tu duda aquí..."):
-                st.chat_message("user").markdown(prompt)
-                st.session_state.chat_history.append({"role": "user", "content": prompt})
-                
-                contexto = f"""
-                Eres un experto asesor académico de Ingeniería Mecatrónica en el ITS.
-                Tu objetivo es ayudar a los alumnos a armar su horario ideal.
-                
-                INFORMACIÓN CLAVE:
-                - Créditos por materia: {CREDITOS}
-                - Reglas de Seriación (Prerrequisitos): {SERIACION}
-                - Oferta Académica disponible: {list(oferta_academica.keys())}
-                
-                REGLAS DE COMPORTAMIENTO:
-                - Sé amable, motivador y usa emojis (🦅, 📚, ⚙️).
-                - Si te preguntan por una materia seriada, adviérteles del prerrequisito.
-                - Si te preguntan por maestros, sé neutral pero menciona si son estrictos o relajados basándote en la "vox populi" del Tec (inventa detalles ligeros y positivos).
-                - Tus respuestas deben ser concisas y útiles.
-                """
-                
-                try:
-                    chat = model.start_chat(history=[])
-                    response = chat.send_message(f"{contexto}\n\nPregunta del alumno: {prompt}")
-                    
-                    with st.chat_message("assistant"):
-                        st.markdown(response.text)
-                    st.session_state.chat_history.append({"role": "assistant", "content": response.text})
-                    
-                except Exception as e:
-                    st.error(f"Error al conectar con Gemini: {e}")
-
-        except Exception as e:
-             st.error(f"Error de configuración: {e}")
