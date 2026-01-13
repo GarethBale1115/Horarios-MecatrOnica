@@ -4,7 +4,6 @@ import itertools
 from fpdf import FPDF
 import os
 import re
-# La IA está desactivada, no importamos genai para evitar errores si no hay clave
 
 # -----------------------------------------------------------------------------
 # 1. CONFIGURACIÓN VISUAL
@@ -74,12 +73,9 @@ if 'horas_libres' not in st.session_state: st.session_state.horas_libres = []
 if 'prefs' not in st.session_state: st.session_state.prefs = {}
 if 'resultados' not in st.session_state: st.session_state.resultados = None
 
-# Base de datos de opiniones (Temporal en RAM)
+# BASE DE DATOS DE OPINIONES VACÍA (LIMPIA)
 if 'opiniones' not in st.session_state: 
-    st.session_state.opiniones = {
-        "Ana Gabriela Gomez Muñoz": {"suma": 450, "votos": 5, "comentarios": ["Excelente maestra, muy clara.", "Estricta pero justa."]},
-        "Gerardo Jarquín Hernández": {"suma": 98, "votos": 1, "comentarios": ["El mejor para Robótica, 100% recomendado."]}
-    }
+    st.session_state.opiniones = {}
 
 if 'alumno_nombre' not in st.session_state: st.session_state.alumno_nombre = ""
 if 'alumno_nc' not in st.session_state: st.session_state.alumno_nc = ""
@@ -126,9 +122,6 @@ database = {
 }
 
 # --- OFERTA ACADÉMICA CON SALONES ---
-# NOTA: He agregado el campo "salon". Como no tengo tu lista completa, puse "TBA" (To Be Announced)
-# o salones genéricos. DEBES EDITAR ESTO CON TUS DATOS REALES.
-
 oferta_academica = {
     "🧪 Química": [{"profesor": "Norma Hernández Flores", "salon": "K-4", "horario": [(d,7,8) for d in range(4)], "id":"Q1"}, {"profesor": "Norma Hernández Flores", "salon": "K-4", "horario": [(d,8,9) for d in range(4)], "id":"Q2"}, {"profesor": "Norma Hernández Flores", "salon": "K-4", "horario": [(d,11,12) for d in range(4)], "id":"Q3"}, {"profesor": "Norma Hernández Flores", "salon": "K-4", "horario": [(d,12,13) for d in range(4)], "id":"Q4"}, {"profesor": "Hilda Araceli Torres Plata", "salon": "K-5", "horario": [(d,8,9) for d in range(4)], "id":"Q5"}, {"profesor": "Hilda Araceli Torres Plata", "salon": "K-5", "horario": [(d,9,10) for d in range(4)], "id":"Q6"}, {"profesor": "Alma Leticia Cázares Arreguin", "salon": "K-6", "horario": [(d,13,14) for d in range(4)], "id":"Q7"}, {"profesor": "Alma Leticia Cázares Arreguin", "salon": "K-6", "horario": [(d,14,15) for d in range(4)], "id":"Q8"}, {"profesor": "Alma Leticia Cázares Arreguin", "salon": "K-6", "horario": [(d,16,17) for d in range(4)], "id":"Q9"}, {"profesor": "José Raymundo Garza Aldaco", "salon": "K-7", "horario": [(d,15,16) for d in range(4)], "id":"Q10"}, {"profesor": "Alejandra Torres Ordaz", "salon": "K-8", "horario": [(d,15,16) for d in range(4)], "id":"Q11"}, {"profesor": "Alejandra Torres Ordaz", "salon": "K-8", "horario": [(d,16,17) for d in range(4)], "id":"Q12"}, {"profesor": "Alejandra Torres Ordaz", "salon": "K-8", "horario": [(d,17,18) for d in range(4)], "id":"Q13"}, {"profesor": "Victor Martinez Rivera", "salon": "K-9", "horario": [(d,15,16) for d in range(4)], "id":"Q14"}, {"profesor": "Victor Martinez Rivera", "salon": "K-9", "horario": [(d,16,17) for d in range(4)], "id":"Q15"}, {"profesor": "Victor Martinez Rivera", "salon": "K-9", "horario": [(d,17,18) for d in range(4)], "id":"Q16"}, {"profesor": "Silvia Susana Aguirre Sanchez", "salon": "K-10", "horario": [(d,17,18) for d in range(4)], "id":"Q17"}, {"profesor": "Silvia Susana Aguirre Sanchez", "salon": "K-10", "horario": [(d,18,19) for d in range(4)], "id":"Q18"}, {"profesor": "Karina Azucena Ayala Torres", "salon": "K-11", "horario": [(d,17,18) for d in range(4)], "id":"Q19"}, {"profesor": "Karina Azucena Ayala Torres", "salon": "K-11", "horario": [(d,18,19) for d in range(4)], "id":"Q20"}],
     "📐 Cálculo Diferencial": [{"profesor": "Allen Epifanio Lopez", "salon": "A-1", "horario": [(d,7,8) for d in range(5)], "id":"CD1"}, {"profesor": "Kevin Alberto Cordova Ventura", "salon": "A-2", "horario": [(d,8,9) for d in range(5)], "id":"CD2"}, {"profesor": "Kevin Alberto Cordova Ventura", "salon": "A-2", "horario": [(d,12,13) for d in range(5)], "id":"CD3"}, {"profesor": "Erwin Rommel Cerda Leon", "salon": "A-3", "horario": [(d,8,9) for d in range(5)], "id":"CD4"}, {"profesor": "Brenda Zavala Aguillon", "salon": "A-4", "horario": [(d,9,10) for d in range(5)], "id":"CD5"}, {"profesor": "Brenda Zavala Aguillon", "salon": "A-4", "horario": [(d,12,13) for d in range(5)], "id":"CD6"}, {"profesor": "Alicia Guadalupe Del Bosque Martínez", "salon": "A-5", "horario": [(d,10,11) for d in range(5)], "id":"CD7"}, {"profesor": "Alicia Guadalupe Del Bosque Martínez", "salon": "A-5", "horario": [(d,11,12) for d in range(5)], "id":"CD8"}, {"profesor": "Eliana Sarahi Sanchez Gonzalez", "salon": "A-6", "horario": [(d,11,12) for d in range(5)], "id":"CD9"}, {"profesor": "Ana Victoria Ferniza Sandoval", "salon": "A-7", "horario": [(d,11,12) for d in range(5)], "id":"CD10"}, {"profesor": "Ana Victoria Ferniza Sandoval", "salon": "A-7", "horario": [(d,13,14) for d in range(5)], "id":"CD11"}, {"profesor": "Edna Marina Gonzalez Martinez", "salon": "A-8", "horario": [(d,11,12) for d in range(5)], "id":"CD12"}, {"profesor": "Rodrigo Juarez Martinez", "salon": "A-9", "horario": [(d,15,16) for d in range(5)], "id":"CD13"}, {"profesor": "Jose Jesus Israel Ruiz Benitez", "salon": "A-10", "horario": [(d,16,17) for d in range(5)], "id":"CD14"}, {"profesor": "Javier Guadalupe Cuellar Villarreal", "salon": "A-11", "horario": [(d,16,17) for d in range(5)], "id":"CD15"}, {"profesor": "Irma Karina Olmedo Landeros", "salon": "A-12", "horario": [(d,17,18) for d in range(5)], "id":"CD16"}],
@@ -184,7 +177,6 @@ oferta_academica = {
     "🎮 Control": [{"profesor": "Cesar Gerardo Martinez Sanchez", "salon": "RR-1", "horario": [(0,9,10),(1,9,10),(2,9,10),(3,9,10),(4,9,11)], "id":"CTRL1"}, {"profesor": "Jesus Guerrero Contreras", "salon": "RR-2", "horario": [(0,15,16),(1,15,16),(2,15,16),(3,15,16),(4,15,17)], "id":"CTRL2"}, {"profesor": "Ricardo Martínez Alvarado", "salon": "RR-3", "horario": [(0,17,18),(1,17,18),(2,17,18),(3,17,18),(4,17,19)], "id":"CTRL3"}, {"profesor": "Isaac Ruiz Ramos", "salon": "RR-4", "horario": [(0,19,20),(1,19,20),(2,19,20),(3,19,20),(4,19,21)], "id":"CTRL4"}],
     "🤖 Sistemas Avanzados de Manufactura": [{"profesor": "Ada Karina Velarde Sanchez", "salon": "SS-1", "horario": [(d,9,10) for d in range(5)], "id":"SAM1"}, {"profesor": "Ada Karina Velarde Sanchez", "salon": "SS-1", "horario": [(d,10,11) for d in range(5)], "id":"SAM2"}, {"profesor": "Maria Del Socorro Marines Leal", "salon": "SS-2", "horario": [(d,17,18) for d in range(5)], "id":"SAM3"}],
     "🌐 Redes Industriales": [{"profesor": "Francisco Flores Sanmiguel", "salon": "TT-1", "horario": [(d,15,16) for d in range(5)], "id":"RI1"}, {"profesor": "Francisco Flores Sanmiguel", "salon": "TT-1", "horario": [(d,16,17) for d in range(5)], "id":"RI2"}, {"profesor": "Francisco Flores Sanmiguel", "salon": "TT-1", "horario": [(d,17,18) for d in range(5)], "id":"RI3"}, {"profesor": "Neider Gonzalez Roblero", "salon": "TT-2", "horario": [(d,18,19) for d in range(5)], "id":"RI4"}, {"profesor": "Neider Gonzalez Roblero", "salon": "TT-2", "horario": [(d,19,20) for d in range(5)], "id":"RI5"}],
-    # SEMESTRE 9
     "🦾 Robótica": [{"profesor": "Gerardo Jarquín Hernández", "salon": "UU-1", "horario": [(d,7,8) for d in range(5)], "id":"ROB1"}, {"profesor": "Gerardo Jarquín Hernández", "salon": "UU-1", "horario": [(d,14,15) for d in range(5)], "id":"ROB2"}],
     "🏭 Tópicos Selectos de Automatización Industrial": [{"profesor": "Ana Gabriela Gomez Muñoz", "salon": "VV-1", "horario": [(0,12,13),(1,12,13),(2,12,13),(3,12,13),(4,12,14)], "id":"TS1"}, {"profesor": "Victor Manuel Retana Castillo", "salon": "VV-2", "horario": [(0,18,19),(1,18,19),(2,18,19),(3,18,19),(4,17,19)], "id":"TS2"}, {"profesor": "Victor Manuel Retana Castillo", "salon": "VV-2", "horario": [(0,20,21),(1,20,21),(2,20,21),(3,20,21),(4,20,22)], "id":"TS3"}, {"profesor": "Luis Rey Santos Saucedo", "salon": "VV-3", "horario": [(0,19,20),(1,19,20),(2,19,20),(3,19,20),(4,19,21)], "id":"TS4"}]
 }
@@ -285,7 +277,7 @@ def create_pro_pdf(horario, alumno_data, total_creditos):
     pdf.cell(30, h_row, "Carrera:", 1, 0, 'L', 1); pdf.cell(100, h_row, "INGENIERÍA MECATRÓNICA", 1, 0, 'L')
     pdf.cell(30, h_row, "Especialidad:", 1, 0, 'L', 1); pdf.cell(100, h_row, clean_text(especialidad), 1, 1, 'L'); pdf.ln(8)
     
-    # Encabezado tabla
+    # Encabezado tabla (AHORA CON SALON)
     pdf.set_font("Arial", 'B', 9); pdf.set_fill_color(128, 0, 0); pdf.set_text_color(255, 255, 255)
     w_mat, w_prof, w_salon, w_dia, w_cred = 60, 55, 15, 22, 12; h_table = 8
     pdf.cell(w_mat, h_table, "Materia", 1, 0, 'C', 1)
@@ -305,11 +297,9 @@ def create_pro_pdf(horario, alumno_data, total_creditos):
         materia_nome = clean_text(materia_clean)
         if len(materia_nome) > 33: materia_nome = materia_nome[:30] + "..."
         
-        profesor_nome = clase['profesor'].split('(')[0]
-        # CORRECCIÓN DE NOMBRE ANA GOMEZ
-        if "Ana Gabriela" in profesor_nome: profesor_nome = "Ana Gomez"
+        # NOMBRE COMPLETO EN PDF (Sin acortar a Ana Gomez)
+        profesor_nome = clean_text(clase['profesor'].split('(')[0][:35])
         
-        profesor_nome = clean_text(profesor_nome[:28])
         salon = clean_text(clase.get('salon', 'TBA'))
         creditos = str(CREDITOS.get(materia_clean, 0))
         
@@ -348,7 +338,8 @@ def create_timetable_html(horario):
         
         parts = clase['profesor'].split('(')[0].split()
         prof_name = f"{parts[0]} {parts[1]}" if len(parts) > 1 else parts[0]
-        # CORRECCIÓN DE NOMBRE ANA GOMEZ
+        
+        # CORRECCIÓN DE NOMBRE ANA GOMEZ (SOLO EN HTML)
         if "Ana Gabriela" in clase['profesor']: prof_name = "Ana Gomez"
 
         salon = clase.get('salon', 'TBA')
@@ -384,6 +375,7 @@ if os.path.exists("reticula.pdf"):
 # VISTA 1: GENERADOR DE HORARIOS
 # =============================================================================
 if menu == "📅 Generador de Horarios":
+    # --- PASO 1: BIENVENIDA ---
     if st.session_state.step == 1:
         col_tec, col_centro, col_its = st.columns([1.5, 3, 1.5], gap="medium")
         with col_tec:
@@ -421,6 +413,7 @@ if menu == "📅 Generador de Horarios":
             if st.button("Comenzar ➡️", use_container_width=True):
                 st.session_state.num_materias_deseadas = cant; st.session_state.step = 2; st.rerun()
 
+    # --- PASO 2: MATERIAS ---
     elif st.session_state.step == 2:
         st.title("📚 Selección de Materias")
         cols = st.columns(9); selected_in_this_step = []
@@ -466,6 +459,7 @@ if menu == "📅 Generador de Horarios":
             if col2.button("Siguiente ➡️", type="primary"):
                 st.session_state.materias_seleccionadas = selected_in_this_step; st.session_state.step = 3; st.rerun()
 
+    # --- PASO 3: DISPONIBILIDAD ---
     elif st.session_state.step == 3:
         st.title("⏰ Disponibilidad")
         col_rang, col_free = st.columns(2)
@@ -482,6 +476,7 @@ if menu == "📅 Generador de Horarios":
         if col1.button("⬅️ Atrás"): st.session_state.step = 2; st.rerun()
         if col2.button("Siguiente ➡️", type="primary"): st.session_state.step = 4; st.rerun()
 
+    # --- PASO 4: PROFESORES ---
     elif st.session_state.step == 4:
         st.title("👨‍🏫 Filtrado de Profesores")
         st.info("✅ Preferencia Alta | ➖ Normal | ❌ Descartar")
@@ -535,6 +530,7 @@ if menu == "📅 Generador de Horarios":
         if col1.button("⬅️ Atrás"): st.session_state.step = 3; st.rerun()
         if col2.button("🚀 GENERAR HORARIOS", type="primary"): st.session_state.step = 5; st.session_state.resultados = None; st.rerun()
 
+    # --- PASO 5: RESULTADOS ---
     elif st.session_state.step == 5:
         st.title("✅ Resultados Finales")
         col_back, _ = st.columns([1, 4])
@@ -543,7 +539,6 @@ if menu == "📅 Generador de Horarios":
             c1, c2, c3, c4 = st.columns(4)
             # Validación: Nombre con acentos y ñ
             raw_name = c1.text_input("Nombre", st.session_state.alumno_nombre)
-            # Regex permite letras a-z, A-Z, acentos, ñ, Ñ y espacios
             clean_name = re.sub(r'[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]', '', raw_name)
             if raw_name != clean_name: st.warning("Solo se permiten letras en el nombre.")
             st.session_state.alumno_nombre = clean_name
