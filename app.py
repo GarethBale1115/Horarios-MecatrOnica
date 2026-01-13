@@ -79,11 +79,7 @@ def get_db_connection():
         st.error("⚠️ No se encontraron los secretos de GCP en la configuración.")
         return None
     try:
-        # Cargar info del diccionario
         creds_info = dict(st.secrets["gcp_service_account"])
-        
-        # CORRECCIÓN AUTOMÁTICA DE LA LLAVE PRIVADA
-        # A veces al copiar/pegar se daña el formato de saltos de línea
         if "private_key" in creds_info:
             creds_info["private_key"] = creds_info["private_key"].replace("\\n", "\n")
 
@@ -97,32 +93,37 @@ def get_db_connection():
 def get_opiniones_data(client):
     if not client: return {}
     try:
-        # Intentar abrir la hoja
         sheet = client.open("opiniones_its").sheet1
         data = sheet.get_all_records()
         
         opiniones_dict = {}
         for row in data:
             prof = str(row.get('Profesor', '')).strip()
-            if not prof: continue # Saltar filas vacías
+            if not prof: continue 
             
             if prof not in opiniones_dict:
                 opiniones_dict[prof] = {"suma": 0, "votos": 0, "comentarios": []}
             
-            try: calif = int(row.get('Calificacion', 0))
+            # --- CORRECCIÓN CRÍTICA PARA LEER CALIFICACIÓN ---
+            # Intenta leer 'Calificacion', 'Calificación', 'calificacion' o 'calificación'
+            raw_calif = row.get('Calificacion') or row.get('Calificación') or row.get('calificacion') or row.get('calificación') or 0
+            
+            try: calif = int(raw_calif)
             except: calif = 0
             
             opiniones_dict[prof]["suma"] += calif
             opiniones_dict[prof]["votos"] += 1
             
-            comentario = str(row.get('Comentario', '')).strip()
+            # --- CORRECCIÓN CRÍTICA PARA LEER COMENTARIO ---
+            comentario = row.get('Comentario') or row.get('comentario') or ""
+            comentario = str(comentario).strip()
             if comentario:
                 opiniones_dict[prof]["comentarios"].insert(0, comentario)
                 
         return opiniones_dict
         
     except gspread.SpreadsheetNotFound:
-        st.error("❌ No encuentro el archivo 'opiniones_its' en Google Drive. Asegúrate de haberle cambiado el nombre y compartido con el bot.")
+        st.error("❌ No encuentro el archivo 'opiniones_its'.")
         return {}
     except Exception as e:
         st.error(f"❌ Error leyendo la hoja: {e}")
@@ -133,7 +134,6 @@ def save_opinion(client, profesor, comentario, calificacion):
     try:
         sheet = client.open("opiniones_its").sheet1
         fecha = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        # Agregar fila
         sheet.append_row([profesor, comentario, calificacion, fecha])
         return True
     except Exception as e:
@@ -160,7 +160,7 @@ if 'alumno_sem' not in st.session_state: st.session_state.alumno_sem = 1
 if 'alumno_per' not in st.session_state: st.session_state.alumno_per = "ENE-JUN 2026"
 
 # -----------------------------------------------------------------------------
-# 4. DATOS Y LÓGICA
+# 4. DATOS Y LÓGICA (BASE DE DATOS COMPLETA V49)
 # -----------------------------------------------------------------------------
 CREDITOS = {
     "🧪 Química": 4, "📐 Cálculo Diferencial": 5, "⚖️ Taller de Ética": 4, "💻 Dibujo Asistido por Computadora": 4, "📏 Metrología y Normalización": 4, "🔎 Fundamentos de Investigación": 4,
