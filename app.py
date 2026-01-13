@@ -4,6 +4,9 @@ import itertools
 from fpdf import FPDF
 import os
 import re
+import gspread
+from oauth2client.service_account import ServiceAccountCredentials
+from datetime import datetime
 
 # -----------------------------------------------------------------------------
 # 1. CONFIGURACIÓN VISUAL
@@ -63,7 +66,65 @@ st.markdown("""
 COLORS = ['#FFCDD2', '#F8BBD0', '#E1BEE7', '#D1C4E9', '#C5CAE9', '#BBDEFB', '#B3E5FC', '#B2EBF2', '#B2DFDB', '#C8E6C9', '#DCEDC8', '#F0F4C3', '#FFF9C4', '#FFECB3', '#FFE0B2', '#FFCCBC']
 
 # -----------------------------------------------------------------------------
-# 2. INICIALIZAR ESTADO
+# 2. CONEXIÓN A GOOGLE SHEETS
+# -----------------------------------------------------------------------------
+@st.cache_resource
+def get_db_connection():
+    try:
+        scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
+        # Cargar credenciales desde st.secrets
+        if "gcp_service_account" in st.secrets:
+            creds_dict = dict(st.secrets["gcp_service_account"])
+            creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
+            client = gspread.authorize(creds)
+            return client
+        else:
+            return None
+    except Exception as e:
+        st.error(f"Error de conexión a BD: {e}")
+        return None
+
+def get_opiniones_data(client):
+    if not client: return {}
+    try:
+        sheet = client.open("opiniones_its").sheet1
+        data = sheet.get_all_records()
+        # Procesar datos para formato rápido
+        opiniones_dict = {}
+        for row in data:
+            prof = row['Profesor']
+            if prof not in opiniones_dict:
+                opiniones_dict[prof] = {"suma": 0, "votos": 0, "comentarios": []}
+            
+            # Limpieza básica
+            try: calif = int(row['Calificacion'])
+            except: calif = 0
+            
+            opiniones_dict[prof]["suma"] += calif
+            opiniones_dict[prof]["votos"] += 1
+            if row['Comentario']:
+                opiniones_dict[prof]["comentarios"].insert(0, row['Comentario']) # El más reciente arriba
+        return opiniones_dict
+    except Exception as e:
+        st.error(f"Error leyendo hoja: {e}")
+        return {}
+
+def save_opinion(client, profesor, comentario, calificacion):
+    if not client: return False
+    try:
+        sheet = client.open("opiniones_its").sheet1
+        fecha = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        sheet.append_row([profesor, comentario, calificacion, fecha])
+        return True
+    except Exception as e:
+        st.error(f"Error guardando: {e}")
+        return False
+
+# Inicializar Conexión
+db_client = get_db_connection()
+
+# -----------------------------------------------------------------------------
+# 3. INICIALIZAR ESTADO
 # -----------------------------------------------------------------------------
 if 'step' not in st.session_state: st.session_state.step = 1
 if 'num_materias_deseadas' not in st.session_state: st.session_state.num_materias_deseadas = 6
@@ -73,17 +134,13 @@ if 'horas_libres' not in st.session_state: st.session_state.horas_libres = []
 if 'prefs' not in st.session_state: st.session_state.prefs = {}
 if 'resultados' not in st.session_state: st.session_state.resultados = None
 
-# BASE DE DATOS DE OPINIONES VACÍA
-if 'opiniones' not in st.session_state: 
-    st.session_state.opiniones = {}
-
 if 'alumno_nombre' not in st.session_state: st.session_state.alumno_nombre = ""
 if 'alumno_nc' not in st.session_state: st.session_state.alumno_nc = ""
 if 'alumno_sem' not in st.session_state: st.session_state.alumno_sem = 1
 if 'alumno_per' not in st.session_state: st.session_state.alumno_per = "ENE-JUN 2026"
 
 # -----------------------------------------------------------------------------
-# 3. DATOS SINCRONIZADOS (CON EMOJIS)
+# 4. DATOS Y LÓGICA
 # -----------------------------------------------------------------------------
 CREDITOS = {
     "🧪 Química": 4, "📐 Cálculo Diferencial": 5, "⚖️ Taller de Ética": 4, "💻 Dibujo Asistido por Computadora": 4, "📏 Metrología y Normalización": 4, "🔎 Fundamentos de Investigación": 4,
@@ -121,7 +178,6 @@ database = {
     }
 }
 
-# --- OFERTA ACADÉMICA COMPLETA Y ACTUALIZADA V49 ---
 oferta_academica = {
     # ------------------ SEMESTRE 1 ------------------
     "🧪 Química": [
@@ -701,7 +757,7 @@ oferta_academica = {
 }
 
 # -----------------------------------------------------------------------------
-# 4. FUNCIONES LÓGICAS
+# 5. FUNCIONES LÓGICAS
 # -----------------------------------------------------------------------------
 def clean_text(text):
     return text.encode('latin-1', 'ignore').decode('latin-1')
@@ -904,7 +960,7 @@ def create_timetable_html(horario):
     return html
 
 # -----------------------------------------------------------------------------
-# 5. MENÚ LATERAL
+# 6. MENÚ LATERAL
 # -----------------------------------------------------------------------------
 menu = st.sidebar.radio("Menú", ["📅 Generador de Horarios", "⭐ Evaluación Docente"])
 
@@ -1058,17 +1114,31 @@ if menu == "📅 Generador de Horarios":
                                     st.checkbox(f"{t}:00 - {t+1}:00", value=True, key=t_key)
 
                             with st.expander("⭐ Ver Opiniones"):
-                                if p not in st.session_state.opiniones: st.session_state.opiniones[p] = {"suma": 0, "votos": 0, "comentarios": []}
-                                data = st.session_state.opiniones[p]
-                                prom = int(data["suma"]/data["votos"]) if data["votos"]>0 else 0
-                                color = "#e74c3c" if prom<60 else "#f1c40f" if prom<90 else "#2ecc71"
-                                st.markdown(f"<div style='text-align:center; font-weight:bold; color:{color}; font-size:1.2em;'>{prom}/100</div>", unsafe_allow_html=True)
-                                if data["comentarios"]:
-                                    for c in data["comentarios"][:2]: st.markdown(f"<div class='comment-bubble'>{c}</div>", unsafe_allow_html=True)
-                                else: st.caption("Sin comentarios.")
-                                new_c = st.text_input("Comentario:", key=f"t_{key}"); new_s = st.slider("Calif:",0,100,80,key=f"s_{key}")
+                                if 'opiniones' in st.session_state and p in st.session_state.opiniones:
+                                    data = st.session_state.opiniones[p]
+                                    # DB temporal o real
+                                    pass
+                                
+                                # LÓGICA DE VISUALIZACIÓN DE BD REAL
+                                opiniones_reales = get_opiniones_data(db_client)
+                                if p in opiniones_reales:
+                                    data = opiniones_reales[p]
+                                    if data["votos"] > 0: prom = int(data["suma"]/data["votos"])
+                                    else: prom = 0
+                                    color = "#e74c3c" if prom<60 else "#f1c40f" if prom<90 else "#2ecc71"
+                                    st.markdown(f"<div style='text-align:center; font-weight:bold; color:{color}; font-size:1.2em;'>{prom}/100</div>", unsafe_allow_html=True)
+                                    if data["comentarios"]:
+                                        for c in data["comentarios"][:2]: st.markdown(f"<div class='comment-bubble'>{c}</div>", unsafe_allow_html=True)
+                                else: st.caption("Sin comentarios aún.")
+                                
+                                new_c = st.text_input("Comentario:", key=f"t_{key}")
+                                new_s = st.slider("Calif:",0,100,80,key=f"s_{key}")
                                 if st.button("Enviar", key=f"b_{key}"):
-                                    data["suma"]+=new_s; data["votos"]+=1; data["comentarios"].insert(0,new_c); st.success("¡Enviado!"); st.rerun()
+                                    if save_opinion(db_client, p, new_c, new_s):
+                                        st.success("¡Guardado!")
+                                        st.rerun()
+                                    else:
+                                        st.error("Error al guardar (Verifica conexión)")
 
         col1, col2 = st.columns([1,1])
         if col1.button("⬅️ Atrás"): st.session_state.step = 3; st.rerun()
@@ -1081,12 +1151,11 @@ if menu == "📅 Generador de Horarios":
         if col_back.button("⬅️ Ajustar Filtros"): st.session_state.step = 4; st.rerun()
         with st.expander("📝 Datos del Alumno (Para el PDF)", expanded=True):
             c1, c2, c3, c4 = st.columns(4)
-            # Validación: Nombre con acentos y ñ
             raw_name = c1.text_input("Nombre", st.session_state.alumno_nombre)
             clean_name = re.sub(r'[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]', '', raw_name)
             if raw_name != clean_name: st.warning("Solo se permiten letras en el nombre.")
             st.session_state.alumno_nombre = clean_name
-            # Validación: No Control solo números
+            
             raw_nc = c2.text_input("No. Control", st.session_state.alumno_nc)
             clean_nc = re.sub(r'\D', '', raw_nc)
             if raw_nc != clean_nc: st.warning("Solo se permiten números en el No. Control.")
@@ -1128,20 +1197,27 @@ elif menu == "⭐ Evaluación Docente":
         for grupo in lista: all_profs.add(grupo['profesor'])
     all_profs = sorted(list(all_profs))
     prof_selected = st.selectbox("Selecciona al profesor:", all_profs)
+    
     st.write("---")
+    
+    # CARGAR DATOS REALES
+    opiniones_reales = get_opiniones_data(db_client)
+    
     c1, c2 = st.columns([2, 1])
     with c1:
         st.subheader(f"Opina sobre: {prof_selected}")
         nuevo_comentario = st.text_area("Comentario (Anónimo):")
         nueva_calif = st.slider("Calificación (0-100):", 0, 100, 80)
         if st.button("Enviar Opinión"):
-            if prof_selected not in st.session_state.opiniones: st.session_state.opiniones[prof_selected] = {"suma": 0, "votos": 0, "comentarios": []}
-            db = st.session_state.opiniones[prof_selected]
-            db["suma"] += nueva_calif; db["votos"] += 1; db["comentarios"].insert(0, nuevo_comentario)
-            st.success("¡Opinión registrada!"); st.rerun()
+            if save_opinion(db_client, prof_selected, nuevo_comentario, nueva_calif):
+                st.success("¡Opinión registrada!")
+                st.rerun()
+            else:
+                st.error("Error de conexión. Verifica la configuración.")
+
     with c2:
-        if prof_selected in st.session_state.opiniones:
-            data = st.session_state.opiniones[prof_selected]
+        if prof_selected in opiniones_reales:
+            data = opiniones_reales[prof_selected]
             if data["votos"] > 0:
                 promedio = int(data["suma"] / data["votos"])
             else:
@@ -1154,9 +1230,13 @@ elif menu == "⭐ Evaluación Docente":
                 </div>
             </div>
             <p style="text-align: center; color: #aaa;">Basado en {data['votos']} votos</p>""", unsafe_allow_html=True)
-        else: st.info("Sin calificaciones aún.")
+        else:
+            st.info("Sin calificaciones aún.")
+
     st.write("---")
     st.subheader("💬 Comentarios Recientes")
-    if prof_selected in st.session_state.opiniones and st.session_state.opiniones[prof_selected]["comentarios"]:
-        for com in st.session_state.opiniones[prof_selected]["comentarios"]: st.markdown(f"<div class='comment-bubble'>{com}</div>", unsafe_allow_html=True)
-    else: st.write("No hay comentarios.")
+    if prof_selected in opiniones_reales and opiniones_reales[prof_selected]["comentarios"]:
+        for com in opiniones_reales[prof_selected]["comentarios"]:
+            st.markdown(f"<div class='comment-bubble'>{com}</div>", unsafe_allow_html=True)
+    else:
+        st.write("No hay comentarios.")
