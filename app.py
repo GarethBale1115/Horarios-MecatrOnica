@@ -5,7 +5,7 @@ from fpdf import FPDF
 import os
 import re
 import gspread
-from oauth2client.service_account import ServiceAccountCredentials
+from google.oauth2.service_account import Credentials
 from datetime import datetime
 
 # -----------------------------------------------------------------------------
@@ -66,47 +66,66 @@ st.markdown("""
 COLORS = ['#FFCDD2', '#F8BBD0', '#E1BEE7', '#D1C4E9', '#C5CAE9', '#BBDEFB', '#B3E5FC', '#B2EBF2', '#B2DFDB', '#C8E6C9', '#DCEDC8', '#F0F4C3', '#FFF9C4', '#FFECB3', '#FFE0B2', '#FFCCBC']
 
 # -----------------------------------------------------------------------------
-# 2. CONEXIÓN A GOOGLE SHEETS
+# 2. CONEXIÓN A GOOGLE SHEETS (MODERNA)
 # -----------------------------------------------------------------------------
+SCOPES = [
+    "https://www.googleapis.com/auth/spreadsheets",
+    "https://www.googleapis.com/auth/drive"
+]
+
 @st.cache_resource
 def get_db_connection():
+    if "gcp_service_account" not in st.secrets:
+        st.error("⚠️ No se encontraron los secretos de GCP en la configuración.")
+        return None
     try:
-        scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
-        # Cargar credenciales desde st.secrets
-        if "gcp_service_account" in st.secrets:
-            creds_dict = dict(st.secrets["gcp_service_account"])
-            creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
-            client = gspread.authorize(creds)
-            return client
-        else:
-            return None
+        # Cargar info del diccionario
+        creds_info = dict(st.secrets["gcp_service_account"])
+        
+        # CORRECCIÓN AUTOMÁTICA DE LA LLAVE PRIVADA
+        # A veces al copiar/pegar se daña el formato de saltos de línea
+        if "private_key" in creds_info:
+            creds_info["private_key"] = creds_info["private_key"].replace("\\n", "\n")
+
+        creds = Credentials.from_service_account_info(creds_info, scopes=SCOPES)
+        client = gspread.authorize(creds)
+        return client
     except Exception as e:
-        st.error(f"Error de conexión a BD: {e}")
+        st.error(f"⚠️ Error de conexión con Google: {e}")
         return None
 
 def get_opiniones_data(client):
     if not client: return {}
     try:
+        # Intentar abrir la hoja
         sheet = client.open("opiniones_its").sheet1
         data = sheet.get_all_records()
-        # Procesar datos para formato rápido
+        
         opiniones_dict = {}
         for row in data:
-            prof = row['Profesor']
+            prof = str(row.get('Profesor', '')).strip()
+            if not prof: continue # Saltar filas vacías
+            
             if prof not in opiniones_dict:
                 opiniones_dict[prof] = {"suma": 0, "votos": 0, "comentarios": []}
             
-            # Limpieza básica
-            try: calif = int(row['Calificacion'])
+            try: calif = int(row.get('Calificacion', 0))
             except: calif = 0
             
             opiniones_dict[prof]["suma"] += calif
             opiniones_dict[prof]["votos"] += 1
-            if row['Comentario']:
-                opiniones_dict[prof]["comentarios"].insert(0, row['Comentario']) # El más reciente arriba
+            
+            comentario = str(row.get('Comentario', '')).strip()
+            if comentario:
+                opiniones_dict[prof]["comentarios"].insert(0, comentario)
+                
         return opiniones_dict
+        
+    except gspread.SpreadsheetNotFound:
+        st.error("❌ No encuentro el archivo 'opiniones_its' en Google Drive. Asegúrate de haberle cambiado el nombre y compartido con el bot.")
+        return {}
     except Exception as e:
-        st.error(f"Error leyendo hoja: {e}")
+        st.error(f"❌ Error leyendo la hoja: {e}")
         return {}
 
 def save_opinion(client, profesor, comentario, calificacion):
@@ -114,10 +133,11 @@ def save_opinion(client, profesor, comentario, calificacion):
     try:
         sheet = client.open("opiniones_its").sheet1
         fecha = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        # Agregar fila
         sheet.append_row([profesor, comentario, calificacion, fecha])
         return True
     except Exception as e:
-        st.error(f"Error guardando: {e}")
+        st.error(f"❌ Error guardando datos: {e}")
         return False
 
 # Inicializar Conexión
@@ -1114,13 +1134,9 @@ if menu == "📅 Generador de Horarios":
                                     st.checkbox(f"{t}:00 - {t+1}:00", value=True, key=t_key)
 
                             with st.expander("⭐ Ver Opiniones"):
-                                if 'opiniones' in st.session_state and p in st.session_state.opiniones:
-                                    data = st.session_state.opiniones[p]
-                                    # DB temporal o real
-                                    pass
-                                
-                                # LÓGICA DE VISUALIZACIÓN DE BD REAL
+                                # CARGAR DATOS REALES DE GOOGLE SHEETS
                                 opiniones_reales = get_opiniones_data(db_client)
+                                
                                 if p in opiniones_reales:
                                     data = opiniones_reales[p]
                                     if data["votos"] > 0: prom = int(data["suma"]/data["votos"])
@@ -1200,7 +1216,7 @@ elif menu == "⭐ Evaluación Docente":
     
     st.write("---")
     
-    # CARGAR DATOS REALES
+    # CARGAR DATOS REALES DE GOOGLE SHEETS
     opiniones_reales = get_opiniones_data(db_client)
     
     c1, c2 = st.columns([2, 1])
