@@ -73,7 +73,7 @@ if 'horas_libres' not in st.session_state: st.session_state.horas_libres = []
 if 'prefs' not in st.session_state: st.session_state.prefs = {}
 if 'resultados' not in st.session_state: st.session_state.resultados = None
 
-# BASE DE DATOS DE OPINIONES VACÍA (LIMPIA)
+# BASE DE DATOS DE OPINIONES VACÍA
 if 'opiniones' not in st.session_state: 
     st.session_state.opiniones = {}
 
@@ -149,7 +149,7 @@ oferta_academica = {
     "🦾 Mecánica de Materiales": [{"profesor": "Juan Carlos Cardenas Contreras", "salon": "T-1", "horario": [(0,7,8),(1,7,8),(2,7,8),(3,7,8),(4,7,9)], "id":"MM1"}, {"profesor": "Juan Carlos Cardenas Contreras", "salon": "T-1", "horario": [(0,9,10),(1,9,10),(2,9,10),(3,9,10),(4,9,11)], "id":"MM2"}, {"profesor": "Juan Carlos Cardenas Contreras", "salon": "T-1", "horario": [(0,12,13),(1,12,13),(2,12,13),(3,12,13),(4,11,13)], "id":"MM3"}, {"profesor": "Juan Francisco Tovar Epifanio", "salon": "T-2", "horario": [(0,13,14),(1,13,14),(2,13,14),(3,13,14),(4,12,14)], "id":"MM4"}, {"profesor": "Adolfo Galvan Avalos", "salon": "T-3", "horario": [(0,17,18),(1,17,18),(2,17,18),(3,17,18),(4,17,19)], "id":"MM5"}],
     "🏎️ Dinámica": [{"profesor": "Claudia Yvonne Franco Martinez", "salon": "U-1", "horario": [(d,8,9) for d in range(4)], "id":"DIN1"}, {"profesor": "Cipriano Alvarado González", "salon": "U-2", "horario": [(d,10,11) for d in range(4)], "id":"DIN2"}, {"profesor": "Cipriano Alvarado González", "salon": "U-2", "horario": [(d,11,12) for d in range(4)], "id":"DIN3"}, {"profesor": "Cipriano Alvarado González", "salon": "U-2", "horario": [(d,12,13) for d in range(4)], "id":"DIN4"}, {"profesor": "Juan Arredondo Valdez", "salon": "U-3", "horario": [(d,17,18) for d in range(4)], "id":"DIN5"}, {"profesor": "Ismene Guadalupe De La Peña Alcala", "salon": "U-4", "horario": [(d,19,20) for d in range(4)], "id":"DIN6"}, {"profesor": "Ismene Guadalupe De La Peña Alcala", "salon": "U-4", "horario": [(d,20,21) for d in range(4)], "id":"DIN7"}],
     "🔌 Análisis de Circuitos Eléctricos": [{"profesor": "Iván De Jesús Epifanio López", "salon": "V-1", "horario": [(0,8,9),(1,8,9),(2,8,9),(3,8,9),(4,7,9)], "id":"ACE1"}, {"profesor": "Iván De Jesús Epifanio López", "salon": "V-1", "horario": [(0,10,11),(1,10,11),(2,10,11),(3,10,11),(4,10,12)], "id":"ACE2"}, {"profesor": "Fernando Aguilar Gaona", "salon": "V-2", "horario": [(0,13,14),(1,13,14),(2,13,14),(3,13,14),(4,13,15)], "id":"ACE3"}, {"profesor": "Alejandro Martínez Hernández", "salon": "V-3", "horario": [(0,13,14),(1,13,14),(2,13,14),(3,13,14),(4,13,15)], "id":"ACE4"}, {"profesor": "Horacio Tolentino Quilantan", "salon": "V-4", "horario": [(0,16,17),(1,16,17),(2,16,17),(3,16,17),(4,16,18)], "id":"ACE5"}, {"profesor": "Josue Isrrael Najera Diaz", "salon": "V-5", "horario": [(0,16,17),(1,16,17),(2,16,17),(3,16,17),(4,16,18)], "id":"ACE6"}, {"profesor": "Josue Isrrael Najera Diaz", "salon": "V-5", "horario": [(0,18,19),(1,18,19),(2,18,19),(3,18,19),(4,18,20)], "id":"ACE7"}, {"profesor": "Josue Isrrael Najera Diaz", "salon": "V-5", "horario": [(0,20,21),(1,20,21),(2,20,21),(3,20,21),(4,20,22)], "id":"ACE8"}, {"profesor": "Obed Ramírez Gómez", "salon": "V-6", "horario": [(0,19,20),(1,19,20),(2,19,20),(3,19,20),(4,19,21)], "id":"ACE9"}],
-    "📝 Taller de Investigación I": [{"profesor": "Juana Maria Dueñaz Reyes", "salon": "W-1", "horario": [(d,7,8) for d in range(4)], "id":"TI1"}, {"profesor": "Fernando Alfonso Ruiz Moreno", "salon": "W-2", "horario": [(d,7,8) for d in range(4)], "id":"TI2"}, {"profesor": "Fernando Alfonso Ruiz Moreno", "salon": "W-2", "horario": [(d,8,9) for d in range(4)], "id":"TI3"}, {"profesor": "Fernando Alfonso Ruiz Moreno", "salon": "W-2", "horario": [(d,9,10) for d in range(4)], "id":"TI4"}, {"profesor": "Fernando Alfonso Ruiz Moreno", "salon": "W-2", "horario": [(d,10,11) for d in range(4)], "id":"TI5"}, {"profesor": "Luis Manuel Navarro Huitron", "salon": "W-3", "horario": [(d,13,14) for d in range(4)], "id":"TI6"}],
+    "Taller de Investigación I": [{"profesor": "Juana Maria Dueñaz Reyes", "salon": "W-1", "horario": [(d,7,8) for d in range(4)], "id":"TI1"}, {"profesor": "Fernando Alfonso Ruiz Moreno", "salon": "W-2", "horario": [(d,7,8) for d in range(4)], "id":"TI2"}, {"profesor": "Fernando Alfonso Ruiz Moreno", "salon": "W-2", "horario": [(d,8,9) for d in range(4)], "id":"TI3"}, {"profesor": "Fernando Alfonso Ruiz Moreno", "salon": "W-2", "horario": [(d,9,10) for d in range(4)], "id":"TI4"}, {"profesor": "Fernando Alfonso Ruiz Moreno", "salon": "W-2", "horario": [(d,10,11) for d in range(4)], "id":"TI5"}, {"profesor": "Luis Manuel Navarro Huitron", "salon": "W-3", "horario": [(d,13,14) for d in range(4)], "id":"TI6"}],
     # SEMESTRE 5
     "⚙️ Máquinas Eléctricas": [{"profesor": "Gabriel Allende Sancho", "salon": "X-1", "horario": [(d,8,9) for d in range(5)], "id":"ME1"}, {"profesor": "Mario Alberto Ponce Llamas", "salon": "X-2", "horario": [(d,9,10) for d in range(5)], "id":"ME2"}, {"profesor": "Mario Alberto Ponce Llamas", "salon": "X-2", "horario": [(d,11,12) for d in range(5)], "id":"ME3"}, {"profesor": "Alejandra Hernandez Rodriguez", "salon": "X-3", "horario": [(d,15,16) for d in range(5)], "id":"ME4"}, {"profesor": "Daniel Ruiz Calderon", "salon": "X-4", "horario": [(d,17,18) for d in range(5)], "id":"ME5"}],
     "📟 Electrónica Analógica": [{"profesor": "Fernando Aguilar Gaona", "salon": "Y-1", "horario": [(0,9,10),(1,9,10),(2,9,10),(3,9,10),(4,9,11)], "id":"EA1"}, {"profesor": "Fernando Aguilar Gaona", "salon": "Y-1", "horario": [(0,12,13),(1,12,13),(2,12,13),(3,12,13),(4,11,13)], "id":"EA2"}, {"profesor": "Rolando Rodriguez Pimentel", "salon": "Y-2", "horario": [(0,9,10),(1,9,10),(2,9,10),(3,9,10),(4,9,11)], "id":"EA3"}, {"profesor": "Joaquin Antonio Alvarado Bustos", "salon": "Y-3", "horario": [(0,10,11),(1,10,11),(2,10,11),(3,10,11),(4,9,11)], "id":"EA4"}, {"profesor": "Joaquin Antonio Alvarado Bustos", "salon": "Y-3", "horario": [(0,11,12),(1,11,12),(2,11,12),(3,11,12),(4,11,13)], "id":"EA5"}],
@@ -177,6 +177,7 @@ oferta_academica = {
     "🎮 Control": [{"profesor": "Cesar Gerardo Martinez Sanchez", "salon": "RR-1", "horario": [(0,9,10),(1,9,10),(2,9,10),(3,9,10),(4,9,11)], "id":"CTRL1"}, {"profesor": "Jesus Guerrero Contreras", "salon": "RR-2", "horario": [(0,15,16),(1,15,16),(2,15,16),(3,15,16),(4,15,17)], "id":"CTRL2"}, {"profesor": "Ricardo Martínez Alvarado", "salon": "RR-3", "horario": [(0,17,18),(1,17,18),(2,17,18),(3,17,18),(4,17,19)], "id":"CTRL3"}, {"profesor": "Isaac Ruiz Ramos", "salon": "RR-4", "horario": [(0,19,20),(1,19,20),(2,19,20),(3,19,20),(4,19,21)], "id":"CTRL4"}],
     "🤖 Sistemas Avanzados de Manufactura": [{"profesor": "Ada Karina Velarde Sanchez", "salon": "SS-1", "horario": [(d,9,10) for d in range(5)], "id":"SAM1"}, {"profesor": "Ada Karina Velarde Sanchez", "salon": "SS-1", "horario": [(d,10,11) for d in range(5)], "id":"SAM2"}, {"profesor": "Maria Del Socorro Marines Leal", "salon": "SS-2", "horario": [(d,17,18) for d in range(5)], "id":"SAM3"}],
     "🌐 Redes Industriales": [{"profesor": "Francisco Flores Sanmiguel", "salon": "TT-1", "horario": [(d,15,16) for d in range(5)], "id":"RI1"}, {"profesor": "Francisco Flores Sanmiguel", "salon": "TT-1", "horario": [(d,16,17) for d in range(5)], "id":"RI2"}, {"profesor": "Francisco Flores Sanmiguel", "salon": "TT-1", "horario": [(d,17,18) for d in range(5)], "id":"RI3"}, {"profesor": "Neider Gonzalez Roblero", "salon": "TT-2", "horario": [(d,18,19) for d in range(5)], "id":"RI4"}, {"profesor": "Neider Gonzalez Roblero", "salon": "TT-2", "horario": [(d,19,20) for d in range(5)], "id":"RI5"}],
+    # SEMESTRE 9
     "🦾 Robótica": [{"profesor": "Gerardo Jarquín Hernández", "salon": "UU-1", "horario": [(d,7,8) for d in range(5)], "id":"ROB1"}, {"profesor": "Gerardo Jarquín Hernández", "salon": "UU-1", "horario": [(d,14,15) for d in range(5)], "id":"ROB2"}],
     "🏭 Tópicos Selectos de Automatización Industrial": [{"profesor": "Ana Gabriela Gomez Muñoz", "salon": "VV-1", "horario": [(0,12,13),(1,12,13),(2,12,13),(3,12,13),(4,12,14)], "id":"TS1"}, {"profesor": "Victor Manuel Retana Castillo", "salon": "VV-2", "horario": [(0,18,19),(1,18,19),(2,18,19),(3,18,19),(4,17,19)], "id":"TS2"}, {"profesor": "Victor Manuel Retana Castillo", "salon": "VV-2", "horario": [(0,20,21),(1,20,21),(2,20,21),(3,20,21),(4,20,22)], "id":"TS3"}, {"profesor": "Luis Rey Santos Saucedo", "salon": "VV-3", "horario": [(0,19,20),(1,19,20),(2,19,20),(3,19,20),(4,19,21)], "id":"TS4"}]
 }
@@ -278,14 +279,18 @@ def create_pro_pdf(horario, alumno_data, total_creditos):
     pdf.cell(30, h_row, "Especialidad:", 1, 0, 'L', 1); pdf.cell(100, h_row, clean_text(especialidad), 1, 1, 'L'); pdf.ln(8)
     
     # Encabezado tabla (AHORA CON SALON)
-    pdf.set_font("Arial", 'B', 9); pdf.set_fill_color(128, 0, 0); pdf.set_text_color(255, 255, 255)
-    w_mat, w_prof, w_salon, w_dia, w_cred = 60, 55, 15, 22, 12; h_table = 8
+    # AJUSTE DE TAMAÑO DE FUENTE: 7 PARA QUE QUEPAN NOMBRES LARGOS
+    pdf.set_font("Arial", 'B', 8); pdf.set_fill_color(128, 0, 0); pdf.set_text_color(255, 255, 255)
+    w_mat, w_prof, w_salon, w_dia, w_cred = 75, 60, 12, 19, 10; h_table = 8
     pdf.cell(w_mat, h_table, "Materia", 1, 0, 'C', 1)
     pdf.cell(w_prof, h_table, "Profesor", 1, 0, 'C', 1)
     pdf.cell(w_salon, h_table, "Salón", 1, 0, 'C', 1)
     pdf.cell(w_cred, h_table, "Créd.", 1, 0, 'C', 1)
     for dia in ["Lun", "Mar", "Mié", "Jue", "Vie"]: pdf.cell(w_dia, h_table, clean_text(dia), 1, 0, 'C', 1)
-    pdf.ln(); pdf.set_font("Arial", size=8); pdf.set_text_color(0, 0, 0)
+    pdf.ln(); 
+    
+    # CUERPO DE TABLA CON LETRA CHIQUITA PARA QUE NO SE CORTE
+    pdf.set_font("Arial", size=7); pdf.set_text_color(0, 0, 0)
     
     def get_start_hour(clase):
         if not clase['horario']: return 24
@@ -295,10 +300,10 @@ def create_pro_pdf(horario, alumno_data, total_creditos):
     for clase in horario_ordenado:
         materia_clean = clase['materia'] 
         materia_nome = clean_text(materia_clean)
-        if len(materia_nome) > 33: materia_nome = materia_nome[:30] + "..."
+        # SIN CORTE DE TEXTO (Full name)
         
         # NOMBRE COMPLETO EN PDF (Sin acortar a Ana Gomez)
-        profesor_nome = clean_text(clase['profesor'].split('(')[0][:35])
+        profesor_nome = clean_text(clase['profesor'].split('(')[0])
         
         salon = clean_text(clase.get('salon', 'TBA'))
         creditos = str(CREDITOS.get(materia_clean, 0))
@@ -314,7 +319,7 @@ def create_pro_pdf(horario, alumno_data, total_creditos):
                 if sesion[0] == d: txt_hora = f"{sesion[1]}:00-{sesion[2]}:00"
             pdf.cell(w_dia, h_table, txt_hora, 1, 0, 'C')
         pdf.ln()
-    pdf.set_font("Arial", 'B', 9)
+    pdf.set_font("Arial", 'B', 8)
     pdf.cell(w_mat + w_prof + w_salon, h_table, clean_text("TOTAL DE CRÉDITOS:"), 1, 0, 'R'); pdf.cell(w_cred, h_table, str(total_creditos), 1, 1, 'C')
     return pdf.output(dest='S').encode('latin-1')
 
@@ -409,7 +414,7 @@ if menu == "📅 Generador de Horarios":
         st.write(""); st.write("")
         col_btn, _ = st.columns([1, 2])
         with col_btn:
-            cant = st.number_input("Materias a cursar:", min_value=1, max_value=9, value=6, label_visibility="collapsed")
+            cant = st.number_input("Selecciona la cantidad de materias a cursar:", min_value=1, max_value=9, value=6)
             if st.button("Comenzar ➡️", use_container_width=True):
                 st.session_state.num_materias_deseadas = cant; st.session_state.step = 2; st.rerun()
 
