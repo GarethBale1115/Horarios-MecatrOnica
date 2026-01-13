@@ -807,6 +807,7 @@ def create_pro_pdf(horario, alumno_data, total_creditos):
     # Ancho dinamico
     w_mat, w_prof, w_salon, w_cred = 75, 60, 12, 10
     w_dia = 19 if not tiene_sabado else 16 # Ajuste si hay sabado
+    h_table = 8 # ALTURA DE FILA DEFINIDA
     
     pdf.cell(w_mat, h_table, "Materia", 1, 0, 'C', 1)
     pdf.cell(w_prof, h_table, "Profesor", 1, 0, 'C', 1)
