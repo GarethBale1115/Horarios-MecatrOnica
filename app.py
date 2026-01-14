@@ -312,7 +312,7 @@ oferta_academica = {
         {"profesor": "Luis Manuel Ferniza Pérez", "salon": "C04", "horario": [(d,10,11) for d in range(5)], "id":"CI26"},
         {"profesor": "Luis Manuel Ferniza Pérez", "salon": "C04", "horario": [(d,12,13) for d in range(5)], "id":"CI27"},
         {"profesor": "Luis Manuel Ferniza Pérez", "salon": "C04", "horario": [(d,13,14) for d in range(5)], "id":"CI27B"},
-        {"profesor": "Erwin Rommel Cerda Leon", "salon": "N39/N40", "horario": [(d,12,13) for d in range(5)] if d!=4 else [(4,12,13)], "id":"CI24"},
+        {"profesor": "Erwin Rommel Cerda Leon", "salon": "N39", "horario": [(d,12,13) for d in range(5)], "id":"CI24"},
         {"profesor": "Erwin Rommel Cerda Leon", "salon": "N40", "horario": [(d,13,14) for d in range(5)], "id":"CI25"},
         {"profesor": "Ignacio Dávila Ríos", "salon": "N42", "horario": [(d,16,17) for d in range(5)], "id":"CI28"},
         {"profesor": "Ignacio Dávila Ríos", "salon": "N42", "horario": [(d,19,20) for d in range(5)], "id":"CI29"},
