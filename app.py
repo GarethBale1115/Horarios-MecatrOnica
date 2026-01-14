@@ -7,6 +7,7 @@ import re
 import gspread
 from google.oauth2.service_account import Credentials
 from datetime import datetime
+import time
 
 # -----------------------------------------------------------------------------
 # 1. CONFIGURACIÓN VISUAL
@@ -66,7 +67,7 @@ st.markdown("""
 COLORS = ['#FFCDD2', '#F8BBD0', '#E1BEE7', '#D1C4E9', '#C5CAE9', '#BBDEFB', '#B3E5FC', '#B2EBF2', '#B2DFDB', '#C8E6C9', '#DCEDC8', '#F0F4C3', '#FFF9C4', '#FFECB3', '#FFE0B2', '#FFCCBC']
 
 # -----------------------------------------------------------------------------
-# 2. CONEXIÓN A GOOGLE SHEETS (MODERNA)
+# 2. CONEXIÓN A GOOGLE SHEETS (MODERNA Y CACHEADA)
 # -----------------------------------------------------------------------------
 SCOPES = [
     "https://www.googleapis.com/auth/spreadsheets",
@@ -76,57 +77,46 @@ SCOPES = [
 @st.cache_resource
 def get_db_connection():
     if "gcp_service_account" not in st.secrets:
-        st.error("⚠️ No se encontraron los secretos de GCP en la configuración.")
         return None
     try:
         creds_info = dict(st.secrets["gcp_service_account"])
         if "private_key" in creds_info:
             creds_info["private_key"] = creds_info["private_key"].replace("\\n", "\n")
-
         creds = Credentials.from_service_account_info(creds_info, scopes=SCOPES)
         client = gspread.authorize(creds)
         return client
     except Exception as e:
-        st.error(f"⚠️ Error de conexión con Google: {e}")
         return None
 
-def get_opiniones_data(client):
+# OPTIMIZACIÓN: Cachear los datos por 60 segundos para no saturar a Google
+@st.cache_data(ttl=60)
+def get_opiniones_data_cached(_client_status):
+    # _client_status es un truco para que streamlit cachee aunque client no sea hashable
+    client = get_db_connection()
     if not client: return {}
     try:
         sheet = client.open("opiniones_its").sheet1
         data = sheet.get_all_records()
-        
         opiniones_dict = {}
         for row in data:
             prof = str(row.get('Profesor', '')).strip()
             if not prof: continue 
-            
             if prof not in opiniones_dict:
                 opiniones_dict[prof] = {"suma": 0, "votos": 0, "comentarios": []}
             
-            # --- CORRECCIÓN CRÍTICA PARA LEER CALIFICACIÓN ---
-            # Intenta leer 'Calificacion', 'Calificación', 'calificacion' o 'calificación'
             raw_calif = row.get('Calificacion') or row.get('Calificación') or row.get('calificacion') or row.get('calificación') or 0
-            
             try: calif = int(raw_calif)
             except: calif = 0
             
             opiniones_dict[prof]["suma"] += calif
             opiniones_dict[prof]["votos"] += 1
             
-            # --- CORRECCIÓN CRÍTICA PARA LEER COMENTARIO ---
             comentario = row.get('Comentario') or row.get('comentario') or ""
             comentario = str(comentario).strip()
             if comentario:
                 opiniones_dict[prof]["comentarios"].insert(0, comentario)
-                
         return opiniones_dict
-        
-    except gspread.SpreadsheetNotFound:
-        st.error("❌ No encuentro el archivo 'opiniones_its'.")
-        return {}
-    except Exception as e:
-        st.error(f"❌ Error leyendo la hoja: {e}")
+    except:
         return {}
 
 def save_opinion(client, profesor, comentario, calificacion):
@@ -135,9 +125,11 @@ def save_opinion(client, profesor, comentario, calificacion):
         sheet = client.open("opiniones_its").sheet1
         fecha = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         sheet.append_row([profesor, comentario, calificacion, fecha])
+        # Limpiar cache para que se vea inmediato
+        get_opiniones_data_cached.clear()
         return True
     except Exception as e:
-        st.error(f"❌ Error guardando datos: {e}")
+        st.error(f"Error al guardar: {e}")
         return False
 
 # Inicializar Conexión
@@ -1100,6 +1092,11 @@ if menu == "📅 Generador de Horarios":
     elif st.session_state.step == 4:
         st.title("👨‍🏫 Filtrado de Profesores")
         st.info("✅ Preferencia Alta | ➖ Normal | ❌ Descartar")
+        
+        # --- CARGAR TODAS LAS OPINIONES UNA SOLA VEZ AQUÍ ---
+        # ESTA ES LA CLAVE PARA QUE GOOGLE NO TE BLOQUEE
+        opiniones_reales_global = get_opiniones_data_cached("status_ok")
+        
         for mat in st.session_state.materias_seleccionadas:
             if mat in oferta_academica:
                 with st.container(border=True):
@@ -1134,11 +1131,9 @@ if menu == "📅 Generador de Horarios":
                                     st.checkbox(f"{t}:00 - {t+1}:00", value=True, key=t_key)
 
                             with st.expander("⭐ Ver Opiniones"):
-                                # CARGAR DATOS REALES DE GOOGLE SHEETS
-                                opiniones_reales = get_opiniones_data(db_client)
-                                
-                                if p in opiniones_reales:
-                                    data = opiniones_reales[p]
+                                # LEER DESDE LA VARIABLE LOCAL (GRATIS)
+                                if p in opiniones_reales_global:
+                                    data = opiniones_reales_global[p]
                                     if data["votos"] > 0: prom = int(data["suma"]/data["votos"])
                                     else: prom = 0
                                     color = "#e74c3c" if prom<60 else "#f1c40f" if prom<90 else "#2ecc71"
@@ -1152,6 +1147,8 @@ if menu == "📅 Generador de Horarios":
                                 if st.button("Enviar", key=f"b_{key}"):
                                     if save_opinion(db_client, p, new_c, new_s):
                                         st.success("¡Guardado!")
+                                        # Recargar para ver cambios
+                                        time.sleep(1)
                                         st.rerun()
                                     else:
                                         st.error("Error al guardar (Verifica conexión)")
@@ -1217,7 +1214,7 @@ elif menu == "⭐ Evaluación Docente":
     st.write("---")
     
     # CARGAR DATOS REALES DE GOOGLE SHEETS
-    opiniones_reales = get_opiniones_data(db_client)
+    opiniones_reales = get_opiniones_data_cached("status_ok")
     
     c1, c2 = st.columns([2, 1])
     with c1:
@@ -1227,6 +1224,7 @@ elif menu == "⭐ Evaluación Docente":
         if st.button("Enviar Opinión"):
             if save_opinion(db_client, prof_selected, nuevo_comentario, nueva_calif):
                 st.success("¡Opinión registrada!")
+                time.sleep(1)
                 st.rerun()
             else:
                 st.error("Error de conexión. Verifica la configuración.")
