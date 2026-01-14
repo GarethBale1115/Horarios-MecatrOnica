@@ -88,10 +88,8 @@ def get_db_connection():
     except Exception as e:
         return None
 
-# OPTIMIZACIÓN: Cachear los datos por 60 segundos para no saturar a Google
 @st.cache_data(ttl=60)
 def get_opiniones_data_cached(_client_status):
-    # _client_status es un truco para que streamlit cachee aunque client no sea hashable
     client = get_db_connection()
     if not client: return {}
     try:
@@ -125,7 +123,6 @@ def save_opinion(client, profesor, comentario, calificacion):
         sheet = client.open("opiniones_its").sheet1
         fecha = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         sheet.append_row([profesor, comentario, calificacion, fecha])
-        # Limpiar cache para que se vea inmediato
         get_opiniones_data_cached.clear()
         return True
     except Exception as e:
@@ -152,7 +149,7 @@ if 'alumno_sem' not in st.session_state: st.session_state.alumno_sem = 1
 if 'alumno_per' not in st.session_state: st.session_state.alumno_per = "ENE-JUN 2026"
 
 # -----------------------------------------------------------------------------
-# 4. DATOS Y LÓGICA (BASE DE DATOS COMPLETA V49)
+# 4. DATOS Y LÓGICA (BASE DE DATOS FINAL - REAL)
 # -----------------------------------------------------------------------------
 CREDITOS = {
     "🧪 Química": 4, "📐 Cálculo Diferencial": 5, "⚖️ Taller de Ética": 4, "💻 Dibujo Asistido por Computadora": 4, "📏 Metrología y Normalización": 4, "🔎 Fundamentos de Investigación": 4,
@@ -190,31 +187,32 @@ database = {
     }
 }
 
+# --- OFERTA ACADÉMICA FINAL REAL ---
 oferta_academica = {
     # ------------------ SEMESTRE 1 ------------------
     "🧪 Química": [
-        {"profesor": "Norma Hernández Flores", "salon": "N05", "horario": [(d,7,8) for d in range(4)], "id":"Q1"},
-        {"profesor": "Norma Hernández Flores", "salon": "N05", "horario": [(d,8,9) for d in range(4)], "id":"Q2"},
-        {"profesor": "Norma Hernández Flores", "salon": "N05", "horario": [(d,11,12) for d in range(4)], "id":"Q3"},
-        {"profesor": "Norma Hernández Flores", "salon": "N05", "horario": [(d,12,13) for d in range(4)], "id":"Q4"},
-        {"profesor": "Hilda Araceli Torres Plata", "salon": "N06", "horario": [(d,8,9) for d in range(4)], "id":"Q5"},
-        {"profesor": "Hilda Araceli Torres Plata", "salon": "N06", "horario": [(d,9,10) for d in range(4)], "id":"Q6"},
-        {"profesor": "Alma Leticia Cázares Arreguin", "salon": "N36", "horario": [(d,13,14) for d in range(4)], "id":"Q7"},
-        {"profesor": "Alma Leticia Cázares Arreguin", "salon": "N36", "horario": [(d,14,15) for d in range(4)], "id":"Q8"},
-        {"profesor": "Alma Leticia Cázares Arreguin", "salon": "N36", "horario": [(d,16,17) for d in range(4)], "id":"Q9"},
-        {"profesor": "José Raymundo Garza Aldaco", "salon": "N07", "horario": [(d,15,16) for d in range(4)], "id":"Q10"},
-        {"profesor": "José Raymundo Garza Aldaco", "salon": "N07", "horario": [(d,16,17) for d in range(4)], "id":"Q10B"},
-        {"profesor": "José Raymundo Garza Aldaco", "salon": "N07", "horario": [(d,17,18) for d in range(4)], "id":"Q10C"},
-        {"profesor": "José Raymundo Garza Aldaco", "salon": "N07", "horario": [(d,18,19) for d in range(4)], "id":"Q10D"},
-        {"profesor": "Alejandra Torres Ordaz", "salon": "C05", "horario": [(d,15,16) for d in range(4)], "id":"Q11"},
-        {"profesor": "Alejandra Torres Ordaz", "salon": "C05", "horario": [(d,16,17) for d in range(4)], "id":"Q12"},
-        {"profesor": "Alejandra Torres Ordaz", "salon": "C05", "horario": [(d,17,18) for d in range(4)], "id":"Q13"},
-        {"profesor": "Victor Martinez Rivera", "salon": "CR15", "horario": [(d,15,16) for d in range(4)], "id":"Q14"},
-        {"profesor": "Victor Martinez Rivera", "salon": "CR15", "horario": [(d,16,17) for d in range(4)], "id":"Q15"},
-        {"profesor": "Victor Martinez Rivera", "salon": "CR15", "horario": [(d,17,18) for d in range(4)], "id":"Q16"},
-        {"profesor": "Silvia Susana Aguirre Sanchez", "salon": "N37", "horario": [(d,17,18) for d in range(4)], "id":"Q17"},
-        {"profesor": "Silvia Susana Aguirre Sanchez", "salon": "N37", "horario": [(d,18,19) for d in range(4)], "id":"Q18"},
-        {"profesor": "Karina Azucena Ayala Torres", "salon": "N35", "horario": [(d,18,19) for d in range(4)], "id":"Q20"}
+        {"profesor": "Norma Hernández Flores", "salon": "N05", "horario": [(0,7,8),(1,7,8),(2,7,8),(3,7,8)], "id":"Q1"},
+        {"profesor": "Norma Hernández Flores", "salon": "N05", "horario": [(0,8,9),(1,8,9),(2,8,9),(3,8,9)], "id":"Q2"},
+        {"profesor": "Norma Hernández Flores", "salon": "N05", "horario": [(0,11,12),(1,11,12),(2,11,12),(3,11,12)], "id":"Q3"},
+        {"profesor": "Norma Hernández Flores", "salon": "N05", "horario": [(0,12,13),(1,12,13),(2,12,13),(3,12,13)], "id":"Q4"},
+        {"profesor": "Hilda Araceli Torres Plata", "salon": "N06", "horario": [(0,8,9),(1,8,9),(2,8,9),(3,8,9)], "id":"Q5"},
+        {"profesor": "Hilda Araceli Torres Plata", "salon": "N06", "horario": [(0,9,10),(1,9,10),(2,9,10),(3,9,10)], "id":"Q6"},
+        {"profesor": "Alma Leticia Cázares Arreguin", "salon": "N36", "horario": [(0,13,14),(1,13,14),(2,13,14),(3,13,14)], "id":"Q7"},
+        {"profesor": "Alma Leticia Cázares Arreguin", "salon": "N36", "horario": [(0,14,15),(1,14,15),(2,14,15),(3,14,15)], "id":"Q8"},
+        {"profesor": "Alma Leticia Cázares Arreguin", "salon": "N36", "horario": [(0,16,17),(1,16,17),(2,16,17),(3,16,17)], "id":"Q9"},
+        {"profesor": "José Raymundo Garza Aldaco", "salon": "N07", "horario": [(0,15,16),(1,15,16),(2,15,16),(3,15,16)], "id":"Q10"},
+        {"profesor": "José Raymundo Garza Aldaco", "salon": "N07", "horario": [(0,16,17),(1,16,17),(2,16,17),(3,16,17)], "id":"Q10B"},
+        {"profesor": "José Raymundo Garza Aldaco", "salon": "N07", "horario": [(0,17,18),(1,17,18),(2,17,18),(3,17,18)], "id":"Q10C"},
+        {"profesor": "José Raymundo Garza Aldaco", "salon": "N07", "horario": [(0,18,19),(1,18,19),(2,18,19),(3,18,19)], "id":"Q10D"},
+        {"profesor": "Alejandra Torres Ordaz", "salon": "C05", "horario": [(0,15,16),(1,15,16),(2,15,16),(3,15,16)], "id":"Q11"},
+        {"profesor": "Alejandra Torres Ordaz", "salon": "C05", "horario": [(0,16,17),(1,16,17),(2,16,17),(3,16,17)], "id":"Q12"},
+        {"profesor": "Alejandra Torres Ordaz", "salon": "C05", "horario": [(0,17,18),(1,17,18),(2,17,18),(3,17,18)], "id":"Q13"},
+        {"profesor": "Victor Martinez Rivera", "salon": "CR15", "horario": [(0,15,16),(1,15,16),(2,15,16),(3,15,16)], "id":"Q14"},
+        {"profesor": "Victor Martinez Rivera", "salon": "CR15", "horario": [(0,16,17),(1,16,17),(2,16,17),(3,16,17)], "id":"Q15"},
+        {"profesor": "Victor Martinez Rivera", "salon": "CR15", "horario": [(0,17,18),(1,17,18),(2,17,18),(3,17,18)], "id":"Q16"},
+        {"profesor": "Silvia Susana Aguirre Sanchez", "salon": "N37", "horario": [(0,17,18),(1,17,18),(2,17,18),(3,17,18)], "id":"Q17"},
+        {"profesor": "Silvia Susana Aguirre Sanchez", "salon": "N37", "horario": [(0,18,19),(1,18,19),(2,18,19),(3,18,19)], "id":"Q18"},
+        {"profesor": "Karina Azucena Ayala Torres", "salon": "N35", "horario": [(0,18,19),(1,18,19),(2,18,19),(3,18,19)], "id":"Q20"}
     ],
     "📐 Cálculo Diferencial": [
         {"profesor": "Allen Epifanio Lopez", "salon": "C12", "horario": [(d,7,8) for d in range(5)], "id":"CD1"},
@@ -224,7 +222,6 @@ oferta_academica = {
         {"profesor": "Erwin Rommel Cerda Leon", "salon": "N34", "horario": [(d,8,9) for d in range(5)], "id":"CD4"},
         {"profesor": "Erwin Rommel Cerda Leon", "salon": "B15A", "horario": [(d,9,10) for d in range(5)], "id":"CD4B"},
         {"profesor": "Liliana Velázquez Rodríguez", "salon": "C13", "horario": [(d,9,10) for d in range(5)], "id":"CDX"},
-        {"profesor": "Brenda Zavala Aguillon", "salon": "C13", "horario": [(d,9,10) for d in range(5)], "id":"CD5"},
         {"profesor": "Brenda Zavala Aguillon", "salon": "C12", "horario": [(d,12,13) for d in range(5)], "id":"CD6"},
         {"profesor": "Alicia Guadalupe Del Bosque Martínez", "salon": "C13", "horario": [(d,10,11) for d in range(5)], "id":"CD7"},
         {"profesor": "Alicia Guadalupe Del Bosque Martínez", "salon": "B21", "horario": [(d,11,12) for d in range(5)], "id":"CD8"},
@@ -271,13 +268,13 @@ oferta_academica = {
         {"profesor": "Monica Hernandez Garcia", "salon": "C8A", "horario": [(d,16,17) for d in range(4)], "id":"D6"}
     ],
     "📏 Metrología y Normalización": [
-        {"profesor": "Juan Francisco Tovar Epifanio", "salon": "N19", "horario": [(d,7,8) for d in range(4)], "id":"M1"},
-        {"profesor": "Juan Francisco Tovar Epifanio", "salon": "N22", "horario": [(d,12,13) for d in range(4)], "id":"M2"},
-        {"profesor": "Pedro Lopez Martinez", "salon": "N20", "horario": [(d,10,11) for d in range(4)], "id":"M3"},
-        {"profesor": "Eustaquio Silva Torres", "salon": "N26", "horario": [(d,12,13) for d in range(4)], "id":"M4"},
-        {"profesor": "Eustaquio Silva Torres", "salon": "N26", "horario": [(d,14,15) for d in range(4)], "id":"M5"},
-        {"profesor": "Carlos Eduardo Resendiz Galindo", "salon": "N23", "horario": [(d,16,17) for d in range(4)], "id":"M6"},
-        {"profesor": "Luis Alejandro Gonzalez Valdez", "salon": "N03", "horario": [(d,18,19) for d in range(4)], "id":"M7"}
+        {"profesor": "Juan Francisco Tovar Epifanio", "salon": "N19", "horario": [(0,7,8),(1,7,8),(2,7,8),(3,7,8)], "id":"M1"},
+        {"profesor": "Juan Francisco Tovar Epifanio", "salon": "N22", "horario": [(0,12,13),(1,12,13),(2,12,13),(3,12,13)], "id":"M2"},
+        {"profesor": "Pedro Lopez Martinez", "salon": "N20", "horario": [(0,10,11),(1,10,11),(2,10,11),(3,10,11)], "id":"M3"},
+        {"profesor": "Eustaquio Silva Torres", "salon": "N26", "horario": [(0,12,13),(1,12,13),(2,12,13),(3,12,13)], "id":"M4"},
+        {"profesor": "Eustaquio Silva Torres", "salon": "N26", "horario": [(0,14,15),(1,14,15),(2,14,15),(3,14,15)], "id":"M5"},
+        {"profesor": "Carlos Eduardo Resendiz Galindo", "salon": "N23", "horario": [(0,16,17),(1,16,17),(2,16,17),(3,16,17)], "id":"M6"},
+        {"profesor": "Luis Alejandro Gonzalez Valdez", "salon": "N03", "horario": [(0,18,19),(1,18,19),(2,18,19),(3,18,19)], "id":"M7"}
     ],
     "🔎 Fundamentos de Investigación": [
         {"profesor": "Nora Laura Perez Murillo", "salon": "S17", "horario": [(d,8,9) for d in range(4)], "id":"F0"},
@@ -315,7 +312,7 @@ oferta_academica = {
         {"profesor": "Luis Manuel Ferniza Pérez", "salon": "C04", "horario": [(d,10,11) for d in range(5)], "id":"CI26"},
         {"profesor": "Luis Manuel Ferniza Pérez", "salon": "C04", "horario": [(d,12,13) for d in range(5)], "id":"CI27"},
         {"profesor": "Luis Manuel Ferniza Pérez", "salon": "C04", "horario": [(d,13,14) for d in range(5)], "id":"CI27B"},
-        {"profesor": "Erwin Rommel Cerda Leon", "salon": "N39", "horario": [(d,12,13) for d in range(5)], "id":"CI24"},
+        {"profesor": "Erwin Rommel Cerda Leon", "salon": "N39/N40", "horario": [(d,12,13) for d in range(5)] if d!=4 else [(4,12,13)], "id":"CI24"},
         {"profesor": "Erwin Rommel Cerda Leon", "salon": "N40", "horario": [(d,13,14) for d in range(5)], "id":"CI25"},
         {"profesor": "Ignacio Dávila Ríos", "salon": "N42", "horario": [(d,16,17) for d in range(5)], "id":"CI28"},
         {"profesor": "Ignacio Dávila Ríos", "salon": "N42", "horario": [(d,19,20) for d in range(5)], "id":"CI29"},
@@ -366,8 +363,8 @@ oferta_academica = {
         {"profesor": "Socorro Del Carmen Espinoza Cardona", "salon": "N21", "horario": [(d,18,19) for d in range(5)], "id":"CIM9"}
     ],
     "💾 Programación Básica": [
-        {"profesor": "Francisco Javier De Leon Macias", "salon": "LS1/R02", "horario": [(d,7,8) for d in range(5)], "id":"PB1"},
-        {"profesor": "Francisco Javier De Leon Macias", "salon": "LS1/R02", "horario": [(d,8,9) for d in range(5)], "id":"PB2"},
+        {"profesor": "Francisco Javier De Leon Macias", "salon": "LS1/R02", "horario": [(0,7,8),(1,7,8),(2,7,8),(3,7,8),(4,7,8)], "id":"PB1"},
+        {"profesor": "Francisco Javier De Leon Macias", "salon": "LS1/R02", "horario": [(0,8,9),(1,8,9),(2,8,9),(3,8,9),(4,8,9)], "id":"PB2"},
         {"profesor": "Leticia Castillo Hernández", "salon": "R13/R08/R12", "horario": [(d,9,10) for d in range(5)], "id":"PB3"},
         {"profesor": "Leticia Castillo Hernández", "salon": "R05/R14", "horario": [(d,13,14) for d in range(5)], "id":"PB4"},
         {"profesor": "Leticia Castillo Hernández", "salon": "R05/R14", "horario": [(d,14,15) for d in range(5)], "id":"PB5"},
@@ -516,16 +513,16 @@ oferta_academica = {
         {"profesor": "Jorge Alberto Ramos Oliveira", "salon": "C10", "horario": [(d,17,18) for d in range(5)], "id":"ED14"}
     ],
     "🔥 Fundamentos de Termodinámica": [
-        {"profesor": "Luis Miguel Veloz Pachicano", "salon": "N20", "horario": [(d,7,8) for d in range(4)], "id":"FT1"},
-        {"profesor": "Luis Miguel Veloz Pachicano", "salon": "N23", "horario": [(d,11,12) for d in range(4)], "id":"FT2"},
-        {"profesor": "Elena Guadalupe Luques Lopez", "salon": "N04", "horario": [(d,8,9) for d in range(4)], "id":"FT3"},
-        {"profesor": "Elena Guadalupe Luques Lopez", "salon": "N04", "horario": [(d,13,14) for d in range(4)], "id":"FT4"},
-        {"profesor": "Elias Servin Hernandez", "salon": "N25", "horario": [(d,9,10) for d in range(4)], "id":"FTX"},
-        {"profesor": "Erendira Del Rocio Gamon Perales", "salon": "N01", "horario": [(d,10,11) for d in range(4)], "id":"FT5"},
-        {"profesor": "Erendira Del Rocio Gamon Perales", "salon": "N01", "horario": [(d,12,13) for d in range(4)], "id":"FT6"},
-        {"profesor": "Edgar Omar Resendiz Flores", "salon": "N24", "horario": [(d,12,13) for d in range(4)], "id":"FT7"},
-        {"profesor": "Massiel Cristina Cisneros Morales", "salon": "N27", "horario": [(d,15,16) for d in range(4)], "id":"FT8"},
-        {"profesor": "Massiel Cristina Cisneros Morales", "salon": "N27", "horario": [(d,18,19) for d in range(4)], "id":"FT9"}
+        {"profesor": "Luis Miguel Veloz Pachicano", "salon": "N20", "horario": [(0,7,8),(1,7,8),(2,7,8),(3,7,8)], "id":"FT1"},
+        {"profesor": "Luis Miguel Veloz Pachicano", "salon": "N23", "horario": [(0,11,12),(1,11,12),(2,11,12),(3,11,12)], "id":"FT2"},
+        {"profesor": "Elena Guadalupe Luques Lopez", "salon": "N04", "horario": [(0,9,10),(1,9,10),(2,9,10),(3,9,10)], "id":"FT3"},
+        {"profesor": "Elena Guadalupe Luques Lopez", "salon": "N04", "horario": [(0,13,14),(1,13,14),(2,13,14),(3,13,14)], "id":"FT4"},
+        {"profesor": "Elias Servin Hernandez", "salon": "N25", "horario": [(0,9,10),(1,9,10),(2,9,10),(3,9,10)], "id":"FTX"},
+        {"profesor": "Erendira Del Rocio Gamon Perales", "salon": "N01", "horario": [(0,10,11),(1,10,11),(2,10,11),(3,10,11)], "id":"FT5"},
+        {"profesor": "Erendira Del Rocio Gamon Perales", "salon": "N01", "horario": [(0,12,13),(1,12,13),(2,12,13),(3,12,13)], "id":"FT6"},
+        {"profesor": "Edgar Omar Resendiz Flores", "salon": "N24", "horario": [(0,12,13),(1,12,13),(2,12,13),(3,12,13)], "id":"FT7"},
+        {"profesor": "Massiel Cristina Cisneros Morales", "salon": "N27", "horario": [(0,15,16),(1,15,16),(2,15,16),(3,15,16)], "id":"FT8"},
+        {"profesor": "Massiel Cristina Cisneros Morales", "salon": "N27", "horario": [(0,18,19),(1,18,19),(2,18,19),(3,18,19)], "id":"FT9"}
     ],
     "🦾 Mecánica de Materiales": [
         {"profesor": "Juan Carlos Cardenas Contreras", "salon": "N17", "horario": [(0,7,8),(1,7,8),(2,7,8),(3,7,8),(4,7,9)], "id":"MM1"},
@@ -535,13 +532,13 @@ oferta_academica = {
         {"profesor": "Adolfo Galvan Avalos", "salon": "N22", "horario": [(0,17,18),(1,17,18),(2,17,18),(3,17,18),(4,17,19)], "id":"MM5"}
     ],
     "🏎️ Dinámica": [
-        {"profesor": "Claudia Yvonne Franco Martinez", "salon": "N12", "horario": [(d,8,9) for d in range(4)], "id":"DIN1"},
-        {"profesor": "Cipriano Alvarado González", "salon": "S16", "horario": [(d,10,11) for d in range(4)], "id":"DIN2"},
-        {"profesor": "Cipriano Alvarado González", "salon": "S16", "horario": [(d,11,12) for d in range(4)], "id":"DIN3"},
-        {"profesor": "Cipriano Alvarado González", "salon": "S16", "horario": [(d,12,13) for d in range(4)], "id":"DIN4"},
-        {"profesor": "Juan Arredondo Valdez", "salon": "S14", "horario": [(d,17,18) for d in range(4)], "id":"DIN5"},
-        {"profesor": "Ismene Guadalupe De La Peña Alcala", "salon": "N12", "horario": [(d,19,20) for d in range(4)], "id":"DIN6"},
-        {"profesor": "Ismene Guadalupe De La Peña Alcala", "salon": "N12", "horario": [(d,20,21) for d in range(4)], "id":"DIN7"}
+        {"profesor": "Claudia Yvonne Franco Martinez", "salon": "N12", "horario": [(0,8,9),(1,8,9),(2,8,9),(3,8,9)], "id":"DIN1"},
+        {"profesor": "Cipriano Alvarado González", "salon": "S16", "horario": [(0,10,11),(1,10,11),(2,10,11),(3,10,11)], "id":"DIN2"},
+        {"profesor": "Cipriano Alvarado González", "salon": "S16", "horario": [(0,11,12),(1,11,12),(2,11,12),(3,11,12)], "id":"DIN3"},
+        {"profesor": "Cipriano Alvarado González", "salon": "S16", "horario": [(0,12,13),(1,12,13),(2,12,13),(3,12,13)], "id":"DIN4"},
+        {"profesor": "Juan Arredondo Valdez", "salon": "S14", "horario": [(0,17,18),(1,17,18),(2,17,18),(3,17,18)], "id":"DIN5"},
+        {"profesor": "Ismene Guadalupe De La Peña Alcala", "salon": "N12", "horario": [(0,19,20),(1,19,20),(2,19,20),(3,19,20)], "id":"DIN6"},
+        {"profesor": "Ismene Guadalupe De La Peña Alcala", "salon": "N12", "horario": [(0,20,21),(1,20,21),(2,20,21),(3,20,21)], "id":"DIN7"}
     ],
     "🔌 Análisis de Circuitos Eléctricos": [
         {"profesor": "Iván De Jesús Epifanio López", "salon": "N15", "horario": [(0,8,9),(1,8,9),(2,8,9),(3,8,9),(4,7,9)], "id":"ACE1"},
@@ -595,20 +592,20 @@ oferta_academica = {
         {"profesor": "Juan Arredondo Valdez", "salon": "S14", "horario": [(d,18,19) for d in range(5)], "id":"MECZ"}
     ],
     "💧 Análisis de Fluidos": [
-        {"profesor": "Edgar Benito Martinez Mercado", "salon": "N24", "horario": [(d,7,8) for d in range(4)], "id":"AF1"},
-        {"profesor": "Edgar Benito Martinez Mercado", "salon": "N25", "horario": [(d,11,12) for d in range(4)], "id":"AF2"},
-        {"profesor": "Edgar Benito Martinez Mercado", "salon": "N25", "horario": [(d,13,14) for d in range(4)], "id":"AF3"},
-        {"profesor": "Luis Alejandro Gonzalez Valdez", "salon": "N03", "horario": [(d,16,17) for d in range(4)], "id":"AF4"},
-        {"profesor": "Luis Alejandro Gonzalez Valdez", "salon": "N03", "horario": [(d,19,20) for d in range(4)], "id":"AF5"},
-        {"profesor": "Ignacio Javier González Ordaz", "salon": "N25", "horario": [(d,18,19) for d in range(4)], "id":"AF6"},
-        {"profesor": "Ignacio Javier González Ordaz", "salon": "N25", "horario": [(d,19,20) for d in range(4)], "id":"AF7"}
+        {"profesor": "Edgar Benito Martinez Mercado", "salon": "N24", "horario": [(0,7,8),(1,7,8),(2,7,8),(3,7,8)], "id":"AF1"},
+        {"profesor": "Edgar Benito Martinez Mercado", "salon": "N25", "horario": [(0,11,12),(1,11,12),(2,11,12),(3,11,12)], "id":"AF2"},
+        {"profesor": "Edgar Benito Martinez Mercado", "salon": "N25", "horario": [(0,13,14),(1,13,14),(2,13,14),(3,13,14)], "id":"AF3"},
+        {"profesor": "Luis Alejandro Gonzalez Valdez", "salon": "N03", "horario": [(0,16,17),(1,16,17),(2,16,17),(3,16,17)], "id":"AF4"},
+        {"profesor": "Luis Alejandro Gonzalez Valdez", "salon": "N03", "horario": [(0,19,20),(1,19,20),(2,19,20),(3,19,20)], "id":"AF5"},
+        {"profesor": "Ignacio Javier González Ordaz", "salon": "N25", "horario": [(0,18,19),(1,18,19),(2,18,19),(3,18,19)], "id":"AF6"},
+        {"profesor": "Ignacio Javier González Ordaz", "salon": "N25", "horario": [(0,19,20),(1,19,20),(2,19,20),(3,19,20)], "id":"AF7"}
     ],
     "📑 Taller de Investigación II": [
-        {"profesor": "Ada Karina Velarde Sanchez", "salon": "S15", "horario": [(d,7,8) for d in range(4)], "id":"TI2_1"},
-        {"profesor": "Alejandra Hernandez Rodriguez", "salon": "N13", "horario": [(d,7,8) for d in range(4)], "id":"TI2_X"},
-        {"profesor": "Juana Maria Dueñaz Reyes", "salon": "S18", "horario": [(d,8,9) for d in range(4)], "id":"TI2_2"},
-        {"profesor": "Ma. Elida Zavala Torres", "salon": "N09", "horario": [(d,17,18) for d in range(4)], "id":"TI2_3"},
-        {"profesor": "Ma. Elida Zavala Torres", "salon": "N09", "horario": [(d,18,19) for d in range(4)], "id":"TI2_4"}
+        {"profesor": "Ada Karina Velarde Sanchez", "salon": "S15", "horario": [(0,7,8),(1,7,8),(2,7,8),(3,7,8)], "id":"TI2_1"},
+        {"profesor": "Alejandra Hernandez Rodriguez", "salon": "N13", "horario": [(0,7,8),(1,7,8),(2,7,8),(3,7,8)], "id":"TI2_X"},
+        {"profesor": "Juana Maria Dueñaz Reyes", "salon": "S18", "horario": [(0,8,9),(1,8,9),(2,8,9),(3,8,9)], "id":"TI2_2"},
+        {"profesor": "Ma. Elida Zavala Torres", "salon": "N09", "horario": [(0,17,18),(1,17,18),(2,17,18),(3,17,18)], "id":"TI2_3"},
+        {"profesor": "Ma. Elida Zavala Torres", "salon": "N09", "horario": [(0,18,19),(1,18,19),(2,18,19),(3,18,19)], "id":"TI2_4"}
     ],
     "💻 Programación Avanzada": [
         {"profesor": "Juan Gilberto Navarro Rodriguez", "salon": "LS2/LS4", "horario": [(0,7,8),(1,7,8),(2,7,8),(3,7,8),(4,7,9)], "id":"PA1"},
@@ -636,9 +633,9 @@ oferta_academica = {
         {"profesor": "Francisco Agustin Vazquez Esquivel", "salon": "N13", "horario": [(d,16,17) for d in range(5)], "id":"INS2"},
         {"profesor": "Francisco Agustin Vazquez Esquivel", "salon": "N13", "horario": [(d,17,18) for d in range(5)], "id":"INS2B"},
         {"profesor": "Cecilia Mendoza Rivas", "salon": "N12", "horario": [(d,11,12) for d in range(5)], "id":"INS3"},
-        {"profesor": "Neider Gonzalez Roblero", "salon": "N15/N09", "horario": [(d,14,15) for d in range(5)], "id":"INS4"},
-        {"profesor": "Neider Gonzalez Roblero", "salon": "N15", "horario": [(d,15,16) for d in range(5)], "id":"INS4B"},
-        {"profesor": "Neider Gonzalez Roblero", "salon": "S15", "horario": [(d,17,18) for d in range(5)], "id":"INS4C"}
+        {"profesor": "Neider Gonzalez Roblero", "salon": "N15/N09", "horario": [(0,14,15),(1,14,15),(2,14,15),(3,14,15),(4,14,15)], "id":"INS4"}, # 2-3pm
+        {"profesor": "Neider Gonzalez Roblero", "salon": "N15", "horario": [(d,15,16) for d in range(5)], "id":"INS4B"}, # 3-4pm
+        {"profesor": "Neider Gonzalez Roblero", "salon": "S15", "horario": [(d,17,18) for d in range(5)], "id":"INS4C"} # 5-6pm
     ],
     "🔩 Diseño de Elementos Mecánicos": [
         {"profesor": "Nestor Roberto Saavedra Camacho", "salon": "N18", "horario": [(d,7,8) for d in range(5)], "id":"DEM1"},
@@ -701,7 +698,7 @@ oferta_academica = {
         {"profesor": "Pedro Celedonio Lopez Lara", "salon": "N19", "horario": [(d,20,21) for d in range(5)], "id":"MANT7"}
     ],
     "💾 Microcontroladores": [
-        {"profesor": "Pedro Quintanilla Contreras", "salon": "N16", "horario": [(d,11,12) for d in range(5)], "id":"MICRO1"},
+        {"profesor": "Pedro Quintanilla Contreras", "salon": "N16", "horario": [(d,13,14) for d in range(5)], "id":"MICRO1"},
         {"profesor": "Huitzilihuitl Saldaña Mora", "salon": "N12", "horario": [(d,15,16) for d in range(5)], "id":"MICRO_X"},
         {"profesor": "Jozef Jesus Reyes Reyna", "salon": "LIN", "horario": [(d,16,17) for d in range(5)], "id":"MICRO2"},
         {"profesor": "Jozef Jesus Reyes Reyna", "salon": "LIN", "horario": [(d,17,18) for d in range(5)], "id":"MICRO2B"}
@@ -715,8 +712,8 @@ oferta_academica = {
     ],
     # ------------------ SEMESTRE 8 ------------------
     "🎮 Control": [
-        {"profesor": "Cesar Gerardo Martinez Sanchez", "salon": "S19/LIN", "horario": [(0,9,10),(1,9,10),(2,9,10),(3,9,10),(4,8,10)], "id":"CTRL1"},
-        {"profesor": "Yolanda Cepeda Rodriguez", "salon": "S18/S14", "horario": [(0,12,13),(1,12,13),(2,12,13),(3,12,13),(4,11,13)], "id":"CTRL_Y"},
+        {"profesor": "Cesar Gerardo Martinez Sanchez", "salon": "S19/LIN", "horario": [(0,9,10),(1,9,10),(2,9,10),(3,9,10),(4,8,9)], "id":"CTRL1"},
+        {"profesor": "Yolanda Cepeda Rodriguez", "salon": "S18/S14", "horario": [(0,12,13),(1,12,13),(2,12,13),(3,12,13),(4,11,12)], "id":"CTRL_Y"},
         {"profesor": "Jesus Guerrero Contreras", "salon": "S20", "horario": [(0,15,16),(1,15,16),(2,15,16),(3,15,16),(4,15,17)], "id":"CTRL2"},
         {"profesor": "Ricardo Martínez Alvarado", "salon": "AM1", "horario": [(0,17,18),(1,17,18),(2,17,18),(3,17,18),(4,16,18)], "id":"CTRL3"},
         {"profesor": "Isaac Ruiz Ramos", "salon": "S15", "horario": [(0,19,20),(1,19,20),(2,19,20),(3,19,20),(4,19,21)], "id":"CTRL4"}
@@ -732,11 +729,13 @@ oferta_academica = {
     "🎛️ Controladores Lógicos Programables": [
         {"profesor": "Ana Gabriela Gomez Muñoz", "salon": "LC3", "horario": [(d,8,9) for d in range(5)], "id":"PLC1"},
         {"profesor": "Ana Gabriela Gomez Muñoz", "salon": "LC3", "horario": [(d,11,12) for d in range(5)], "id":"PLC2"},
-        {"profesor": "Carlos Alberto Martinez Miwa", "salon": "N16", "horario": [(d,12,13) for d in range(5)], "id":"PLC_X"},
-        {"profesor": "Carlos Alberto Martinez Miwa", "salon": "N16", "horario": [(d,13,14) for d in range(5)], "id":"PLC_Y"},
+        {"profesor": "Mario Alberto Ponce Llamas", "salon": "LE2", "horario": [(d,10,11) for d in range(5)], "id":"PLC_MP"},
+        {"profesor": "Carlos Alberto Martinez Miwa", "salon": "N16", "horario": [(d,11,12) for d in range(5)], "id":"PLC_X"},
+        {"profesor": "Carlos Alberto Martinez Miwa", "salon": "N16", "horario": [(d,12,13) for d in range(5)], "id":"PLC_Y"},
         {"profesor": "Manuel Enrique Sandoval Lopez", "salon": "AUT", "horario": [(d,14,15) for d in range(5)], "id":"PLC_Z"},
         {"profesor": "Johan Jesus Alvarado Hernandez", "salon": "N16", "horario": [(d,18,19) for d in range(5)], "id":"PLC_W"},
-        {"profesor": "Johan Jesus Alvarado Hernandez", "salon": "N16", "horario": [(d,19,20) for d in range(5)], "id":"PLC_V"}
+        {"profesor": "Johan Jesus Alvarado Hernandez", "salon": "N16", "horario": [(d,19,20) for d in range(5)], "id":"PLC_V"},
+        {"profesor": "Johan Jesus Alvarado Hernandez", "salon": "N16", "horario": [(d,20,21) for d in range(5)], "id":"PLC_U"}
     ],
     "🤖 Sistemas Avanzados de Manufactura": [
         {"profesor": "Ada Karina Velarde Sanchez", "salon": "S15", "horario": [(d,8,9) for d in range(5)], "id":"SAM1"},
