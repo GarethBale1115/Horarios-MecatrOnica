@@ -312,7 +312,7 @@ oferta_academica = {
         {"profesor": "Luis Manuel Ferniza Pérez", "salon": "C04", "horario": [(d,10,11) for d in range(5)], "id":"CI26"},
         {"profesor": "Luis Manuel Ferniza Pérez", "salon": "C04", "horario": [(d,12,13) for d in range(5)], "id":"CI27"},
         {"profesor": "Luis Manuel Ferniza Pérez", "salon": "C04", "horario": [(d,13,14) for d in range(5)], "id":"CI27B"},
-        {"profesor": "Erwin Rommel Cerda Leon", "salon": "N39", "horario": [(d,12,13) for d in range(5)], "id":"CI24"},
+        {"profesor": "Erwin Rommel Cerda Leon", "salon": "N39/N40", "horario": [(0,12,13),(1,12,13),(2,12,13),(3,12,13),(4,12,13)], "id":"CI24"},
         {"profesor": "Erwin Rommel Cerda Leon", "salon": "N40", "horario": [(d,13,14) for d in range(5)], "id":"CI25"},
         {"profesor": "Ignacio Dávila Ríos", "salon": "N42", "horario": [(d,16,17) for d in range(5)], "id":"CI28"},
         {"profesor": "Ignacio Dávila Ríos", "salon": "N42", "horario": [(d,19,20) for d in range(5)], "id":"CI29"},
@@ -733,6 +733,7 @@ oferta_academica = {
         {"profesor": "Carlos Alberto Martinez Miwa", "salon": "N16", "horario": [(d,11,12) for d in range(5)], "id":"PLC_X"},
         {"profesor": "Carlos Alberto Martinez Miwa", "salon": "N16", "horario": [(d,12,13) for d in range(5)], "id":"PLC_Y"},
         {"profesor": "Manuel Enrique Sandoval Lopez", "salon": "AUT", "horario": [(d,14,15) for d in range(5)], "id":"PLC_Z"},
+        {"profesor": "Manuel Enrique Sandoval Lopez", "salon": "AUT", "horario": [(d,15,16) for d in range(5)], "id":"PLC_Z2"},
         {"profesor": "Johan Jesus Alvarado Hernandez", "salon": "N16", "horario": [(d,18,19) for d in range(5)], "id":"PLC_W"},
         {"profesor": "Johan Jesus Alvarado Hernandez", "salon": "N16", "horario": [(d,19,20) for d in range(5)], "id":"PLC_V"},
         {"profesor": "Johan Jesus Alvarado Hernandez", "salon": "N16", "horario": [(d,20,21) for d in range(5)], "id":"PLC_U"}
