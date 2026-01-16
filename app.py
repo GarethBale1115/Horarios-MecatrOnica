@@ -12,7 +12,7 @@ import time
 # -----------------------------------------------------------------------------
 # 1. CONFIGURACIÓN VISUAL
 # -----------------------------------------------------------------------------
-st.set_page_config(page_title="Horario ITS", page_icon="🐴", layout="wide")
+st.set_page_config(page_title="Horario ITS", page_icon="🦅", layout="wide")
 
 st.markdown("""
 <style>
@@ -793,7 +793,7 @@ oferta_academica = {
         {"profesor": "Carlos Alberto Martinez Miwa", "salon": "N16", "horario": [(d,11,12) for d in range(5)], "id":"PLC_X"},
         {"profesor": "Carlos Alberto Martinez Miwa", "salon": "N16", "horario": [(d,12,13) for d in range(5)], "id":"PLC_Y"},
         {"profesor": "Manuel Enrique Sandoval Lopez", "salon": "AUT", "horario": [(d,14,15) for d in range(5)], "id":"PLC_Z"},
-        {"profesor": "Manuel Enrique Sandoval Lopez", "salon": "AUT", "horario": [(d,15,16) for d in range(5)], "id":"PLC_Z2"},
+        {"profesor": "Manuel Enrique Sandoval Lopez", "salon": "AUT", "horario": [(d,15,16) for d in range(5)], "id":"PLC_Z2"}, # HORA EXTRA AGREGADA
         {"profesor": "Johan Jesus Alvarado Hernandez", "salon": "N16", "horario": [(d,18,19) for d in range(5)], "id":"PLC_W"},
         {"profesor": "Johan Jesus Alvarado Hernandez", "salon": "N16", "horario": [(d,19,20) for d in range(5)], "id":"PLC_V"},
         {"profesor": "Johan Jesus Alvarado Hernandez", "salon": "N16", "horario": [(d,20,21) for d in range(5)], "id":"PLC_U"}
@@ -852,20 +852,12 @@ def generar_combinaciones(materias, rango, prefs, horas_libres):
     for hl in horas_libres: inicio = int(hl.split(":")[0]); bloqueos.append(inicio)
     pool = []
     
-    # CARGAR ESTATUS DE GRUPOS (CACHEADO)
-    status_data = get_status_data_cached("status_ok")
-    
     for mat_display in materias:
         mat_key = mat_display
         if mat_key not in oferta_academica: continue
         opciones = []
         for sec in oferta_academica[mat_key]:
             prof_name = sec['profesor']
-            group_id = sec.get('id', 'unknown')
-            
-            # --- FILTRO DE GRUPOS CERRADOS OFICIALMENTE ---
-            if group_id in status_data and status_data[group_id] == "CERRADO":
-                continue # Saltar grupo cerrado
             
             key = f"{mat_display}_{prof_name}"
             puntos = prefs.get(key, 50)
