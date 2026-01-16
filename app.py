@@ -1210,14 +1210,14 @@ if menu == "📅 Generador de Horarios":
                                         # Checar reportes para este grupo especifico
                                         rep_count = reportes_global.get(spec_id, 0)
                                         
-                                        c_chk, c_warn, c_btn = st.columns([0.2, 0.5, 0.3])
+                                        c_chk, c_warn, c_btn = st.columns([0.2, 0.4, 0.4])
                                         with c_chk:
                                             st.checkbox(f"{t}:00", value=True, key=t_key)
                                         with c_warn:
                                             if rep_count > 0:
                                                 st.markdown(f"<span class='report-badge'>⚠️ {rep_count} reportes</span>", unsafe_allow_html=True)
                                         with c_btn:
-                                            if st.button("📢", key=f"rep_{spec_id}", help="Reportar como LLENO"):
+                                            if st.button("📢 Reportar Lleno", key=f"rep_{spec_id}", help="Reportar que este grupo ya no tiene cupo"):
                                                 if add_group_report(db_client, spec_id):
                                                     st.toast("Reporte enviado. Gracias.")
                                                     time.sleep(1)
