@@ -30,10 +30,20 @@ st.markdown("""
     [data-testid="stCheckbox"] label:hover { border-color: var(--guinda); background-color: rgba(128, 0, 0, 0.15); }
     [data-testid="stCheckbox"]:has(input:checked) label { background-color: var(--guinda) !important; border-color: var(--guinda) !important; }
     [data-testid="stCheckbox"]:has(input:checked) div[data-testid="stMarkdownContainer"] p { color: white !important; font-weight: bold !important; }
+    [data-testid="stCheckbox"] div[data-testid="stMarkdownContainer"] p { font-size: 0.85em; line-height: 1.3; margin: 0; color: #e0e0e0; text-align: center; }
     
-    /* ALERTAS */
-    .report-alert { color: #d32f2f; font-weight: bold; font-size: 0.8em; margin-left: 10px; }
-    .report-warn { color: #f57c00; font-weight: bold; font-size: 0.8em; margin-left: 10px; }
+    /* ALERTAS DE REPORTE */
+    .report-badge { 
+        color: #d32f2f; 
+        background-color: #ffebee;
+        border: 1px solid #d32f2f;
+        padding: 2px 8px; 
+        border-radius: 12px; 
+        font-size: 0.75em; 
+        font-weight: bold; 
+        display: inline-block;
+        margin-left: 5px;
+    }
 
     /* CREDIT BOXES */
     .credit-box { padding: 10px; border-radius: 5px; text-align: center; font-weight: bold; margin-top: 10px; }
@@ -103,7 +113,7 @@ def get_opiniones_data_cached(_client_status):
             if prof not in opiniones_dict:
                 opiniones_dict[prof] = {"suma": 0, "votos": 0, "comentarios": []}
             
-            raw_calif = row.get('Calificacion') or row.get('Calificación') or row.get('calificacion') or 0
+            raw_calif = row.get('Calificacion') or row.get('Calificación') or row.get('calificacion') or row.get('calificación') or 0
             try: calif = int(raw_calif)
             except: calif = 0
             
@@ -118,7 +128,7 @@ def get_opiniones_data_cached(_client_status):
     except:
         return {}
 
-# NUEVO: CACHE DE REPORTES DE GRUPOS LLENOS
+# CACHE DE REPORTES DE GRUPOS LLENOS
 @st.cache_data(ttl=15) 
 def get_group_reports_cached(_client_status):
     client = get_db_connection()
@@ -127,7 +137,8 @@ def get_group_reports_cached(_client_status):
         try:
             sheet = client.open("opiniones_its").worksheet("reportes_grupos")
         except:
-            return {} 
+            return {} # No existe aun
+            
         data = sheet.get_all_records()
         reports = {}
         for row in data:
@@ -146,18 +157,22 @@ def add_group_report(client, group_id):
         try:
             sheet = client.open("opiniones_its").worksheet("reportes_grupos")
         except:
+            # Si no existe la hoja, crearla
             sh = client.open("opiniones_its")
             sheet = sh.add_worksheet(title="reportes_grupos", rows=1000, cols=3)
             sheet.append_row(["ID_Grupo", "Conteo", "Ultimo_Reporte"])
         
+        # Buscar si ya existe el reporte
         cell = sheet.find(group_id)
         fecha = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         
         if cell:
+            # Sumar reporte
             current_val = int(sheet.cell(cell.row, 2).value)
             sheet.update_cell(cell.row, 2, current_val + 1)
             sheet.update_cell(cell.row, 3, fecha)
         else:
+            # Nuevo reporte
             sheet.append_row([group_id, 1, fecha])
             
         get_group_reports_cached.clear()
@@ -778,7 +793,7 @@ oferta_academica = {
         {"profesor": "Carlos Alberto Martinez Miwa", "salon": "N16", "horario": [(d,11,12) for d in range(5)], "id":"PLC_X"},
         {"profesor": "Carlos Alberto Martinez Miwa", "salon": "N16", "horario": [(d,12,13) for d in range(5)], "id":"PLC_Y"},
         {"profesor": "Manuel Enrique Sandoval Lopez", "salon": "AUT", "horario": [(d,14,15) for d in range(5)], "id":"PLC_Z"},
-        {"profesor": "Manuel Enrique Sandoval Lopez", "salon": "AUT", "horario": [(d,15,16) for d in range(5)], "id":"PLC_Z2"}, # HORA EXTRA AGREGADA
+        {"profesor": "Manuel Enrique Sandoval Lopez", "salon": "AUT", "horario": [(d,15,16) for d in range(5)], "id":"PLC_Z2"},
         {"profesor": "Johan Jesus Alvarado Hernandez", "salon": "N16", "horario": [(d,18,19) for d in range(5)], "id":"PLC_W"},
         {"profesor": "Johan Jesus Alvarado Hernandez", "salon": "N16", "horario": [(d,19,20) for d in range(5)], "id":"PLC_V"},
         {"profesor": "Johan Jesus Alvarado Hernandez", "salon": "N16", "horario": [(d,20,21) for d in range(5)], "id":"PLC_U"}
@@ -1038,15 +1053,6 @@ if os.path.exists("reticula.pdf"):
     with open("reticula.pdf", "rb") as pdf_file:
         st.sidebar.download_button(label="📄 Descargar Retícula", data=pdf_file, file_name="Reticula_Mecatronica.pdf", mime="application/pdf")
 
-# CAJA SECRETA ADMIN
-st.sidebar.write("---")
-admin_key = st.sidebar.text_input("Admin", type="password", key="admin_input")
-if admin_key == "admin123": # CONTRASEÑA ADMIN
-    st.session_state.admin_mode = True
-    st.sidebar.success("Modo Dios Activado ⚡")
-else:
-    st.session_state.admin_mode = False
-
 # =============================================================================
 # VISTA 1: GENERADOR DE HORARIOS
 # =============================================================================
@@ -1160,8 +1166,6 @@ if menu == "📅 Generador de Horarios":
         # --- CARGAR TODAS LAS OPINIONES UNA SOLA VEZ AQUÍ ---
         # ESTA ES LA CLAVE PARA QUE GOOGLE NO TE BLOQUEE
         opiniones_reales_global = get_opiniones_data_cached("status_ok")
-        # CARGAR ESTATUS DE GRUPOS
-        status_global = get_status_data_cached("status_ok")
         # CARGAR REPORTES DE GRUPOS
         reportes_global = get_group_reports_cached("status_ok")
         
@@ -1184,32 +1188,14 @@ if menu == "📅 Generador de Horarios":
                     cols = st.columns(3)
                     for i, p in enumerate(profes_validos):
                         key = f"{mat}_{p}"; 
-                        # Buscar ID de grupo
-                        teacher_sec = next((s for s in oferta_academica[mat] if s['profesor'] == p), None)
-                        group_id = teacher_sec.get('id', 'unknown') if teacher_sec else 'unknown'
-                        
-                        # VERIFICAR ESTATUS
-                        status_actual = status_global.get(group_id, "ABIERTO")
-                        is_closed = (status_actual == "CERRADO")
-                        
-                        # ESTILO DE TARJETA
-                        card_style = ""
-                        if is_closed: card_style = "status-closed"
                         
                         with cols[i % 3]:
-                            with st.container(): # Contenedor para aplicar estilo si se pudiera (Streamlit limita esto)
-                                if is_closed: st.markdown(f"<div class='badge-closed'>⛔ GRUPO CERRADO</div>", unsafe_allow_html=True)
-                                
+                            with st.container(): 
                                 st.write(f"**{p}**")
-                                
-                                # Si está cerrado, deshabilitar o marcar como X
-                                if is_closed:
-                                    st.error("No disponible")
-                                else:
-                                    val = st.radio("P", ["✅", "➖", "❌"], index=1, key=key, horizontal=True, label_visibility="collapsed")
-                                    if val == "✅": st.session_state.prefs[key] = 100
-                                    elif val == "❌": st.session_state.prefs[key] = 0
-                                    else: st.session_state.prefs[key] = 50
+                                val = st.radio("P", ["✅", "➖", "❌"], index=1, key=key, horizontal=True, label_visibility="collapsed")
+                                if val == "✅": st.session_state.prefs[key] = 100
+                                elif val == "❌": st.session_state.prefs[key] = 0
+                                else: st.session_state.prefs[key] = 50
                                 
                                 with st.expander("🕒 Horas Disponibles"):
                                     teacher_sections = [s for s in oferta_academica[mat] if s['profesor'] == p]
@@ -1217,8 +1203,7 @@ if menu == "📅 Generador de Horarios":
                                     for t in start_times:
                                         t_key = f"time_{mat}_{p}_{t}"
                                         
-                                        # Identificar grupo especifico por hora (aproximacion)
-                                        # Nota: Esto asume que un profe no tiene dos grupos a la misma hora (correcto)
+                                        # Identificar grupo especifico por hora
                                         specific_group = next((s for s in teacher_sections if s['horario'][0][1] == t), None)
                                         spec_id = specific_group.get('id', 'unknown') if specific_group else 'unknown'
                                         
@@ -1230,11 +1215,11 @@ if menu == "📅 Generador de Horarios":
                                             st.checkbox(f"{t}:00", value=True, key=t_key)
                                         with c_warn:
                                             if rep_count > 0:
-                                                st.markdown(f"<span class='report-alert'>⚠️ {rep_count} reportes</span>", unsafe_allow_html=True)
+                                                st.markdown(f"<span class='report-badge'>⚠️ {rep_count} reportes</span>", unsafe_allow_html=True)
                                         with c_btn:
-                                            if st.button("📢", key=f"rep_{spec_id}", help="Reportar que este grupo ya se llenó"):
+                                            if st.button("📢", key=f"rep_{spec_id}", help="Reportar como LLENO"):
                                                 if add_group_report(db_client, spec_id):
-                                                    st.toast("Reporte enviado. ¡Gracias!")
+                                                    st.toast("Reporte enviado. Gracias.")
                                                     time.sleep(1)
                                                     st.rerun()
 
@@ -1259,15 +1244,6 @@ if menu == "📅 Generador de Horarios":
                                             st.rerun()
                                         else:
                                             st.error("Error al guardar")
-                                
-                                if st.session_state.admin_mode:
-                                    c_admin1, c_admin2 = st.columns(2)
-                                    if c_admin1.button("⛔ CERRAR", key=f"close_{key}"):
-                                        update_group_status(db_client, group_id, "CERRADO")
-                                        st.rerun()
-                                    if c_admin2.button("✅ ABRIR", key=f"open_{key}"):
-                                        update_group_status(db_client, group_id, "ABIERTO")
-                                        st.rerun()
 
         col1, col2 = st.columns([1,1])
         if col1.button("⬅️ Atrás"): st.session_state.step = 3; st.rerun()
