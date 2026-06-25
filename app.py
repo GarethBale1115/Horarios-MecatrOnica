@@ -49,7 +49,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 COLORS = ['#FFCDD2', '#F8BBD0', '#E1BEE7', '#D1C4E9', '#C5CAE9', '#BBDEFB', '#B3E5FC', '#B2EBF2', '#B2DFDB', '#C8E6C9', '#DCEDC8', '#F0F4C3']
-SCOPES = ["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/drive"]
+SCOPES = ["[https://www.googleapis.com/auth/spreadsheets](https://www.googleapis.com/auth/spreadsheets)", "[https://www.googleapis.com/auth/drive](https://www.googleapis.com/auth/drive)"]
 
 @st.cache_resource
 def get_db_connection():
@@ -206,7 +206,6 @@ def generar_combinaciones_backtracking(materias_nombres, rango, prefs, horas_lib
                 opciones.append(s)
         if not opciones: return [], f"❌ **{mat}**: No tiene horarios disponibles con tus filtros."
         pools.append(opciones)
-
     validos = []
     def backtrack(index, current_combo, current_score):
         if index == len(pools):
@@ -251,23 +250,19 @@ def create_pro_pdf(horario, alumno_data, total_creditos, carrera_nombre):
     pdf.cell(30, h_row, "Semestre:", 1, 0, 'L', 1); pdf.cell(30, h_row, str(alumno_data.get("semestre", "")), 1, 1, 'L')
     pdf.cell(30, h_row, "Carrera:", 1, 0, 'L', 1); pdf.cell(100, h_row, clean_text(carrera_nombre.upper()), 1, 0, 'L')
     pdf.cell(30, h_row, "Periodo:", 1, 0, 'L', 1); pdf.cell(100, h_row, clean_text(alumno_data.get("periodo", "").upper()), 1, 1, 'L'); pdf.ln(8)
-    
     tiene_sabado = any(s[0] == 5 for c in horario for s in c['horario'])
     pdf.set_font("Arial", 'B', 8); pdf.set_fill_color(128, 0, 0); pdf.set_text_color(255, 255, 255)
     w_mat, w_prof, w_salon, w_cred = 75, 60, 12, 10
     w_dia = 19 if not tiene_sabado else 16 
     h_table = 8 
-    
     pdf.cell(w_mat, h_table, "Materia", 1, 0, 'C', 1)
     pdf.cell(w_prof, h_table, "Profesor", 1, 0, 'C', 1)
     pdf.cell(w_salon, h_table, "Salón", 1, 0, 'C', 1)
     pdf.cell(w_cred, h_table, "Créd.", 1, 0, 'C', 1)
-    
     dias_header = ["Lun", "Mar", "Mié", "Jue", "Vie"]
     if tiene_sabado: dias_header.append("Sáb")
     for dia in dias_header: pdf.cell(w_dia, h_table, clean_text(dia), 1, 0, 'C', 1)
     pdf.ln(); pdf.set_font("Arial", size=7); pdf.set_text_color(0, 0, 0)
-    
     horario_ordenado = sorted(horario, key=lambda c: min([h[1] for h in c['horario']]) if c['horario'] else 24)
     for clase in horario_ordenado:
         pdf.cell(w_mat, h_table, clean_text(clase['materia']), 1)
@@ -296,7 +291,6 @@ def create_timetable_html(horario):
     subject_colors = {clase['materia']: COLORS[i % len(COLORS)] for i, clase in enumerate(horario)}
     rango_dias = 6 if tiene_sabado else 5
     grid = {h: [None]*rango_dias for h in range(min_h, max_h)} 
-    
     for clase in horario:
         mat_name = clase['materia'].split(' ')[1] if " " in clase['materia'] else clase['materia']
         if len(mat_name) > 20: mat_name = mat_name[:20] + "..."
@@ -307,7 +301,6 @@ def create_timetable_html(horario):
             for h in range(sesion[1], sesion[2]):
                 if h in grid and sesion[0] < rango_dias:
                     grid[h][sesion[0]] = f"<div class='clase-cell' style='background-color: {color};'><span>{mat_name}</span><span class='clase-prof'>{prof_name}</span><span class='clase-salon'>{clase.get('salon','TBA')}</span></div>"
-    
     headers = ["Lun", "Mar", "Mié", "Jue", "Vie"]
     if tiene_sabado: headers.append("Sáb")
     html = f"<table class='horario-grid'><thead><tr><th class='hora-col'>Hora</th>" + "".join([f"<th>{h}</th>" for h in headers]) + "</tr></thead><tbody>"
@@ -327,6 +320,9 @@ if 'resultados' not in st.session_state: st.session_state.resultados = None
 if 'carrera_seleccionada' not in st.session_state: st.session_state.carrera_seleccionada = ""
 
 menu = st.sidebar.radio("Menú", ["📅 Generador de Horarios", "⭐ Evaluación Docente"])
+if os.path.exists("burro.png"): st.sidebar.image("burro.png", use_container_width=True)
+if os.path.exists("reticula.pdf"):
+    with open("reticula.pdf", "rb") as pdf_file: st.sidebar.download_button(label="📄 Descargar Retícula", data=pdf_file, file_name="Reticula_Mecatronica.pdf", mime="application/pdf")
 
 if menu == "📅 Generador de Horarios":
     if st.session_state.step == 1:
@@ -334,11 +330,12 @@ if menu == "📅 Generador de Horarios":
         col1, col2, col3 = st.columns([1, 2, 1])
         with col2:
             st.container(border=True)
-            periodo = st.selectbox("📌 Periodo Académico", ["2026_VERANO", "2026_AGO_DIC"])
-            carrera = st.selectbox("🎓 Carrera", ["mecatronica", "industrial (Próximamente)", "sistemas (Próximamente)", "gestion (Próximamente)", "materiales (Próximamente)"])
-            cant = st.number_input("📚 Materias a cursar:", min_value=1, max_value=9, value=2)
+            st.text_input("📌 Periodo Académico", "CURSO VERANO 2026", disabled=True)
+            periodo = "2026_VERANO"
+            carrera = st.selectbox("🎓 Carrera", ["MECATRÓNICA", "INDUSTRIAL (PRÓXIMAMENTE)", "SISTEMAS (PRÓXIMAMENTE)", "GESTIÓN (PRÓXIMAMENTE)", "MATERIALES (PRÓXIMAMENTE)"])
+            cant = st.number_input("📚 Materias a cursar:", min_value=1, max_value=2, value=2)
             if st.button("Cargar Oferta ➡️", use_container_width=True, type="primary"):
-                carrera_clean = carrera.split(" ")[0] 
+                carrera_clean = carrera.split(" ")[0].lower().replace("ó", "o")
                 json_data = load_oferta_json(periodo, carrera_clean)
                 if json_data:
                     of_clases, mat_sem = format_json_to_oferta(json_data)
@@ -346,7 +343,7 @@ if menu == "📅 Generador de Horarios":
                     st.session_state.materias_por_semestre = mat_sem
                     st.session_state.num_materias_deseadas = cant
                     st.session_state.carrera_seleccionada = carrera_clean
-                    st.session_state.periodo_seleccionado = periodo
+                    st.session_state.periodo_seleccionado = "CURSO VERANO 2026"
                     st.session_state.step = 2
                     st.rerun()
                 else: st.error(f"❌ Sin oferta cargada en {periodo} para {carrera_clean.upper()}.")
@@ -360,12 +357,11 @@ if menu == "📅 Generador de Horarios":
                 st.markdown(f"<div class='semestre-header'>{i}°</div>", unsafe_allow_html=True)
                 for m in st.session_state.materias_por_semestre.get(i, []):
                     cr = CREDITOS.get(m, 0)
-                    if st.checkbox(f"{m} ({cr} Cr)", value=(m in st.session_state.materias_seleccionadas), key=f"chk_{m}"):
-                        selected_in_this_step.append(m)
+                    if st.checkbox(f"{m} ({cr} Cr)", value=(m in st.session_state.materias_seleccionadas), key=f"chk_{m}"): selected_in_this_step.append(m)
         total_creditos = sum([CREDITOS.get(m, 0) for m in selected_in_this_step])
         num_selected = len(selected_in_this_step)
         st.write("---")
-        limite_creditos = 36 if "AGO_DIC" in st.session_state.periodo_seleccionado else 12 
+        limite_creditos = 12 
         c_info = st.container()
         msg_cred = f"✅ Créditos: {total_creditos}" if total_creditos <= limite_creditos else f"⛔ Exceso: {total_creditos}"
         style_cred = "credit-ok" if total_creditos <= limite_creditos else "credit-error"
