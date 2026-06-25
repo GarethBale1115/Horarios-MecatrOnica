@@ -1,0 +1,83 @@
+{
+  "materias": {
+    "CALC_DIF": {
+      "nombre": "Cálculo Diferencial",
+      "creditos": 0,
+      "semestre": 1,
+      "grupos": [
+        {
+          "id": "2026V-MEC-CALCDIF-A1",
+          "profesor": "Zavala Aguillon Brenda",
+          "salon": "C06",
+          "horario": [
+            {"dia": 0, "inicio": 7, "fin": 10},
+            {"dia": 1, "inicio": 7, "fin": 10},
+            {"dia": 2, "inicio": 7, "fin": 10},
+            {"dia": 3, "inicio": 7, "fin": 10},
+            {"dia": 4, "inicio": 7, "fin": 10}
+          ]
+        },
+        {
+          "id": "2026V-MEC-CALCDIF-B1",
+          "profesor": "Zavala Aguillon Brenda",
+          "salon": "C06",
+          "horario": [
+            {"dia": 0, "inicio": 10, "fin": 13},
+            {"dia": 1, "inicio": 10, "fin": 13},
+            {"dia": 2, "inicio": 10, "fin": 13},
+            {"dia": 3, "inicio": 10, "fin": 13},
+            {"dia": 4, "inicio": 10, "fin": 13}
+          ]
+        },
+        {
+          "id": "2026V-MEC-CALCDIF-C1",
+          "profesor": "Pendiente Por Asignar",
+          "salon": "B20A",
+          "horario": [
+            {"dia": 0, "inicio": 10, "fin": 13},
+            {"dia": 1, "inicio": 10, "fin": 13},
+            {"dia": 2, "inicio": 10, "fin": 13},
+            {"dia": 3, "inicio": 10, "fin": 13},
+            {"dia": 4, "inicio": 10, "fin": 13}
+          ]
+        },
+        {
+          "id": "2026V-MEC-CALCDIF-D1",
+          "profesor": "Olmedo Landeros Irma Karina",
+          "salon": "C06",
+          "horario": [
+            {"dia": 0, "inicio": 15, "fin": 18},
+            {"dia": 1, "inicio": 15, "fin": 18},
+            {"dia": 2, "inicio": 15, "fin": 18},
+            {"dia": 3, "inicio": 15, "fin": 18},
+            {"dia": 4, "inicio": 15, "fin": 18}
+          ]
+        },
+        {
+          "id": "2026V-MEC-CALCDIF-E1",
+          "profesor": "Velázquez Rodríguez Liliana",
+          "salon": "C05",
+          "horario": [
+            {"dia": 0, "inicio": 7, "fin": 10},
+            {"dia": 1, "inicio": 7, "fin": 10},
+            {"dia": 2, "inicio": 7, "fin": 10},
+            {"dia": 3, "inicio": 7, "fin": 10},
+            {"dia": 4, "inicio": 7, "fin": 10}
+          ]
+        },
+        {
+          "id": "2026V-MEC-CALCDIF-F1",
+          "profesor": "Velázquez Rodríguez Liliana",
+          "salon": "C05",
+          "horario": [
+            {"dia": 0, "inicio": 10, "fin": 13},
+            {"dia": 1, "inicio": 10, "fin": 13},
+            {"dia": 2, "inicio": 10, "fin": 13},
+            {"dia": 3, "inicio": 10, "fin": 13},
+            {"dia": 4, "inicio": 10, "fin": 13}
+          ]
+        }
+      ]
+    }
+  }
+}
