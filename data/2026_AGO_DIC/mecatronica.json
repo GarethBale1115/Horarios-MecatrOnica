@@ -1,4 +1,5 @@
 {
+  "materias": {
   "QUIM": {
     "nombre": "Química",
     "creditos": 4,
@@ -5670,4 +5671,5 @@
       }
     ]
   }
+}
 }
