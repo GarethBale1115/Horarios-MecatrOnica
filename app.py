@@ -79,24 +79,101 @@ CREDITOS = {
 # 4. MOTOR LÓGICO (EL CEREBRO DEL SISTEMA)
 # =============================================================================
 @st.cache_data
+def _read_json(filepath, modified_ns):
+    """Lee el archivo y renueva la caché cuando el JSON cambia."""
+    with open(filepath, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+
 def load_oferta_json(periodo, carrera):
     filepath = f"data/{periodo}/{carrera}.json"
-    if not os.path.exists(filepath): return None
-    with open(filepath, 'r', encoding='utf-8') as f: return json.load(f)
+
+    if not os.path.exists(filepath):
+        return None
+
+    try:
+        return _read_json(filepath, os.stat(filepath).st_mtime_ns)
+    except json.JSONDecodeError as error:
+        raise ValueError(
+            f"JSON inválido en {filepath}: línea {error.lineno}, "
+            f"columna {error.colno}. {error.msg}"
+        ) from error
+
 
 def format_json_to_oferta(json_data):
-    oferta = {}; mat_sem = {i: [] for i in range(1, 10)}
-    for key, info in json_data.get("materias", {}).items():
-        nombre = info["nombre"]; sem = int(info.get("semestre", 1))
-        if 1 <= sem <= 9: mat_sem[sem].append(nombre)
+    """
+    Convierte el JSON al formato interno del motor.
+
+    Acepta temporalmente ambos formatos:
+    1) {"materias": {...}}
+    2) {"QUIM": {...}, "CALC_DIF": {...}}
+    """
+    if not isinstance(json_data, dict):
+        raise ValueError("La raíz del JSON debe ser un objeto.")
+
+    materias = json_data.get("materias", json_data)
+
+    if not isinstance(materias, dict) or not materias:
+        raise ValueError("No se encontraron materias dentro del JSON.")
+
+    oferta = {}
+    mat_sem = {i: [] for i in range(1, 10)}
+    creditos = {}
+
+    for clave, info in materias.items():
+        if not isinstance(info, dict):
+            raise ValueError(f"La materia {clave} no tiene una estructura válida.")
+
+        nombre = str(info.get("nombre", "")).strip()
+        if not nombre:
+            raise ValueError(f"La materia {clave} no tiene nombre.")
+
+        try:
+            semestre = int(info.get("semestre"))
+            creditos_materia = int(info.get("creditos", 0))
+        except (TypeError, ValueError) as error:
+            raise ValueError(
+                f"La materia {clave} tiene semestre o créditos inválidos."
+            ) from error
+
+        if semestre not in range(1, 10):
+            raise ValueError(
+                f"La materia {nombre} tiene semestre {semestre}; debe ser de 1 a 9."
+            )
+
+        if nombre in oferta:
+            raise ValueError(f"Nombre de materia duplicado: {nombre}")
+
+        mat_sem[semestre].append(nombre)
+        creditos[nombre] = creditos_materia
         oferta[nombre] = []
-        for g in info.get("grupos", []):
-            oferta[nombre].append({
-                "profesor": g["profesor"], "salon": g.get("salon", "TBA"),
-                "horario": [(h["dia"], h["inicio"], h["fin"]) for h in g.get("horario", [])],
-                "id": g.get("id", ""), "materia": nombre
-            })
-    return oferta, mat_sem
+
+        for grupo in info.get("grupos", []):
+            horario = []
+
+            for sesion in grupo.get("horario", []):
+                horario.append(
+                    (
+                        int(sesion["dia"]),
+                        int(sesion["inicio"]),
+                        int(sesion["fin"]),
+                    )
+                )
+
+            oferta[nombre].append(
+                {
+                    "profesor": grupo.get("profesor", "POR ASIGNAR"),
+                    "salon": grupo.get("salon", "POR ASIGNAR"),
+                    "horario": horario,
+                    "id": grupo.get("id", ""),
+                    "materia": nombre,
+                }
+            )
+
+    for semestre in mat_sem:
+        mat_sem[semestre].sort()
+
+    return oferta, mat_sem, creditos
 
 def traslape(h1, h2):
     for a in h1:
@@ -170,13 +247,35 @@ if st.session_state.step == 1:
         cant = st.number_input("📚 Materias a cursar:", min_value=1, max_value=9, value=6)
         if st.button("Cargar Oferta ➡️", use_container_width=True, type="primary"):
             carrera_clean = carrera.split(" ")[0].lower().replace("ó", "o")
-            data = load_oferta_json("2026_AGO_DIC", carrera_clean)
-            if data:
-                st.session_state.oferta, st.session_state.mat_sem = format_json_to_oferta(data)
-                st.session_state.cant_deseada = cant
-                st.session_state.carrera = carrera_clean
-                st.session_state.step = 2; st.rerun()
-            else: st.error(f"❌ Falta el archivo /data/2026_AGO_DIC/{carrera_clean}.json")
+
+            try:
+                data = load_oferta_json("2026_AGO_DIC", carrera_clean)
+
+                if data is None:
+                    st.error(
+                        f"❌ Falta el archivo "
+                        f"/data/2026_AGO_DIC/{carrera_clean}.json"
+                    )
+                else:
+                    (
+                        st.session_state.oferta,
+                        st.session_state.mat_sem,
+                        st.session_state.creditos,
+                    ) = format_json_to_oferta(data)
+
+                    st.session_state.seleccion = []
+
+                    for key in list(st.session_state.keys()):
+                        if key.startswith("materia_"):
+                            del st.session_state[key]
+
+                    st.session_state.cant_deseada = int(cant)
+                    st.session_state.carrera = carrera_clean
+                    st.session_state.step = 2
+                    st.rerun()
+
+            except ValueError as error:
+                st.error(f"❌ {error}")
 
 elif st.session_state.step == 2:
     st.title("📚 Selección de Materias")
@@ -184,13 +283,38 @@ elif st.session_state.step == 2:
     seleccion = []
     if 'seleccion' not in st.session_state: st.session_state.seleccion = []
     
+    total_materias = sum(
+        len(materias) for materias in st.session_state.mat_sem.values()
+    )
+    st.caption(f"Oferta cargada correctamente: {total_materias} materias.")
+
     for i in range(1, 10):
         with cols[i-1]:
-            st.markdown(f"<div class='semestre-header'>{i}°</div>", unsafe_allow_html=True)
-            for m in st.session_state.mat_sem.get(i, []):
-                if st.checkbox(f"{m} ({CREDITOS.get(m, 0)} Cr)", value=(m in st.session_state.seleccion)): seleccion.append(m)
-    
-    creditos_totales = sum([CREDITOS.get(m, 0) for m in seleccion])
+            st.markdown(
+                f"<div class='semestre-header'>{i}°</div>",
+                unsafe_allow_html=True,
+            )
+
+            materias_semestre = st.session_state.mat_sem.get(i, [])
+
+            if not materias_semestre:
+                st.caption("Sin materias")
+
+            for materia in materias_semestre:
+                creditos_materia = st.session_state.creditos.get(materia, 0)
+
+                if st.checkbox(
+                    f"{materia} ({creditos_materia} Cr)",
+                    value=(materia in st.session_state.seleccion),
+                    key=f"materia_{i}_{materia}",
+                ):
+                    seleccion.append(materia)
+
+    creditos_totales = sum(
+        st.session_state.creditos.get(materia, 0)
+        for materia in seleccion
+    )
+
     st.write("---")
     c_info = st.container()
     style = "credit-ok" if creditos_totales <= 36 and len(seleccion) == st.session_state.cant_deseada else "credit-error"
