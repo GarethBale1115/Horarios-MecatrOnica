@@ -812,7 +812,6 @@
       }
     ]
   },
-  {
   "EST_CON_CAL": {
     "nombre": "Estadística Y Control De Calidad",
     "creditos": 4,
@@ -2034,7 +2033,6 @@
       }
     ]
   },
-  {
   "DES_SUS": {
     "nombre": "Desarrollo Sustentable",
     "creditos": 5,
@@ -3098,7 +3096,6 @@
       }
     ]
   },
-  {
   "MEC_MAT": {
     "nombre": "Mecánica De Materiales",
     "creditos": 6,
@@ -3764,7 +3761,6 @@
       }
     ]
   },
-  {
   "MECANISMOS": {
     "nombre": "Mecanismos",
     "creditos": 5,
@@ -4357,7 +4353,6 @@
       }
     ]
   },
-  {
   "ELEC_POT_APL": {
     "nombre": "Electrónica De Potencia Aplicada",
     "creditos": 6,
@@ -4802,7 +4797,6 @@
       }
     ]
   },
-  {
   "DIN_SIST": {
     "nombre": "Dinámica De Sistemas",
     "creditos": 5,
@@ -5241,7 +5235,6 @@
       }
     ]
   },
-  {
   "CONTROL": {
     "nombre": "Control",
     "creditos": 6,
@@ -5521,7 +5514,6 @@
       }
     ]
   },
-  {
   "TOP_SEL_AUT_IND": {
     "nombre": "Tópicos Selectos de Automatización Industrial",
     "creditos": 6,
