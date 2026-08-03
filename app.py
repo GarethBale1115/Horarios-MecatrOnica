@@ -2,6 +2,8 @@ import base64
 import json
 import mimetypes
 import os
+import unicodedata
+from datetime import datetime, timezone
 from pathlib import Path
 
 import gspread
@@ -9,16 +11,18 @@ import streamlit as st
 from google.oauth2.service_account import Credentials
 
 # =============================================================================
-# 1. IDENTIDAD, CONFIGURACIÓN E INTERFAZ
+# 1. IDENTIDAD Y CONFIGURACIÓN
 # =============================================================================
 APP_NAME = "Horario ITS"
 APP_SUBTITLE = "Generador inteligente de horarios académicos"
-AUTOR = "Luis Miguel Jiménez Espinoza"
+AUTOR = "Néstor Alexis Piña Rodríguez"
 PERIODO_CODIGO = "2026_AGO_DIC"
 PERIODO_TEXTO = "AGOSTO - DICIEMBRE 2026"
+MAX_CREDITOS = 36
+MAX_RESULTADOS = 15
+RESIDENCIA = "Residencia Profesional"
+MAX_MATERIAS_ADICIONALES_RESIDENCIA = 2
 
-# Catálogo centralizado. Solo Mecatrónica tiene oferta JSON por ahora.
-# Cuando agregues otra carrera, basta con crear su JSON con el nombre indicado.
 CARRERAS = {
     "INGENIERÍA MECATRÓNICA": "mecatronica",
     "INGENIERÍA INDUSTRIAL": "industrial",
@@ -30,6 +34,8 @@ CARRERAS = {
     "INGENIERÍA QUÍMICA": "quimica",
     "INGENIERÍA EN GESTIÓN EMPRESARIAL": "gestion_empresarial",
 }
+
+DIAS = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"]
 
 st.set_page_config(
     page_title=f"{APP_NAME} | Ago-Dic 2026",
@@ -47,8 +53,6 @@ st.markdown(
         --guinda-700: #7b1028;
         --guinda-600: #951a35;
         --guinda-500: #a61b36;
-        --guinda-suave: rgba(166, 27, 54, 0.13);
-        --oro: #c49a56;
         --fondo: #0e1117;
         --panel: #151922;
         --panel-2: #1c212c;
@@ -57,6 +61,7 @@ st.markdown(
         --texto-suave: #aeb4c0;
         --verde: #3ddc97;
         --rojo: #ff6b76;
+        --ambar: #f7c66b;
     }
 
     html, body, [data-testid="stAppViewContainer"] {
@@ -66,13 +71,11 @@ st.markdown(
             var(--fondo);
     }
 
-    [data-testid="stHeader"] {
-        background: transparent;
-    }
+    [data-testid="stHeader"] { background: transparent; }
 
     [data-testid="stMainBlockContainer"] {
         max-width: 1780px;
-        padding-top: 1.1rem;
+        padding-top: 1rem;
         padding-bottom: 3rem;
     }
 
@@ -84,15 +87,15 @@ st.markdown(
 
     .brand-header {
         display: grid;
-        grid-template-columns: minmax(130px, 0.8fr) minmax(420px, 2.4fr) minmax(130px, 0.8fr);
-        gap: 26px;
+        grid-template-columns: minmax(120px, .75fr) minmax(420px, 2.5fr) minmax(120px, .75fr);
+        gap: 24px;
         align-items: center;
-        padding: 19px 24px;
+        padding: 16px 22px;
         border: 1px solid var(--borde);
         border-top: 4px solid var(--guinda-600);
-        border-radius: 22px;
-        background: linear-gradient(135deg, rgba(29, 33, 44, 0.97), rgba(17, 20, 28, 0.98));
-        box-shadow: 0 18px 48px rgba(0, 0, 0, 0.23);
+        border-radius: 20px;
+        background: linear-gradient(135deg, rgba(29, 33, 44, .97), rgba(17, 20, 28, .98));
+        box-shadow: 0 18px 48px rgba(0, 0, 0, .23);
         margin-bottom: 12px;
     }
 
@@ -100,392 +103,212 @@ st.markdown(
         display: flex;
         justify-content: center;
         align-items: center;
-        min-height: 78px;
+        min-height: 70px;
     }
 
     .institution-logo img {
         width: 100%;
-        max-width: 176px;
-        max-height: 82px;
+        max-width: 170px;
+        max-height: 75px;
         object-fit: contain;
-        filter: drop-shadow(0 5px 12px rgba(0, 0, 0, 0.24));
     }
 
     .institution-fallback {
-        width: 100%;
-        min-height: 72px;
+        min-height: 66px;
         display: flex;
         align-items: center;
         justify-content: center;
-        border: 1px dashed rgba(255, 255, 255, 0.24);
-        border-radius: 13px;
+        border: 1px dashed rgba(255,255,255,.22);
+        border-radius: 12px;
         color: var(--texto-suave);
-        font-size: 0.78rem;
-        font-weight: 800;
-        text-align: center;
-        letter-spacing: 0.08em;
+        font-weight: 850;
+        letter-spacing: .08em;
     }
 
-    .project-logo {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-
-    .project-logo img {
-        width: min(100%, 670px);
-        max-height: 126px;
-        object-fit: contain;
-    }
+    .project-logo { display: flex; justify-content: center; align-items: center; }
+    .project-logo img { width: min(100%, 670px); max-height: 116px; object-fit: contain; }
 
     .progress-track {
         display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 10px;
-        margin: 0 0 24px 0;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 9px;
+        margin: 0 0 20px 0;
     }
 
     .progress-step {
-        min-height: 44px;
+        min-height: 43px;
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 8px;
-        padding: 9px 14px;
-        border-radius: 12px;
+        gap: 7px;
+        padding: 8px 10px;
+        border-radius: 11px;
         border: 1px solid var(--borde);
-        background: rgba(22, 26, 35, 0.92);
+        background: rgba(22, 26, 35, .92);
         color: var(--texto-suave);
-        font-size: 0.82rem;
+        font-size: .78rem;
         font-weight: 800;
         text-align: center;
     }
 
     .progress-step.done {
         color: #ffdce4;
-        border-color: rgba(166, 27, 54, 0.55);
-        background: rgba(123, 16, 40, 0.26);
+        border-color: rgba(166, 27, 54, .55);
+        background: rgba(123, 16, 40, .26);
     }
 
     .progress-step.active {
         color: white;
         border-color: var(--guinda-500);
         background: linear-gradient(135deg, var(--guinda-700), var(--guinda-500));
-        box-shadow: 0 8px 20px rgba(123, 16, 40, 0.27);
+        box-shadow: 0 8px 20px rgba(123, 16, 40, .27);
     }
 
     .hero-panel {
-        padding: 30px 32px;
+        padding: 27px 30px;
         border: 1px solid var(--borde);
-        border-radius: 22px;
-        background:
-            linear-gradient(115deg, rgba(123, 16, 40, 0.22), rgba(21, 25, 34, 0.95) 48%),
-            var(--panel);
-        box-shadow: 0 18px 40px rgba(0, 0, 0, 0.18);
+        border-radius: 21px;
+        background: linear-gradient(115deg, rgba(123,16,40,.22), rgba(21,25,34,.95) 48%), var(--panel);
+        box-shadow: 0 18px 40px rgba(0,0,0,.18);
         margin-bottom: 18px;
     }
 
     .hero-kicker {
         color: #e6b7c3;
-        font-size: 0.75rem;
+        font-size: .74rem;
         font-weight: 900;
-        letter-spacing: 0.18em;
+        letter-spacing: .16em;
         text-transform: uppercase;
-        margin-bottom: 8px;
+        margin-bottom: 7px;
     }
 
     .hero-title {
         color: white;
-        font-size: clamp(1.9rem, 3.4vw, 3.35rem);
-        line-height: 1.03;
+        font-size: clamp(1.9rem, 3vw, 3rem);
+        line-height: 1.04;
         font-weight: 950;
-        letter-spacing: -0.045em;
-        margin-bottom: 12px;
+        letter-spacing: -.04em;
+        margin-bottom: 10px;
     }
 
     .hero-copy {
         color: #d0d4dc;
-        max-width: 880px;
+        max-width: 900px;
         font-size: 1rem;
-        line-height: 1.65;
+        line-height: 1.55;
         margin: 0;
     }
 
-    .hero-meta {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 9px;
-        margin-top: 19px;
-    }
-
+    .hero-meta { display:flex; flex-wrap:wrap; gap:9px; margin-top:16px; }
     .meta-chip {
-        display: inline-flex;
-        align-items: center;
-        gap: 7px;
-        padding: 8px 12px;
-        border: 1px solid rgba(255, 255, 255, 0.14);
-        border-radius: 999px;
-        background: rgba(5, 7, 11, 0.22);
-        color: #edf0f4;
-        font-size: 0.78rem;
-        font-weight: 750;
+        display:inline-flex; align-items:center; gap:7px; padding:7px 11px;
+        border:1px solid rgba(255,255,255,.14); border-radius:999px;
+        background:rgba(5,7,11,.22); color:#edf0f4; font-size:.77rem; font-weight:750;
     }
 
     .section-head {
-        padding: 20px 24px;
+        padding: 18px 22px;
         border-left: 5px solid var(--guinda-500);
-        border-radius: 0 16px 16px 0;
-        background: linear-gradient(90deg, rgba(123, 16, 40, 0.22), rgba(21, 25, 34, 0.8));
-        margin-bottom: 18px;
+        border-radius: 0 15px 15px 0;
+        background: linear-gradient(90deg, rgba(123,16,40,.22), rgba(21,25,34,.8));
+        margin-bottom: 16px;
     }
+    .section-head h1 { margin:0 0 4px 0; font-size:clamp(1.5rem,2.2vw,2.25rem); }
+    .section-head p { margin:0; color:var(--texto-suave); line-height:1.48; }
 
-    .section-head h1 {
-        margin: 0 0 5px 0;
-        font-size: clamp(1.55rem, 2.3vw, 2.35rem);
-    }
-
-    .section-head p {
-        margin: 0;
-        color: var(--texto-suave);
-        line-height: 1.55;
-    }
-
-    .form-note {
-        padding: 12px 14px;
-        border-radius: 12px;
-        background: rgba(166, 27, 54, 0.10);
-        border: 1px solid rgba(166, 27, 54, 0.30);
-        color: #e1c4cb;
-        font-size: 0.83rem;
-        margin-top: 10px;
-    }
-
-    [data-testid="stForm"],
-    [data-testid="stVerticalBlockBorderWrapper"] {
+    [data-testid="stForm"], [data-testid="stVerticalBlockBorderWrapper"] {
         border-color: var(--borde) !important;
-        border-radius: 18px !important;
-        background: rgba(20, 24, 33, 0.72) !important;
-    }
-
-    /* Tarjetas de materias: indicador y tooltip ocultos para ganar ancho. */
-    [data-testid="stCheckbox"] {
-        height: 132px !important;
-        min-height: 132px !important;
-        max-height: 132px !important;
-        margin-bottom: 10px !important;
-    }
-
-    [data-testid="stCheckbox"] [role="checkbox"] {
-        display: none !important;
-    }
-
-    [data-testid="stCheckbox"] > label {
-        width: 100% !important;
-        height: 124px !important;
-        min-height: 124px !important;
-        max-height: 124px !important;
-        box-sizing: border-box !important;
-        border: 1px solid rgba(180, 186, 198, 0.28) !important;
-        border-radius: 14px !important;
-        padding: 10px 8px !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        text-align: center !important;
-        overflow: hidden !important;
-        transition: transform 0.16s ease, border-color 0.16s ease, background 0.16s ease !important;
-        cursor: pointer !important;
-        background: linear-gradient(145deg, rgba(27, 32, 43, 0.98), rgba(16, 19, 27, 0.98));
-    }
-
-    [data-testid="stCheckbox"] > label:hover {
-        border-color: var(--guinda-500) !important;
-        background: linear-gradient(145deg, rgba(83, 15, 33, 0.72), rgba(24, 27, 37, 0.98)) !important;
-        transform: translateY(-2px);
-        box-shadow: 0 10px 22px rgba(0, 0, 0, 0.18);
-    }
-
-    [data-testid="stCheckbox"]:has(input:checked) > label {
-        background: linear-gradient(145deg, var(--guinda-700), var(--guinda-500)) !important;
-        border-color: #d74b68 !important;
-        box-shadow: 0 10px 25px rgba(123, 16, 40, 0.32);
-    }
-
-    [data-testid="stCheckbox"] div[data-testid="stMarkdownContainer"] {
-        width: 100% !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-    }
-
-    [data-testid="stCheckbox"] div[data-testid="stMarkdownContainer"] p {
-        width: 100% !important;
-        margin: 0 !important;
-        color: #f5f6f8 !important;
-        font-size: clamp(0.67rem, 0.73vw, 0.82rem) !important;
-        line-height: 1.22 !important;
-        font-weight: 760 !important;
-        text-align: center !important;
-        white-space: normal !important;
-        word-break: normal !important;
-        overflow-wrap: normal !important;
-        hyphens: none !important;
-        text-wrap: balance;
-    }
-
-    [data-testid="stCheckbox"]:has(input:checked)
-    div[data-testid="stMarkdownContainer"] p {
-        color: white !important;
-        font-weight: 900 !important;
+        border-radius: 17px !important;
+        background: rgba(20,24,33,.72) !important;
     }
 
     .semester-header {
-        min-height: 42px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #f7dce3;
-        font-weight: 950;
-        font-size: 0.92rem;
-        text-align: center;
-        border: 1px solid rgba(166, 27, 54, 0.45);
-        border-bottom: 3px solid var(--guinda-500);
-        border-radius: 10px 10px 4px 4px;
-        background: rgba(123, 16, 40, 0.18);
-        margin-bottom: 10px;
+        min-height:42px; display:flex; align-items:center; justify-content:center;
+        color:#f7dce3; font-weight:950; font-size:.9rem; text-align:center;
+        border:1px solid rgba(166,27,54,.45); border-bottom:3px solid var(--guinda-500);
+        border-radius:10px 10px 4px 4px; background:rgba(123,16,40,.18); margin-bottom:10px;
     }
 
-    .credit-box {
-        padding: 15px;
-        border-radius: 13px;
-        text-align: center;
-        font-weight: 900;
-        margin-top: 10px;
-        letter-spacing: 0.01em;
+    .credit-box { padding:14px; border-radius:13px; text-align:center; font-weight:900; margin-top:10px; }
+    .credit-ok { background:rgba(4,95,70,.30); color:var(--verde); border:1px solid var(--verde); }
+    .credit-error { background:rgba(153,27,27,.27); color:#ff8c95; border:1px solid #ff6b76; }
+    .selection-note { color:var(--texto-suave); font-size:.82rem; margin:4px 0 14px 0; }
+
+    .stButton > button, [data-testid="stFormSubmitButton"] > button {
+        min-height:46px; color:white !important;
+        background:linear-gradient(135deg,var(--guinda-700),var(--guinda-500)) !important;
+        border:1px solid rgba(255,255,255,.1) !important;
+        font-weight:850 !important; border-radius:11px !important;
+        box-shadow:0 9px 20px rgba(92,8,28,.21);
+    }
+    .stButton > button:hover, [data-testid="stFormSubmitButton"] > button:hover {
+        background:linear-gradient(135deg,var(--guinda-600),#bf2444) !important;
+        border-color:rgba(255,255,255,.2) !important; transform:translateY(-1px);
     }
 
-    .credit-ok {
-        background: rgba(4, 95, 70, 0.30);
-        color: var(--verde);
-        border: 1px solid var(--verde);
+    .group-card {
+        border:1px solid var(--borde);
+        border-left:4px solid var(--guinda-500);
+        border-radius:14px;
+        padding:13px 14px;
+        background:linear-gradient(135deg,rgba(37,41,53,.9),rgba(18,21,29,.94));
+        margin-bottom:10px;
     }
-
-    .credit-error {
-        background: rgba(153, 27, 27, 0.27);
-        color: #ff8c95;
-        border: 1px solid #ff6b76;
+    .group-title { color:#fff; font-size:1rem; font-weight:900; margin-bottom:4px; }
+    .group-meta { color:var(--texto-suave); font-size:.8rem; line-height:1.5; }
+    .session-chip {
+        display:inline-block; margin:3px 4px 3px 0; padding:5px 8px;
+        border-radius:999px; border:1px solid rgba(255,255,255,.13);
+        background:rgba(255,255,255,.05); color:#e9ebef; font-size:.72rem; font-weight:750;
     }
-
-    .selection-note {
-        color: var(--texto-suave);
-        font-size: 0.82rem;
-        margin: 4px 0 14px 0;
+    .rating-row { display:flex; align-items:center; gap:12px; min-height:90px; }
+    .rating-donut {
+        width:76px; height:76px; border-radius:50%; position:relative; flex:0 0 76px;
+        display:flex; align-items:center; justify-content:center;
     }
-
-    .stButton > button,
-    [data-testid="stFormSubmitButton"] > button {
-        min-height: 47px;
-        color: white !important;
-        background: linear-gradient(135deg, var(--guinda-700), var(--guinda-500)) !important;
-        border: 1px solid rgba(255, 255, 255, 0.10) !important;
-        font-weight: 850 !important;
-        border-radius: 11px !important;
-        box-shadow: 0 9px 20px rgba(92, 8, 28, 0.21);
+    .rating-donut::after {
+        content:""; width:54px; height:54px; border-radius:50%; background:#171b24; position:absolute;
     }
-
-    .stButton > button:hover,
-    [data-testid="stFormSubmitButton"] > button:hover {
-        background: linear-gradient(135deg, var(--guinda-600), #bf2444) !important;
-        border-color: rgba(255, 255, 255, 0.20) !important;
-        transform: translateY(-1px);
-    }
+    .rating-number { position:relative; z-index:2; color:#fff; font-size:1rem; font-weight:950; }
+    .rating-copy { color:var(--texto-suave); font-size:.8rem; line-height:1.45; }
+    .status-full { color:#ff9ea7; font-weight:850; }
+    .status-open { color:#76e8b2; font-weight:850; }
 
     .horario-grid {
-        width: 100%;
-        border-collapse: separate;
-        border-spacing: 0;
-        text-align: center;
-        font-size: 0.8em;
-        background: #ffffff;
-        color: #151820;
-        border-radius: 12px;
-        overflow: hidden;
-        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18);
+        width:100%; border-collapse:separate; border-spacing:0; text-align:center;
+        font-size:.8em; background:#fff; color:#151820; border-radius:12px; overflow:hidden;
+        box-shadow:0 12px 28px rgba(0,0,0,.18);
     }
-
-    .horario-grid th {
-        background: var(--guinda-700);
-        color: white;
-        padding: 9px;
-        border: 1px solid #5d0c20;
-    }
-
-    .horario-grid td {
-        border: 1px solid #e0e3e9;
-        height: 47px;
-        vertical-align: middle;
-        padding: 2px;
-    }
-
-    .hora-col {
-        background: #e8eaf0;
-        font-weight: 900;
-        width: 72px;
-    }
-
+    .horario-grid th { background:var(--guinda-700); color:white; padding:9px; border:1px solid #5d0c20; }
+    .horario-grid td { border:1px solid #e0e3e9; height:47px; vertical-align:middle; padding:2px; }
+    .hora-col { background:#e8eaf0; font-weight:900; width:72px; }
     .clase-cell {
-        border-radius: 6px;
-        padding: 5px;
-        color: #111;
-        font-weight: 800;
-        font-size: 0.92em;
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
+        border-radius:6px; padding:5px; color:#111; font-weight:800; font-size:.92em;
+        height:100%; display:flex; flex-direction:column; justify-content:center;
     }
 
-    .footer-note {
-        text-align: center;
-        color: #7f8794;
-        font-size: 0.76rem;
-        padding-top: 26px;
-    }
+    .footer-note { text-align:center; color:#7f8794; font-size:.75rem; padding-top:25px; }
 
     @media (max-width: 1180px) {
-        [data-testid="stCheckbox"] div[data-testid="stMarkdownContainer"] p {
-            font-size: 0.63rem !important;
-        }
-        .brand-header {
-            grid-template-columns: 120px 1fr 120px;
-        }
+        .brand-header { grid-template-columns:110px 1fr 110px; }
+        .progress-step span { display:none; }
     }
 
-    @media (max-width: 760px) {
-        .brand-header {
-            grid-template-columns: 1fr;
-            gap: 12px;
-        }
-        .institution-logo {
-            display: none;
-        }
-        .project-logo img {
-            max-height: 96px;
-        }
-        .progress-step {
-            font-size: 0.68rem;
-            padding: 7px 4px;
-        }
-        .hero-panel {
-            padding: 24px 20px;
-        }
+    @media (max-width:760px) {
+        .brand-header { grid-template-columns:1fr; gap:10px; }
+        .institution-logo { display:none; }
+        .project-logo img { max-height:92px; }
+        .progress-step { font-size:.66rem; padding:7px 3px; }
+        .hero-panel { padding:22px 18px; }
     }
 </style>
 """,
     unsafe_allow_html=True,
 )
 
-
+# =============================================================================
+# 2. RECURSOS VISUALES
+# =============================================================================
 def _first_existing_path(*candidates):
     for candidate in candidates:
         path = Path(candidate)
@@ -510,42 +333,23 @@ def _logo_html(path, fallback):
 
 
 def render_brand_header(current_step):
-    tecnm_path = _first_existing_path(
-        "assets/logo_tecnm.png",
-        "assets/logo_tec.png",
-        "logo_tec.png",
-    )
-    its_path = _first_existing_path(
-        "assets/logo_its.png",
-        "logo_its.png",
-    )
-    project_path = _first_existing_path(
-        "assets/horario_its_logo.svg",
-        "horario_its_logo.svg",
-    )
+    tecnm_path = _first_existing_path("assets/logo_tecnm.png", "assets/logo_tec.png", "logo_tec.png")
+    its_path = _first_existing_path("assets/logo_its.png", "logo_its.png")
+    project_path = _first_existing_path("assets/horario_its_logo.svg", "horario_its_logo.svg")
 
     project_uri = _data_uri(project_path)
-    if project_uri:
-        project_html = f'<img src="{project_uri}" alt="{APP_NAME}">'
-    else:
-        project_html = (
-            '<div style="text-align:center">'
-            '<div style="font-size:2.15rem;font-weight:950;color:#fff">'
-            'HORARIO ITS 🫏</div>'
-            '<div style="color:#b9bec8;font-size:.82rem">'
-            'GENERADOR INTELIGENTE DE HORARIOS</div></div>'
-        )
+    project_html = (
+        f'<img src="{project_uri}" alt="{APP_NAME}">'
+        if project_uri
+        else '<div style="text-align:center"><div style="font-size:2.1rem;font-weight:950;color:#fff">HORARIO ITS 🫏</div><div style="color:#b9bec8;font-size:.8rem">GENERADOR DE HORARIOS</div></div>'
+    )
 
     st.markdown(
         f"""
         <div class="brand-header">
-            <div class="institution-logo">
-                {_logo_html(tecnm_path, "TECNM")}
-            </div>
+            <div class="institution-logo">{_logo_html(tecnm_path, "TECNM")}</div>
             <div class="project-logo">{project_html}</div>
-            <div class="institution-logo">
-                {_logo_html(its_path, "ITS")}
-            </div>
+            <div class="institution-logo">{_logo_html(its_path, "ITS")}</div>
         </div>
         """,
         unsafe_allow_html=True,
@@ -553,121 +357,144 @@ def render_brand_header(current_step):
 
     labels = (
         (1, "Inicio", "Configura tu carga"),
-        (2, "Materias", "Elige tu retícula"),
-        (3, "Horarios", "Genera opciones"),
+        (2, "Materias", "Elige asignaturas"),
+        (3, "Grupos", "Profesores y horas"),
+        (4, "Horarios", "Compara opciones"),
     )
     items = []
-    for step_number, title, subtitle in labels:
-        if step_number < current_step:
-            css_class = "done"
-            icon = "✓"
-        elif step_number == current_step:
-            css_class = "active"
-            icon = str(step_number)
+    for number, title, subtitle in labels:
+        if number < current_step:
+            css_class, icon = "done", "✓"
+        elif number == current_step:
+            css_class, icon = "active", str(number)
         else:
-            css_class = ""
-            icon = str(step_number)
+            css_class, icon = "", str(number)
         items.append(
-            f'<div class="progress-step {css_class}">'
-            f'<strong>{icon}. {title}</strong><span>· {subtitle}</span></div>'
+            f'<div class="progress-step {css_class}"><strong>{icon}. {title}</strong><span>· {subtitle}</span></div>'
         )
-
-    st.markdown(
-        '<div class="progress-track">' + ''.join(items) + '</div>',
-        unsafe_allow_html=True,
-    )
+    st.markdown('<div class="progress-track">' + "".join(items) + "</div>", unsafe_allow_html=True)
 
 
 def render_section_header(title, description):
     st.markdown(
-        f"""
-        <div class="section-head">
-            <h1>{title}</h1>
-            <p>{description}</p>
-        </div>
-        """,
+        f'<div class="section-head"><h1>{title}</h1><p>{description}</p></div>',
         unsafe_allow_html=True,
     )
 
+
+
+
+def render_subject_card_css():
+    """Activa el estilo de tarjetas únicamente en la página de materias."""
+    st.markdown(
+        r"""
+        <style>
+        [data-testid="stCheckbox"] {
+            min-height: 160px !important;
+            height: 160px !important;
+            max-height: 160px !important;
+            margin-bottom: 10px !important;
+        }
+        [data-testid="stCheckbox"] > label {
+            width: 100% !important;
+            min-height: 152px !important;
+            height: 152px !important;
+            max-height: 152px !important;
+            box-sizing: border-box !important;
+            border: 1px solid rgba(180,186,198,.28) !important;
+            border-radius: 14px !important;
+            padding: 12px 8px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            text-align: center !important;
+            overflow: visible !important;
+            transition: transform .16s ease, border-color .16s ease, background .16s ease !important;
+            cursor: pointer !important;
+            background: linear-gradient(145deg, rgba(27,32,43,.98), rgba(16,19,27,.98));
+        }
+        [data-testid="stCheckbox"] > label:hover {
+            border-color: var(--guinda-500) !important;
+            background: linear-gradient(145deg, rgba(83,15,33,.72), rgba(24,27,37,.98)) !important;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 22px rgba(0,0,0,.18);
+        }
+        [data-testid="stCheckbox"]:has(input:checked) > label {
+            background: linear-gradient(145deg, var(--guinda-700), var(--guinda-500)) !important;
+            border-color: #d74b68 !important;
+            box-shadow: 0 10px 25px rgba(123,16,40,.32);
+        }
+        [data-testid="stCheckbox"] div[data-testid="stMarkdownContainer"] {
+            width: 100% !important;
+            display:flex !important;
+            align-items:center !important;
+            justify-content:center !important;
+        }
+        [data-testid="stCheckbox"] div[data-testid="stMarkdownContainer"] p {
+            width:100% !important;
+            margin:0 !important;
+            color:#f5f6f8 !important;
+            font-size:clamp(.61rem,.69vw,.78rem) !important;
+            line-height:1.2 !important;
+            font-weight:780 !important;
+            text-align:center !important;
+            white-space:normal !important;
+            word-break:normal !important;
+            overflow-wrap:break-word !important;
+            hyphens:none !important;
+        }
+        [data-testid="stCheckbox"]:has(input:checked) div[data-testid="stMarkdownContainer"] p {
+            color:white !important;
+            font-weight:900 !important;
+        }
+        @media (max-width:1180px) {
+            [data-testid="stCheckbox"] div[data-testid="stMarkdownContainer"] p {
+                font-size:.58rem !important;
+            }
+        }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
 
 def render_footer():
     st.markdown(
-        f"""
-        <div class="footer-note">
-            {APP_NAME} · Desarrollado por {AUTOR}. Proyecto académico independiente;
-            verifica tu carga final en los canales oficiales del ITS.
-        </div>
-        """,
+        f'<div class="footer-note">{APP_NAME} · Desarrollado por {AUTOR} · Instituto Tecnológico de Saltillo</div>',
         unsafe_allow_html=True,
     )
 
+# =============================================================================
+# 3. ICONOS, COLORES Y SERIACIONES
+# =============================================================================
 COLORS = [
-    "#FFCDD2", "#F8BBD0", "#E1BEE7", "#D1C4E9",
-    "#C5CAE9", "#BBDEFB", "#B3E5FC", "#B2EBF2",
-    "#B2DFDB", "#C8E6C9", "#DCEDC8", "#F0F4C3",
+    "#FFCDD2", "#F8BBD0", "#E1BEE7", "#D1C4E9", "#C5CAE9", "#BBDEFB",
+    "#B3E5FC", "#B2EBF2", "#B2DFDB", "#C8E6C9", "#DCEDC8", "#F0F4C3",
 ]
 
-MAX_CREDITOS = 36
-RESIDENCIA = "Residencia Profesional"
-MAX_MATERIAS_ADICIONALES_RESIDENCIA = 2
-
-# Iconos ligeros: no requieren archivos PNG ni vuelven lenta la aplicación.
 ICONOS_MATERIAS = {
-    "Química": "⚗️",
-    "Cálculo Diferencial": "➗",
-    "Taller De Ética": "⚖️",
-    "Dibujo Asistido Por Computadora": "🖥️",
-    "Metrología Y Normalización": "📏",
-    "Fundamentos De Investigación": "🔎",
-    "Estadística Y Control De Calidad": "📊",
-    "Álgebra Lineal": "🔢",
-    "Cálculo Integral": "∫",
-    "Ciencia E Ingeniería De Materiales": "🧱",
-    "Programación Básica": "💻",
-    "Administración Y Contabilidad": "🧾",
-    "Desarrollo Sustentable": "🌱",
-    "Métodos Numéricos": "🧮",
-    "Electromagnetismo": "🧲",
-    "Procesos De Fabricación": "🏭",
-    "Cálculo Vectorial": "🧭",
-    "Estática": "🏗️",
-    "Mecánica De Materiales": "🔩",
-    "Dinámica": "🏎️",
-    "Ecuaciones Diferenciales": "📈",
-    "Taller De Investigación I": "📝",
-    "Análisis De Circuitos Eléctricos": "🔌",
-    "Fundamentos De Termodinámica": "🌡️",
-    "Mecanismos": "⚙️",
-    "Programación Avanzada": "🧑‍💻",
-    "Taller De Investigación II": "📚",
-    "Máquinas Eléctricas": "⚡",
-    "Análisis De Fluidos": "💧",
-    "Electrónica Analógica": "〰️",
-    "Electrónica De Potencia Aplicada": "🔋",
-    "Instrumentación": "🎛️",
-    "Diseño De Elementos Mecánicos": "🛠️",
-    "Electrónica Digital": "0️⃣",
-    "Vibraciones Mecánicas": "📳",
-    "Administración del Mantenimiento": "📋",
-    "Dinámica De Sistemas": "🔄",
-    "Manufactura Avanzada": "🏭",
-    "Circuitos Hidráulicos Y Neumáticos": "💨",
-    "Mantenimiento": "🔧",
-    "Microcontroladores": "🧠",
-    "Diseño Asistido por Computadora": "✏️",
-    "Control": "🎚️",
-    "Formulación Y Evaluación De Proyectos": "📑",
-    "Controladores Lógicos Programables": "🧩",
-    "Sistemas Avanzados De Manufactura": "🦾",
-    "Redes Industriales": "🌐",
-    "Tópicos Selectos de Automatización Industrial": "🤖",
-    "Robótica": "🤖",
+    "Química": "⚗️", "Cálculo Diferencial": "➗", "Taller De Ética": "⚖️",
+    "Dibujo Asistido Por Computadora": "🖥️", "Metrología Y Normalización": "📏",
+    "Fundamentos De Investigación": "🔎", "Estadística Y Control De Calidad": "📊",
+    "Álgebra Lineal": "🔢", "Cálculo Integral": "∫", "Ciencia E Ingeniería De Materiales": "🧱",
+    "Programación Básica": "💻", "Administración Y Contabilidad": "🧾",
+    "Desarrollo Sustentable": "🌱", "Métodos Numéricos": "🧮", "Electromagnetismo": "🧲",
+    "Procesos De Fabricación": "🏭", "Cálculo Vectorial": "🧭", "Estática": "🏗️",
+    "Mecánica De Materiales": "🔩", "Dinámica": "🏎️", "Ecuaciones Diferenciales": "📈",
+    "Taller De Investigación I": "📝", "Análisis De Circuitos Eléctricos": "🔌",
+    "Fundamentos De Termodinámica": "🌡️", "Mecanismos": "⚙️", "Programación Avanzada": "🧑‍💻",
+    "Taller De Investigación II": "📚", "Máquinas Eléctricas": "⚡", "Análisis De Fluidos": "💧",
+    "Electrónica Analógica": "〰️", "Electrónica De Potencia Aplicada": "🔋",
+    "Instrumentación": "🎛️", "Diseño De Elementos Mecánicos": "🛠️", "Electrónica Digital": "0️⃣",
+    "Vibraciones Mecánicas": "📳", "Administración del Mantenimiento": "📋",
+    "Dinámica De Sistemas": "🔄", "Manufactura Avanzada": "🏭",
+    "Circuitos Hidráulicos Y Neumáticos": "💨", "Mantenimiento": "🔧",
+    "Microcontroladores": "🧠", "Diseño Asistido por Computadora": "✏️", "Control": "🎚️",
+    "Formulación Y Evaluación De Proyectos": "📑", "Controladores Lógicos Programables": "🧩",
+    "Sistemas Avanzados De Manufactura": "🦾", "Redes Industriales": "🌐",
+    "Tópicos Selectos de Automatización Industrial": "🤖", "Robótica": "🤖",
     "Residencia Profesional": "🎓",
 }
 
-# Relaciones visibles en la retícula. Si A es antecedente de B, no se permite
-# escoger A y B en el mismo periodo. También se calcula la relación transitiva:
-# por ejemplo, Diferencial e Integral, pero también Diferencial y Vectorial.
 SERIADAS_DIRECTAS = (
     ("Cálculo Diferencial", "Cálculo Integral"),
     ("Cálculo Integral", "Cálculo Vectorial"),
@@ -696,42 +523,208 @@ SERIADAS_DIRECTAS = (
 )
 
 # =============================================================================
-# 2. CONEXIÓN A GOOGLE SHEETS
+# 4. GOOGLE SHEETS: OPINIONES Y REPORTES
 # =============================================================================
 SCOPES = [
     "https://www.googleapis.com/auth/spreadsheets",
     "https://www.googleapis.com/auth/drive",
 ]
+RATING_HEADERS = ["timestamp", "periodo", "carrera", "materia", "profesor", "calificacion", "comentario"]
+REPORT_HEADERS = ["timestamp", "periodo", "carrera", "materia", "grupo_id", "profesor", "estado"]
+
+
+def _normalize(value):
+    text = unicodedata.normalize("NFKD", str(value or ""))
+    return "".join(char for char in text if not unicodedata.combining(char)).strip().lower()
 
 
 @st.cache_resource
 def get_db_connection():
-    if "gcp_service_account" not in st.secrets:
-        return None
-
     try:
-        creds_info = dict(st.secrets["gcp_service_account"])
-        if "private_key" in creds_info:
-            creds_info["private_key"] = creds_info["private_key"].replace(
-                "\\n", "\n"
-            )
-        creds = Credentials.from_service_account_info(
-            creds_info,
-            scopes=SCOPES,
-        )
+        info = dict(st.secrets["gcp_service_account"])
+        if "private_key" in info:
+            info["private_key"] = info["private_key"].replace("\\n", "\n")
+        creds = Credentials.from_service_account_info(info, scopes=SCOPES)
         return gspread.authorize(creds)
     except Exception:
         return None
 
 
-db_client = get_db_connection()
+def _sheet_config():
+    config = {}
+    try:
+        if "google_sheets" in st.secrets:
+            config.update(dict(st.secrets["google_sheets"]))
+    except Exception:
+        pass
+    for key in ("spreadsheet_id", "spreadsheet_url", "spreadsheet_name"):
+        try:
+            if key in st.secrets and key not in config:
+                config[key] = st.secrets[key]
+        except Exception:
+            pass
+    return config
+
+
+@st.cache_resource
+def get_spreadsheet():
+    client = get_db_connection()
+    if client is None:
+        return None
+    config = _sheet_config()
+    try:
+        if config.get("spreadsheet_id"):
+            return client.open_by_key(str(config["spreadsheet_id"]))
+        if config.get("spreadsheet_url"):
+            return client.open_by_url(str(config["spreadsheet_url"]))
+        if config.get("spreadsheet_name"):
+            return client.open(str(config["spreadsheet_name"]))
+        for name in ("Horario ITS", "HorarioITS", "Waze Académico", "Waze Academico"):
+            try:
+                return client.open(name)
+            except gspread.SpreadsheetNotFound:
+                continue
+    except Exception:
+        return None
+    return None
+
+
+def _worksheet(candidates, headers):
+    book = get_spreadsheet()
+    if book is None:
+        return None
+    for name in candidates:
+        try:
+            ws = book.worksheet(name)
+            values = ws.get_all_values()
+            if not values:
+                ws.append_row(headers)
+            return ws
+        except gspread.WorksheetNotFound:
+            continue
+        except Exception:
+            return None
+    try:
+        ws = book.add_worksheet(title=candidates[0], rows=1000, cols=max(10, len(headers)))
+        ws.append_row(headers)
+        return ws
+    except Exception:
+        return None
+
+
+def _record_value(record, *aliases):
+    normalized = {_normalize(key): value for key, value in record.items()}
+    for alias in aliases:
+        key = _normalize(alias)
+        if key in normalized:
+            return normalized[key]
+    return ""
+
+
+@st.cache_data(ttl=60)
+def read_ratings():
+    ws = _worksheet(("Opiniones", "Calificaciones", "Profesores"), RATING_HEADERS)
+    if ws is None:
+        return []
+    try:
+        return ws.get_all_records()
+    except Exception:
+        return []
+
+
+@st.cache_data(ttl=60)
+def read_reports():
+    ws = _worksheet(("Grupos_Llenos", "Grupos Llenos", "Reportes"), REPORT_HEADERS)
+    if ws is None:
+        return []
+    try:
+        return ws.get_all_records()
+    except Exception:
+        return []
+
+
+def ratings_for_professor(profesor):
+    result = []
+    target = _normalize(profesor)
+    for row in read_ratings():
+        name = _record_value(row, "profesor", "maestro", "docente")
+        if _normalize(name) != target:
+            continue
+        try:
+            score = float(_record_value(row, "calificacion", "rating", "puntuacion"))
+        except (TypeError, ValueError):
+            continue
+        if 1 <= score <= 5:
+            result.append(
+                {
+                    "calificacion": score,
+                    "comentario": str(_record_value(row, "comentario", "opinion", "reseña")),
+                    "materia": str(_record_value(row, "materia", "asignatura")),
+                }
+            )
+    return result
+
+
+def report_count(group_id):
+    target = _normalize(group_id)
+    count = 0
+    for row in read_reports():
+        saved_id = _record_value(row, "grupo_id", "grupo", "id")
+        state = _record_value(row, "estado", "reporte", "status")
+        if _normalize(saved_id) == target and (_normalize(state) in ("", "lleno", "grupo lleno", "cerrado")):
+            count += 1
+    return count
+
+
+def submit_rating(materia, profesor, score, comment):
+    ws = _worksheet(("Opiniones", "Calificaciones", "Profesores"), RATING_HEADERS)
+    if ws is None:
+        return False
+    try:
+        ws.append_row(
+            [
+                datetime.now(timezone.utc).isoformat(),
+                PERIODO_CODIGO,
+                st.session_state.get("carrera_nombre", ""),
+                materia,
+                profesor,
+                int(score),
+                comment.strip(),
+            ]
+        )
+        read_ratings.clear()
+        return True
+    except Exception:
+        return False
+
+
+def submit_full_report(materia, group):
+    ws = _worksheet(("Grupos_Llenos", "Grupos Llenos", "Reportes"), REPORT_HEADERS)
+    if ws is None:
+        return False
+    try:
+        ws.append_row(
+            [
+                datetime.now(timezone.utc).isoformat(),
+                PERIODO_CODIGO,
+                st.session_state.get("carrera_nombre", ""),
+                materia,
+                group.get("id", ""),
+                group.get("profesor", "POR ASIGNAR"),
+                "LLENO",
+            ]
+        )
+        read_reports.clear()
+        return True
+    except Exception:
+        return False
+
 
 # =============================================================================
-# 3. CARGA Y NORMALIZACIÓN DE LA OFERTA
+# 5. CARGA Y NORMALIZACIÓN DE LA OFERTA
 # =============================================================================
 @st.cache_data
 def _read_json(filepath, modified_ns):
-    """Renueva la caché cuando cambia la fecha de modificación del JSON."""
     del modified_ns
     with open(filepath, "r", encoding="utf-8") as file:
         return json.load(file)
@@ -739,326 +732,250 @@ def _read_json(filepath, modified_ns):
 
 def load_oferta_json(periodo, carrera):
     filepath = f"data/{periodo}/{carrera}.json"
-
     if not os.path.exists(filepath):
         return None
-
     try:
         return _read_json(filepath, os.stat(filepath).st_mtime_ns)
     except json.JSONDecodeError as error:
         raise ValueError(
-            f"JSON inválido en {filepath}: línea {error.lineno}, "
-            f"columna {error.colno}. {error.msg}"
+            f"El archivo de la oferta tiene un error en la línea {error.lineno}, columna {error.colno}."
         ) from error
 
 
 def format_json_to_oferta(json_data):
-    """Convierte el JSON al formato interno usado por el generador."""
     if not isinstance(json_data, dict):
-        raise ValueError("La raíz del JSON debe ser un objeto.")
-
+        raise ValueError("La oferta académica no tiene una estructura válida.")
     materias = json_data.get("materias", json_data)
-
     if not isinstance(materias, dict) or not materias:
-        raise ValueError("No se encontraron materias dentro del JSON.")
+        raise ValueError("No se encontraron materias en la oferta académica.")
 
     oferta = {}
-    mat_sem = {semestre: [] for semestre in range(1, 10)}
-    creditos = {}
+    mat_sem = {semester: [] for semester in range(1, 10)}
+    credits = {}
 
-    for clave, info in materias.items():
+    for key, info in materias.items():
         if not isinstance(info, dict):
-            raise ValueError(f"La materia {clave} no tiene estructura válida.")
-
-        nombre = str(info.get("nombre", "")).strip()
-        if not nombre:
-            raise ValueError(f"La materia {clave} no tiene nombre.")
-
+            raise ValueError(f"La materia {key} no tiene una estructura válida.")
+        name = str(info.get("nombre", "")).strip()
+        if not name:
+            raise ValueError(f"La materia {key} no tiene nombre.")
         try:
-            semestre = int(info.get("semestre"))
-            creditos_materia = int(info.get("creditos", 0))
+            semester = int(info.get("semestre"))
+            subject_credits = int(info.get("creditos", 0))
         except (TypeError, ValueError) as error:
-            raise ValueError(
-                f"La materia {clave} tiene semestre o créditos inválidos."
-            ) from error
+            raise ValueError(f"La materia {name} tiene datos inválidos.") from error
+        if semester not in range(1, 10):
+            raise ValueError(f"La materia {name} tiene un semestre inválido.")
+        if name in oferta:
+            raise ValueError(f"Nombre de materia duplicado: {name}")
 
-        if semestre not in range(1, 10):
-            raise ValueError(
-                f"La materia {nombre} tiene semestre {semestre}; debe ser 1 a 9."
-            )
+        mat_sem[semester].append(name)
+        credits[name] = subject_credits
+        oferta[name] = []
 
-        if nombre in oferta:
-            raise ValueError(f"Nombre de materia duplicado: {nombre}")
-
-        mat_sem[semestre].append(nombre)
-        creditos[nombre] = creditos_materia
-        oferta[nombre] = []
-
-        for grupo in info.get("grupos", []):
-            horario = [
-                (
-                    int(sesion["dia"]),
-                    int(sesion["inicio"]),
-                    int(sesion["fin"]),
-                )
-                for sesion in grupo.get("horario", [])
+        for group in info.get("grupos", []):
+            schedule = [
+                (int(session["dia"]), int(session["inicio"]), int(session["fin"]))
+                for session in group.get("horario", [])
             ]
-
-            oferta[nombre].append(
+            oferta[name].append(
                 {
-                    "profesor": grupo.get("profesor", "POR ASIGNAR"),
-                    "salon": grupo.get("salon", "POR ASIGNAR"),
-                    "horario": horario,
-                    "id": grupo.get("id", ""),
-                    "materia": nombre,
+                    "profesor": group.get("profesor", "POR ASIGNAR"),
+                    "salon": group.get("salon", "POR ASIGNAR"),
+                    "horario": schedule,
+                    "id": group.get("id", ""),
+                    "materia": name,
                 }
             )
 
-    for semestre in mat_sem:
-        mat_sem[semestre].sort()
-
-    return oferta, mat_sem, creditos
+    for semester in mat_sem:
+        mat_sem[semester].sort()
+    return oferta, mat_sem, credits
 
 # =============================================================================
-# 4. REGLAS DE SELECCIÓN
+# 6. REGLAS ACADÉMICAS
 # =============================================================================
-def construir_grafo_seriadas():
-    grafo = {}
-    for antecedente, consecuente in SERIADAS_DIRECTAS:
-        grafo.setdefault(antecedente, set()).add(consecuente)
-    return grafo
+def build_prerequisite_graph():
+    graph = {}
+    for previous, next_subject in SERIADAS_DIRECTAS:
+        graph.setdefault(previous, set()).add(next_subject)
+    return graph
 
 
-GRAFO_SERIADAS = construir_grafo_seriadas()
+GRAFO_SERIADAS = build_prerequisite_graph()
 
 
-def materias_posteriores(materia):
-    """Obtiene todas las materias posteriores por cierre transitivo."""
-    visitadas = set()
-    pendientes = list(GRAFO_SERIADAS.get(materia, set()))
-
-    while pendientes:
-        actual = pendientes.pop()
-        if actual in visitadas:
+def later_subjects(subject):
+    visited = set()
+    pending = list(GRAFO_SERIADAS.get(subject, set()))
+    while pending:
+        current = pending.pop()
+        if current in visited:
             continue
-        visitadas.add(actual)
-        pendientes.extend(GRAFO_SERIADAS.get(actual, set()))
-
-    return visitadas
-
-
-def detectar_conflictos_seriados(seleccion):
-    seleccionadas = set(seleccion)
-    conflictos = []
-
-    for antecedente in sorted(seleccionadas):
-        for consecuente in sorted(materias_posteriores(antecedente)):
-            if consecuente in seleccionadas:
-                conflictos.append((antecedente, consecuente))
-
-    return conflictos
+        visited.add(current)
+        pending.extend(GRAFO_SERIADAS.get(current, set()))
+    return visited
 
 
-def validar_seleccion(seleccion, cantidad_deseada, creditos_por_materia):
-    errores = []
-    total_creditos = sum(
-        creditos_por_materia.get(materia, 0)
-        for materia in seleccion
-    )
+def serial_conflicts(selection):
+    selected = set(selection)
+    conflicts = []
+    for previous in sorted(selected):
+        for next_subject in sorted(later_subjects(previous)):
+            if next_subject in selected:
+                conflicts.append((previous, next_subject))
+    return conflicts
 
-    if len(seleccion) != cantidad_deseada:
-        errores.append(
-            f"Debes seleccionar exactamente {cantidad_deseada} materias; "
-            f"actualmente seleccionaste {len(seleccion)}."
+
+def validate_selection(selection, desired_count, credits_by_subject):
+    errors = []
+    total_credits = sum(credits_by_subject.get(subject, 0) for subject in selection)
+    if len(selection) != desired_count:
+        errors.append(
+            f"Debes seleccionar exactamente {desired_count} materias; seleccionaste {len(selection)}."
         )
-
-    if total_creditos > MAX_CREDITOS:
-        errores.append(
-            f"La carga suma {total_creditos} créditos y el máximo permitido "
-            f"es {MAX_CREDITOS}."
+    if total_credits > MAX_CREDITOS:
+        errors.append(f"La carga suma {total_credits} créditos y el máximo permitido es {MAX_CREDITOS}.")
+    for previous, next_subject in serial_conflicts(selection):
+        errors.append(f"No puedes cursar {previous} y {next_subject} en el mismo periodo porque son seriadas.")
+    if RESIDENCIA in selection and len(selection) - 1 > MAX_MATERIAS_ADICIONALES_RESIDENCIA:
+        errors.append(
+            f"Residencia Profesional puede acompañarse de máximo {MAX_MATERIAS_ADICIONALES_RESIDENCIA} materias adicionales."
         )
-
-    conflictos = detectar_conflictos_seriados(seleccion)
-    for antecedente, consecuente in conflictos:
-        errores.append(
-            f"No puedes cursar simultáneamente {antecedente} y {consecuente}; "
-            "son materias seriadas en la retícula."
-        )
-
-    if RESIDENCIA in seleccion:
-        materias_adicionales = len(seleccion) - 1
-        if materias_adicionales > MAX_MATERIAS_ADICIONALES_RESIDENCIA:
-            errores.append(
-                "Residencia Profesional puede acompañarse de máximo "
-                f"{MAX_MATERIAS_ADICIONALES_RESIDENCIA} materias adicionales."
-            )
-
-    return errores, total_creditos
+    return errors, total_credits
 
 # =============================================================================
-# 5. MOTOR DE COMBINACIONES
+# 7. FILTRO DE GRUPOS Y MOTOR DE COMBINACIONES
 # =============================================================================
-def traslape(horario_1, horario_2):
-    for sesion_1 in horario_1:
-        for sesion_2 in horario_2:
-            mismo_dia = sesion_1[0] == sesion_2[0]
-            se_cruzan = max(sesion_1[1], sesion_2[1]) < min(
-                sesion_1[2], sesion_2[2]
-            )
-            if mismo_dia and se_cruzan:
+def session_label(session):
+    day, start, end = session
+    day_name = DIAS[day] if 0 <= day < len(DIAS) else f"Día {day}"
+    return f"{day_name} {start}:00-{end}:00"
+
+
+def group_fits(group, time_range, blocked_hours):
+    blocked = {int(value.split(":")[0]) for value in blocked_hours}
+    for _, start, end in group.get("horario", []):
+        if start < time_range[0] or end > time_range[1]:
+            return False
+        if any(hour in blocked for hour in range(start, end)):
+            return False
+    return True
+
+
+def schedules_overlap(schedule_1, schedule_2):
+    for session_1 in schedule_1:
+        for session_2 in schedule_2:
+            if session_1[0] == session_2[0] and max(session_1[1], session_2[1]) < min(session_1[2], session_2[2]):
                 return True
     return False
 
 
-def generar_combinaciones(materias, rango, hrs_libres, oferta):
-    bloqueos = [int(hora.split(":")[0]) for hora in hrs_libres]
+def generate_combinations(subjects, filtered_offer):
+    if not subjects:
+        return [[]], "OK"
+
     pools = []
+    ordered_subjects = sorted(subjects, key=lambda subject: len(filtered_offer.get(subject, [])))
+    for subject in ordered_subjects:
+        options = filtered_offer.get(subject, [])
+        if not options:
+            return [], f"No quedó ningún grupo habilitado para {subject}."
+        pools.append(options)
 
-    # Primero procesa las materias con menos grupos para podar antes el árbol.
-    materias_ordenadas = sorted(
-        materias,
-        key=lambda materia: len(oferta.get(materia, [])),
-    )
+    valid = []
 
-    for materia in materias_ordenadas:
-        if materia not in oferta:
-            return [], f"❌ No se encontró {materia} en la oferta."
-
-        opciones = []
-        for seccion in oferta[materia]:
-            dentro = True
-
-            for sesion in seccion["horario"]:
-                if sesion[1] < rango[0] or sesion[2] > rango[1]:
-                    dentro = False
-                    break
-
-                if any(
-                    hora_bloqueada in range(sesion[1], sesion[2])
-                    for hora_bloqueada in bloqueos
-                ):
-                    dentro = False
-                    break
-
-            if dentro:
-                opciones.append(seccion)
-
-        if not opciones:
-            return [], f"❌ {materia} no cuadra con tus bloqueos de tiempo."
-
-        pools.append(opciones)
-
-    validos = []
-
-    def backtrack(indice, combinacion):
-        if len(validos) >= 15:
+    def backtrack(index, combination):
+        if len(valid) >= MAX_RESULTADOS:
             return
-
-        if indice == len(pools):
-            validos.append(list(combinacion))
+        if index == len(pools):
+            valid.append(list(combination))
             return
-
-        for seccion in pools[indice]:
-            if not any(
-                traslape(seccion["horario"], previa["horario"])
-                for previa in combinacion
-            ):
-                combinacion.append(seccion)
-                backtrack(indice + 1, combinacion)
-                combinacion.pop()
+        for group in pools[index]:
+            if not any(schedules_overlap(group["horario"], previous["horario"]) for previous in combination):
+                combination.append(group)
+                backtrack(index + 1, combination)
+                combination.pop()
 
     backtrack(0, [])
-    return validos, "OK"
+    return valid, "OK"
 
 # =============================================================================
-# 6. GENERACIÓN DEL HORARIO HTML
+# 8. HORARIO HTML Y COMPONENTES DE PROFESORES
 # =============================================================================
-def create_timetable_html(horario):
-    if not horario:
+def create_timetable_html(schedule):
+    if not schedule:
+        return "<div style='padding:16px;color:#aeb4c0'>La selección solo incluye Residencia Profesional; no hay bloques que mostrar.</div>"
+
+    hours = [hour for course in schedule for session in course["horario"] for hour in (session[1], session[2])]
+    if not hours:
         return ""
 
-    horas = [
-        hora
-        for clase in horario
-        for sesion in clase["horario"]
-        for hora in (sesion[1], sesion[2])
-    ]
+    min_hour, max_hour = min(hours), max(hours)
+    has_saturday = any(session[0] == 5 for course in schedule for session in course["horario"])
+    day_count = 6 if has_saturday else 5
+    grid = {hour: [None] * day_count for hour in range(min_hour, max_hour)}
+    colors = {course["materia"]: COLORS[index % len(COLORS)] for index, course in enumerate(schedule)}
 
-    if not horas:
-        return ""
-
-    min_hora, max_hora = min(horas), max(horas)
-    tiene_sabado = any(
-        sesion[0] == 5
-        for clase in horario
-        for sesion in clase["horario"]
-    )
-    cantidad_dias = 6 if tiene_sabado else 5
-    grid = {
-        hora: [None] * cantidad_dias
-        for hora in range(min_hora, max_hora)
-    }
-
-    colores = {
-        clase["materia"]: COLORS[indice % len(COLORS)]
-        for indice, clase in enumerate(horario)
-    }
-
-    for clase in horario:
-        for sesion in clase["horario"]:
-            for hora in range(sesion[1], sesion[2]):
-                if sesion[0] < cantidad_dias:
-                    grid[hora][sesion[0]] = (
-                        "<div class='clase-cell' "
-                        f"style='background-color:{colores[clase['materia']]}' >"
-                        f"<span>{clase['materia']}</span><br>"
-                        f"<small>{clase['profesor']}</small>"
-                        "</div>"
+    for course in schedule:
+        for session in course["horario"]:
+            for hour in range(session[1], session[2]):
+                if session[0] < day_count:
+                    grid[hour][session[0]] = (
+                        f"<div class='clase-cell' style='background-color:{colors[course['materia']]}'><span>{course['materia']}</span>"
+                        f"<small>{course['profesor']} · {course.get('id','')}</small></div>"
                     )
 
-    encabezados = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"][:cantidad_dias]
-    html = (
-        "<table class='horario-grid'><thead><tr>"
-        "<th class='hora-col'>Hora</th>"
-        + "".join(f"<th>{dia}</th>" for dia in encabezados)
-        + "</tr></thead><tbody>"
-    )
-
-    for hora in range(min_hora, max_hora):
-        html += (
-            f"<tr><td class='hora-col'>{hora}-{hora + 1}</td>"
-            + "".join(
-                f"<td>{grid[hora][dia] or ''}</td>"
-                for dia in range(cantidad_dias)
-            )
-            + "</tr>"
-        )
-
+    headers = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"][:day_count]
+    html = "<table class='horario-grid'><thead><tr><th class='hora-col'>Hora</th>" + "".join(
+        f"<th>{day}</th>" for day in headers
+    ) + "</tr></thead><tbody>"
+    for hour in range(min_hour, max_hour):
+        html += f"<tr><td class='hora-col'>{hour}:00-{hour+1}:00</td>" + "".join(
+            f"<td>{grid[hour][day] or ''}</td>" for day in range(day_count)
+        ) + "</tr>"
     return html + "</tbody></table>"
 
+
+def rating_html(ratings):
+    if not ratings:
+        average, count = 0.0, 0
+    else:
+        average = sum(item["calificacion"] for item in ratings) / len(ratings)
+        count = len(ratings)
+    angle = max(0, min(360, average / 5 * 360))
+    color = "#3ddc97" if average >= 4 else "#f7c66b" if average >= 3 else "#ff6b76"
+    label = f"{average:.1f}" if count else "—"
+    copy = f"{count} calificación{'es' if count != 1 else ''}" if count else "Sin calificaciones todavía"
+    return (
+        '<div class="rating-row">'
+        f'<div class="rating-donut" style="background:conic-gradient({color} 0deg {angle}deg, #343946 {angle}deg 360deg)">'
+        f'<span class="rating-number">{label}</span></div>'
+        f'<div class="rating-copy"><strong style="color:#fff">Evaluación del profesor</strong><br>{copy}<br>Escala de 1 a 5</div>'
+        '</div>'
+    )
+
 # =============================================================================
-# 7. FLUJO DE NAVEGACIÓN
+# 9. ESTADO DE NAVEGACIÓN
 # =============================================================================
 if "step" not in st.session_state:
     st.session_state.step = 1
 
 render_brand_header(st.session_state.step)
 
+# =============================================================================
+# PÁGINA 1 — INICIO
+# =============================================================================
 if st.session_state.step == 1:
     st.markdown(
         f"""
         <div class="hero-panel">
             <div class="hero-kicker">Planeación académica · Ago-Dic 2026</div>
-            <div class="hero-title">Arma tu horario sin choques y con reglas de carga claras.</div>
-            <p class="hero-copy">
-                Selecciona tu carrera y el número de materias que deseas cursar. Después podrás
-                elegir asignaturas de los nueve semestres, validar créditos y seriaciones, definir
-                tus horas no disponibles y comparar combinaciones de grupos compatibles.
-            </p>
+            <div class="hero-title">Organiza tu carga y genera horarios sin choques.</div>
+            <p class="hero-copy">Selecciona tu carrera, materias y grupos. Horario ITS compara las opciones disponibles y crea alternativas compatibles.</p>
             <div class="hero-meta">
-                <span class="meta-chip">🧠 Motor de combinaciones</span>
-                <span class="meta-chip">🧩 Validación de seriaciones</span>
                 <span class="meta-chip">🎓 Máximo 36 créditos</span>
+                <span class="meta-chip">🧩 Validación de seriaciones</span>
                 <span class="meta-chip">👤 Autor: {AUTOR}</span>
             </div>
         </div>
@@ -1066,250 +983,289 @@ if st.session_state.step == 1:
         unsafe_allow_html=True,
     )
 
-    columna_info, columna_formulario = st.columns([1.05, 1.25], gap="large")
-
-    with columna_info:
-        render_section_header(
-            "Bienvenido a Horario ITS",
-            "Una herramienta para explorar cargas académicas antes de realizar tu inscripción oficial.",
-        )
+    info_col, form_col = st.columns([.85, 1.25], gap="large")
+    with info_col:
+        render_section_header("Bienvenido a Horario ITS", "Planea tu carga antes de realizar la inscripción oficial.")
         st.markdown(
             """
-            **¿Qué hace la página?**
+            **La página te permite:**
 
-            1. Carga la oferta académica publicada para el periodo.
-            2. Organiza las materias por semestre y controla el total de créditos.
-            3. Evita combinaciones de materias seriadas en el mismo periodo.
-            4. Genera alternativas de horario sin traslapes entre grupos.
-
-            **Importante:** esta herramienta sirve para planeación. La disponibilidad real,
-            prerrequisitos y autorización final dependen del Instituto Tecnológico de Saltillo.
+            - Elegir materias de los nueve semestres.
+            - Revisar profesores, grupos y horarios disponibles.
+            - Consultar opiniones de otros estudiantes.
+            - Generar combinaciones sin traslapes.
             """
         )
 
-    with columna_formulario:
-        render_section_header(
-            "Configura tu búsqueda",
-            "El periodo es fijo. Las carreras sin archivo JSON aparecerán como próximas a integrarse.",
-        )
-
+    with form_col:
+        render_section_header("Configura tu búsqueda", "Selecciona la carrera y la cantidad de materias que deseas cursar.")
         with st.form("configuracion_inicial", border=True):
-            st.text_input(
-                "📌 Periodo académico",
-                PERIODO_TEXTO,
-                disabled=True,
-            )
+            st.text_input("📌 Periodo académico", PERIODO_TEXTO, disabled=True)
+            career = st.selectbox("🎓 Carrera", list(CARRERAS.keys()), index=0)
+            amount = st.number_input("📚 Materias a cursar", min_value=1, max_value=9, value=6, step=1)
+            submit = st.form_submit_button("Cargar oferta  ➜", use_container_width=True, type="primary")
 
-            opciones_carrera = list(CARRERAS.keys())
-
-            def formato_carrera(nombre):
-                slug = CARRERAS[nombre]
-                disponible = os.path.exists(
-                    f"data/{PERIODO_CODIGO}/{slug}.json"
-                )
-                estado = "Disponible" if disponible else "Próximamente"
-                simbolo = "●" if disponible else "○"
-                return f"{nombre}  {simbolo} {estado}"
-
-            carrera = st.selectbox(
-                "🎓 Carrera",
-                opciones_carrera,
-                index=0,
-                format_func=formato_carrera,
-            )
-
-            cantidad = st.number_input(
-                "📚 Materias a cursar",
-                min_value=1,
-                max_value=9,
-                value=6,
-                step=1,
-            )
-
-            st.markdown(
-                "<div class='form-note'>La selección deberá coincidir exactamente "
-                "con esta cantidad y no podrá superar 36 créditos.</div>",
-                unsafe_allow_html=True,
-            )
-
-            enviar = st.form_submit_button(
-                "Cargar oferta  ➜",
-                use_container_width=True,
-                type="primary",
-            )
-
-        if enviar:
-            carrera_clean = CARRERAS[carrera]
-
+        if submit:
+            slug = CARRERAS[career]
             try:
-                data = load_oferta_json(PERIODO_CODIGO, carrera_clean)
-
+                data = load_oferta_json(PERIODO_CODIGO, slug)
                 if data is None:
-                    st.info(
-                        "Esta carrera ya está incluida en el catálogo, pero su oferta "
-                        f"{PERIODO_TEXTO} todavía no se ha cargado. "
-                        f"Agrega `data/{PERIODO_CODIGO}/{carrera_clean}.json` para habilitarla."
-                    )
+                    st.info("La oferta de esta carrera todavía no está disponible para el periodo seleccionado.")
                 else:
                     (
                         st.session_state.oferta,
                         st.session_state.mat_sem,
                         st.session_state.creditos,
                     ) = format_json_to_oferta(data)
-
                     st.session_state.seleccion = []
-
+                    st.session_state.cant_deseada = int(amount)
+                    st.session_state.carrera = slug
+                    st.session_state.carrera_nombre = career
                     for key in list(st.session_state.keys()):
-                        if key.startswith("materia_"):
+                        if key.startswith(("materia_", "grupo_", "sesion_")):
                             del st.session_state[key]
-
-                    st.session_state.cant_deseada = int(cantidad)
-                    st.session_state.carrera = carrera_clean
-                    st.session_state.carrera_nombre = carrera
                     st.session_state.step = 2
                     st.rerun()
-
             except ValueError as error:
                 st.error(f"❌ {error}")
 
+# =============================================================================
+# PÁGINA 2 — MATERIAS
+# =============================================================================
 elif st.session_state.step == 2:
+    render_subject_card_css()
     render_section_header(
         "📚 Selección de materias",
-        "Elige exactamente la cantidad indicada. El sistema valida créditos, seriaciones y reglas especiales antes de permitirte continuar.",
+        "Elige la cantidad indicada. El sistema validará créditos, seriaciones y reglas especiales.",
     )
 
     if "seleccion" not in st.session_state:
         st.session_state.seleccion = []
 
-    total_materias = sum(
-        len(materias)
-        for materias in st.session_state.mat_sem.values()
-    )
-    carrera_nombre = st.session_state.get("carrera_nombre", "MECATRÓNICA")
+    total_subjects = sum(len(subjects) for subjects in st.session_state.mat_sem.values())
     st.markdown(
-        f"<div class='selection-note'>"
-        f"{carrera_nombre} · {total_materias} materias disponibles · "
-        f"selecciona {st.session_state.cant_deseada}."
-        f"</div>",
+        f'<div class="selection-note">{st.session_state.get("carrera_nombre", "")} · {total_subjects} materias disponibles · selecciona {st.session_state.cant_deseada}.</div>',
         unsafe_allow_html=True,
     )
 
-    columnas = st.columns(9, gap="small")
-    seleccion = []
-
-    for semestre in range(1, 10):
-        with columnas[semestre - 1]:
-            st.markdown(
-                f"<div class='semester-header'>{semestre}° semestre</div>",
-                unsafe_allow_html=True,
-            )
-
-            materias_semestre = st.session_state.mat_sem.get(semestre, [])
-
-            if not materias_semestre:
+    columns = st.columns(9, gap="small")
+    selection = []
+    for semester in range(1, 10):
+        with columns[semester - 1]:
+            st.markdown(f'<div class="semester-header">{semester}° semestre</div>', unsafe_allow_html=True)
+            semester_subjects = st.session_state.mat_sem.get(semester, [])
+            if not semester_subjects:
                 st.caption("Sin materias")
-
-            for materia in materias_semestre:
-                creditos_materia = st.session_state.creditos.get(materia, 0)
-                icono = ICONOS_MATERIAS.get(materia, "📘")
-                etiqueta = (
-                    f"{icono}  \n"
-                    f"**{materia}**  \n"
-                    f"{creditos_materia} Cr"
+            for subject in semester_subjects:
+                credits = st.session_state.creditos.get(subject, 0)
+                icon = ICONOS_MATERIAS.get(subject, "📘")
+                label = f"{icon}  \n**{subject}**  \n({credits} Cr)"
+                selected = st.checkbox(
+                    label,
+                    value=(subject in st.session_state.seleccion),
+                    key=f"materia_{semester}_{subject}",
                 )
+                if selected:
+                    selection.append(subject)
 
-                seleccionada = st.checkbox(
-                    etiqueta,
-                    value=(materia in st.session_state.seleccion),
-                    key=f"materia_{semestre}_{materia}",
-                )
-
-                if seleccionada:
-                    seleccion.append(materia)
-
-    errores, creditos_totales = validar_seleccion(
-        seleccion,
-        st.session_state.cant_deseada,
-        st.session_state.creditos,
-    )
-
+    errors, total_credits = validate_selection(selection, st.session_state.cant_deseada, st.session_state.creditos)
     st.divider()
-
-    clase_estado = "credit-ok" if not errores else "credit-error"
+    state_class = "credit-ok" if not errors else "credit-error"
     st.markdown(
-        f"<div class='credit-box {clase_estado}'>"
-        f"Créditos: {creditos_totales}/{MAX_CREDITOS} &nbsp;·&nbsp; "
-        f"Materias: {len(seleccion)}/{st.session_state.cant_deseada}"
-        "</div>",
+        f'<div class="credit-box {state_class}">Créditos: {total_credits}/{MAX_CREDITOS} &nbsp;·&nbsp; Materias: {len(selection)}/{st.session_state.cant_deseada}</div>',
         unsafe_allow_html=True,
     )
-
-    for error in errores:
+    for error in errors:
         st.warning(f"⚠️ {error}")
 
-    columna_volver, columna_siguiente = st.columns(2)
-
-    if columna_volver.button("← Volver", use_container_width=True):
+    back_col, next_col = st.columns(2)
+    if back_col.button("← Volver", use_container_width=True):
         st.session_state.step = 1
         st.rerun()
+    if not errors and next_col.button("Continuar a grupos  ➜", type="primary", use_container_width=True):
+        st.session_state.seleccion = selection
+        st.session_state.step = 3
+        st.rerun()
 
-    if not errores:
-        if columna_siguiente.button(
-            "Continuar a disponibilidad  ➜",
-            type="primary",
-            use_container_width=True,
-        ):
-            st.session_state.seleccion = seleccion
-            st.session_state.step = 3
-            st.rerun()
-
+# =============================================================================
+# PÁGINA 3 — GRUPOS, PROFESORES Y DISPONIBILIDAD
+# =============================================================================
 elif st.session_state.step == 3:
     render_section_header(
-        "⏰ Disponibilidad y resultados",
-        "Define tu rango permitido y bloquea las horas en las que no puedes asistir. El motor buscará grupos sin traslapes.",
+        "👨‍🏫 Grupos, profesores y disponibilidad",
+        "Define el horario en que puedes asistir, revisa cada profesor y decide qué grupos considerar.",
     )
 
-    materias_resumen = " · ".join(st.session_state.seleccion)
-    st.caption(f"Materias seleccionadas: {materias_resumen}")
+    selected_subjects = list(st.session_state.seleccion)
+    schedulable_subjects = [subject for subject in selected_subjects if subject != RESIDENCIA]
+
+    if RESIDENCIA in selected_subjects:
+        st.info("Residencia Profesional cuenta en tu carga y créditos, pero no se incluye en la generación del horario.")
 
     with st.container(border=True):
-        columna_rango, columna_libres = st.columns(2, gap="large")
-        with columna_rango:
-            rango = st.slider("Horario global", 7, 22, (7, 22))
-        with columna_libres:
-            libres = st.multiselect(
-                "Bloquear horas",
-                [f"{hora}:00-{hora + 1}:00" for hora in range(7, 22)],
+        range_col, blocked_col = st.columns(2, gap="large")
+        with range_col:
+            time_range = st.slider("Horario en el Tec", 7, 22, (7, 22))
+        with blocked_col:
+            blocked = st.multiselect(
+                "Horas que no deseas cursar",
+                [f"{hour}:00-{hour+1}:00" for hour in range(7, 22)],
                 placeholder="Selecciona las horas que deseas dejar libres",
             )
 
-    columna_atras, _ = st.columns(2)
-    if columna_atras.button(
-        "← Regresar a materias",
-        use_container_width=True,
-    ):
+    filtered_offer = {}
+    missing_subjects = []
+
+    if not schedulable_subjects:
+        st.success("Tu selección únicamente incluye Residencia Profesional. Puedes continuar para ver el resumen.")
+
+    for subject in schedulable_subjects:
+        icon = ICONOS_MATERIAS.get(subject, "📘")
+        st.subheader(f"{icon} {subject}")
+        groups = [group for group in st.session_state.oferta.get(subject, []) if group_fits(group, time_range, blocked)]
+        enabled_groups = []
+
+        if not groups:
+            st.warning("No hay grupos de esta materia dentro de la disponibilidad seleccionada.")
+            missing_subjects.append(subject)
+            continue
+
+        for index, group in enumerate(groups):
+            group_key = f"{subject}_{group.get('id') or index}"
+            professor = group.get("profesor", "POR ASIGNAR")
+            room = group.get("salon", "POR ASIGNAR")
+            reports = report_count(group.get("id", ""))
+            ratings = ratings_for_professor(professor)
+            schedule_labels = [session_label(session) for session in group.get("horario", [])]
+
+            with st.container(border=True):
+                summary_col, rating_col, action_col = st.columns([1.45, .8, 1.05], gap="large")
+
+                with summary_col:
+                    status = (
+                        f'<span class="status-full">⚠ {reports} reporte(s) de grupo lleno</span>'
+                        if reports
+                        else '<span class="status-open">Sin reportes de cierre</span>'
+                    )
+                    chips = "".join(f'<span class="session-chip">{label}</span>' for label in schedule_labels)
+                    st.markdown(
+                        f'<div class="group-card"><div class="group-title">{professor}</div><div class="group-meta">Grupo: {group.get("id", "SIN ID")} · Salón: {room}<br>{status}<br>{chips}</div></div>',
+                        unsafe_allow_html=True,
+                    )
+                    consider = st.checkbox("Considerar este grupo", value=True, key=f"grupo_{group_key}")
+                    accepted_sessions = []
+                    for session_index, label in enumerate(schedule_labels):
+                        accepted = st.checkbox(
+                            f"Aceptar {label}",
+                            value=True,
+                            key=f"sesion_{group_key}_{session_index}",
+                        )
+                        if accepted:
+                            accepted_sessions.append(label)
+                    complete_schedule = len(accepted_sessions) == len(schedule_labels)
+                    if consider and not complete_schedule:
+                        st.caption("Al quitar una hora, el grupo completo queda fuera porque todas sus sesiones son obligatorias.")
+                    if consider and complete_schedule:
+                        enabled_groups.append(group)
+
+                with rating_col:
+                    st.markdown(rating_html(ratings), unsafe_allow_html=True)
+                    comments = [item["comentario"] for item in ratings if item["comentario"].strip()]
+                    if comments:
+                        with st.expander("Ver opiniones"):
+                            for comment in comments[-5:]:
+                                st.write(f"• {comment}")
+
+                with action_col:
+                    with st.expander("Calificar profesor"):
+                        with st.form(f"rating_form_{group_key}"):
+                            score = st.slider("Calificación", 1, 5, 5, key=f"score_{group_key}")
+                            comment = st.text_area("Comentario opcional", max_chars=300, key=f"comment_{group_key}")
+                            send_rating = st.form_submit_button("Enviar calificación", use_container_width=True)
+                        if send_rating:
+                            if submit_rating(subject, professor, score, comment):
+                                st.success("Calificación registrada.")
+                                st.rerun()
+                            else:
+                                st.warning("Las opiniones están temporalmente fuera de servicio.")
+
+                    report_key = f"reported_{group_key}"
+                    already_reported = st.session_state.get(report_key, False)
+                    if st.button(
+                        "Reportar grupo lleno" if not already_reported else "Reporte enviado",
+                        key=f"report_{group_key}",
+                        use_container_width=True,
+                        disabled=already_reported,
+                    ):
+                        if submit_full_report(subject, group):
+                            st.session_state[report_key] = True
+                            st.success("Reporte registrado.")
+                            st.rerun()
+                        else:
+                            st.warning("Los reportes están temporalmente fuera de servicio.")
+
+        filtered_offer[subject] = enabled_groups
+        if not enabled_groups:
+            missing_subjects.append(subject)
+
+    st.divider()
+    if missing_subjects:
+        st.warning("Debes conservar al menos un grupo completo para: " + ", ".join(sorted(set(missing_subjects))))
+
+    back_col, next_col = st.columns(2)
+    if back_col.button("← Regresar a materias", use_container_width=True):
         st.session_state.step = 2
         st.rerun()
 
-    resultados, mensaje = generar_combinaciones(
-        st.session_state.seleccion,
-        rango,
-        libres,
-        st.session_state.oferta,
+    can_continue = not missing_subjects
+    if next_col.button(
+        "Generar horarios  ➜",
+        type="primary",
+        use_container_width=True,
+        disabled=not can_continue,
+    ):
+        st.session_state.oferta_filtrada = filtered_offer
+        st.session_state.materias_horario = schedulable_subjects
+        st.session_state.step = 4
+        st.rerun()
+
+# =============================================================================
+# PÁGINA 4 — RESULTADOS
+# =============================================================================
+elif st.session_state.step == 4:
+    render_section_header(
+        "🗓️ Horarios compatibles",
+        "Compara las opciones generadas con los grupos y horas que conservaste.",
     )
 
-    if not resultados:
-        st.error(mensaje)
+    subjects = st.session_state.get("materias_horario", [])
+    filtered_offer = st.session_state.get("oferta_filtrada", {})
+    results, message = generate_combinations(subjects, filtered_offer)
+
+    back_col, _ = st.columns(2)
+    if back_col.button("← Regresar a grupos", use_container_width=True):
+        st.session_state.step = 3
+        st.rerun()
+
+    if not results:
+        st.error(message)
     else:
-        st.success(f"Se encontraron {len(resultados)} opciones compatibles.")
-        for indice, horario in enumerate(resultados):
-            with st.expander(
-                f"Opción {indice + 1}",
-                expanded=(indice == 0),
-            ):
-                st.markdown(
-                    create_timetable_html(horario),
-                    unsafe_allow_html=True,
-                )
+        if subjects:
+            st.success(f"Se encontraron {len(results)} opciones compatibles.")
+        else:
+            st.success("Residencia Profesional quedó registrada sin agregar bloques al horario.")
+
+        for index, schedule in enumerate(results):
+            with st.expander(f"Opción {index + 1}", expanded=(index == 0)):
+                st.markdown(create_timetable_html(schedule), unsafe_allow_html=True)
+                if schedule:
+                    st.markdown("**Grupos incluidos:**")
+                    for course in schedule:
+                        schedule_text = ", ".join(session_label(session) for session in course["horario"])
+                        st.write(
+                            f"- **{course['materia']}** — {course['profesor']} — {course.get('id','')} — {schedule_text}"
+                        )
+                if RESIDENCIA in st.session_state.get("seleccion", []):
+                    st.caption("Residencia Profesional forma parte de la carga, pero no ocupa bloques en este horario.")
 
 render_footer()
