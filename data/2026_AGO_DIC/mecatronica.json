@@ -1,0 +1,5681 @@
+{
+  "QUIM": {
+    "nombre": "Química",
+    "creditos": 4,
+    "semestre": 1,
+    "grupos": [
+      {
+        "id": "2026A-MEC-QUIM-A",
+        "profesor": "Torres Plata Hilda Araceli",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 13, "fin": 14},
+          {"dia": 1, "inicio": 13, "fin": 14},
+          {"dia": 2, "inicio": 13, "fin": 14},
+          {"dia": 3, "inicio": 13, "fin": 14}
+        ]
+      },
+      {
+        "id": "2026A-MEC-QUIM-B",
+        "profesor": "Hernández Flores Norma",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 9, "fin": 10},
+          {"dia": 1, "inicio": 9, "fin": 10},
+          {"dia": 2, "inicio": 9, "fin": 10},
+          {"dia": 3, "inicio": 9, "fin": 10}
+        ]
+      },
+      {
+        "id": "2026A-MEC-QUIM-C",
+        "profesor": "Hernández Flores Norma",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 11, "fin": 12},
+          {"dia": 1, "inicio": 11, "fin": 12},
+          {"dia": 2, "inicio": 11, "fin": 12},
+          {"dia": 3, "inicio": 11, "fin": 12}
+        ]
+      },
+      {
+        "id": "2026A-MEC-QUIM-D",
+        "profesor": "Torres Ordaz Alejandra",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 15, "fin": 16},
+          {"dia": 1, "inicio": 15, "fin": 16},
+          {"dia": 2, "inicio": 15, "fin": 16},
+          {"dia": 3, "inicio": 15, "fin": 16}
+        ]
+      },
+      {
+        "id": "2026A-MEC-QUIM-D1",
+        "profesor": "Torres Plata Hilda Araceli",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 8, "fin": 9},
+          {"dia": 1, "inicio": 8, "fin": 9},
+          {"dia": 2, "inicio": 8, "fin": 9},
+          {"dia": 3, "inicio": 8, "fin": 9}
+        ]
+      },
+      {
+        "id": "2026A-MEC-QUIM-E",
+        "profesor": "Garza Aldaco José Raymundo",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 16, "fin": 17},
+          {"dia": 1, "inicio": 16, "fin": 17},
+          {"dia": 2, "inicio": 16, "fin": 17},
+          {"dia": 3, "inicio": 16, "fin": 17}
+        ]
+      },
+      {
+        "id": "2026A-MEC-QUIM-E1",
+        "profesor": "Martinez Rivera Victor",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 17, "fin": 18},
+          {"dia": 1, "inicio": 17, "fin": 18},
+          {"dia": 2, "inicio": 17, "fin": 18},
+          {"dia": 3, "inicio": 17, "fin": 18}
+        ]
+      },
+      {
+        "id": "2026A-MEC-QUIM-F1",
+        "profesor": "Torres Plata Hilda Araceli",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 12, "fin": 13},
+          {"dia": 1, "inicio": 12, "fin": 13},
+          {"dia": 2, "inicio": 12, "fin": 13},
+          {"dia": 3, "inicio": 12, "fin": 13}
+        ]
+      },
+      {
+        "id": "2026A-MEC-QUIM-H1",
+        "profesor": "Ayala Torres Karina Azucena",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 18, "fin": 19},
+          {"dia": 1, "inicio": 18, "fin": 19},
+          {"dia": 2, "inicio": 18, "fin": 19},
+          {"dia": 3, "inicio": 18, "fin": 19}
+        ]
+      },
+      {
+        "id": "2026A-MEC-QUIM-R",
+        "profesor": "Aguirre Sanchez Silvia Susana",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 16, "fin": 17},
+          {"dia": 1, "inicio": 16, "fin": 17},
+          {"dia": 2, "inicio": 16, "fin": 17},
+          {"dia": 3, "inicio": 16, "fin": 17}
+        ]
+      },
+      {
+        "id": "2026A-MEC-QUIM-S",
+        "profesor": "Torres Ordaz Alejandra",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 17, "fin": 18},
+          {"dia": 1, "inicio": 17, "fin": 18},
+          {"dia": 2, "inicio": 17, "fin": 18},
+          {"dia": 3, "inicio": 17, "fin": 18}
+        ]
+      },
+      {
+        "id": "2026A-MEC-QUIM-U",
+        "profesor": "Torres Ordaz Alejandra",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 16, "fin": 17},
+          {"dia": 1, "inicio": 16, "fin": 17},
+          {"dia": 2, "inicio": 16, "fin": 17},
+          {"dia": 3, "inicio": 16, "fin": 17}
+        ]
+      },
+      {
+        "id": "2026A-MEC-QUIM-V",
+        "profesor": "Aguirre Sanchez Silvia Susana",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 17, "fin": 18},
+          {"dia": 1, "inicio": 17, "fin": 18},
+          {"dia": 2, "inicio": 17, "fin": 18},
+          {"dia": 3, "inicio": 17, "fin": 18}
+        ]
+      },
+      {
+        "id": "2026A-MEC-QUIM-W",
+        "profesor": "Martinez Rivera Victor",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 15, "fin": 16},
+          {"dia": 1, "inicio": 15, "fin": 16},
+          {"dia": 2, "inicio": 15, "fin": 16},
+          {"dia": 3, "inicio": 15, "fin": 16}
+        ]
+      },
+      {
+        "id": "2026A-MEC-QUIM-X",
+        "profesor": "Ayala Torres Karina Azucena",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 20, "fin": 21},
+          {"dia": 1, "inicio": 20, "fin": 21},
+          {"dia": 2, "inicio": 20, "fin": 21},
+          {"dia": 3, "inicio": 20, "fin": 21}
+        ]
+      },
+      {
+        "id": "2026A-MEC-QUIM-Y",
+        "profesor": "Aguirre Sanchez Silvia Susana",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 18, "fin": 19},
+          {"dia": 1, "inicio": 18, "fin": 19},
+          {"dia": 2, "inicio": 18, "fin": 19},
+          {"dia": 3, "inicio": 18, "fin": 19}
+        ]
+      },
+      {
+        "id": "2026A-MEC-QUIM-Z",
+        "profesor": "Martinez Rivera Victor",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 16, "fin": 17},
+          {"dia": 1, "inicio": 16, "fin": 17},
+          {"dia": 2, "inicio": 16, "fin": 17},
+          {"dia": 3, "inicio": 16, "fin": 17}
+        ]
+      }
+    ]
+  },
+  "CALC_DIF": {
+    "nombre": "Cálculo Diferencial",
+    "creditos": 5,
+    "semestre": 1,
+    "grupos": [
+      {
+        "id": "2026A-MEC-CALCDIF-A",
+        "profesor": "Sanchez Orozco Jorge Luis",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 8, "fin": 9},
+          {"dia": 1, "inicio": 8, "fin": 9},
+          {"dia": 2, "inicio": 8, "fin": 9},
+          {"dia": 3, "inicio": 8, "fin": 9},
+          {"dia": 4, "inicio": 8, "fin": 9}
+        ]
+      },
+      {
+        "id": "2026A-MEC-CALCDIF-B",
+        "profesor": "Sanchez Gonzalez Eliana Sarahi",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 10, "fin": 11},
+          {"dia": 1, "inicio": 10, "fin": 11},
+          {"dia": 2, "inicio": 10, "fin": 11},
+          {"dia": 3, "inicio": 10, "fin": 11},
+          {"dia": 4, "inicio": 10, "fin": 11}
+        ]
+      },
+      {
+        "id": "2026A-MEC-CALCDIF-B1",
+        "profesor": "Olmedo Landeros Irma Karina",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 18, "fin": 19},
+          {"dia": 1, "inicio": 18, "fin": 19},
+          {"dia": 2, "inicio": 18, "fin": 19},
+          {"dia": 3, "inicio": 18, "fin": 19},
+          {"dia": 4, "inicio": 18, "fin": 19}
+        ]
+      },
+      {
+        "id": "2026A-MEC-CALCDIF-C",
+        "profesor": "Olmedo Landeros Irma Karina",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 17, "fin": 18},
+          {"dia": 1, "inicio": 17, "fin": 18},
+          {"dia": 2, "inicio": 17, "fin": 18},
+          {"dia": 3, "inicio": 17, "fin": 18},
+          {"dia": 4, "inicio": 17, "fin": 18}
+        ]
+      },
+      {
+        "id": "2026A-MEC-CALCDIF-D",
+        "profesor": "Ferniza Sandoval Ana Victoria",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 13, "fin": 14},
+          {"dia": 1, "inicio": 13, "fin": 14},
+          {"dia": 2, "inicio": 13, "fin": 14},
+          {"dia": 3, "inicio": 13, "fin": 14},
+          {"dia": 4, "inicio": 13, "fin": 14}
+        ]
+      },
+      {
+        "id": "2026A-MEC-CALCDIF-E",
+        "profesor": "Olmedo Landeros Irma Karina",
+        "salon": "C09",
+        "horario": [
+          {"dia": 0, "inicio": 15, "fin": 16},
+          {"dia": 1, "inicio": 15, "fin": 16},
+          {"dia": 2, "inicio": 15, "fin": 16},
+          {"dia": 3, "inicio": 15, "fin": 16},
+          {"dia": 4, "inicio": 15, "fin": 16}
+        ]
+      },
+      {
+        "id": "2026A-MEC-CALCDIF-E1",
+        "profesor": "Flores Villa Miguel Angel",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 18, "fin": 19},
+          {"dia": 1, "inicio": 18, "fin": 19},
+          {"dia": 2, "inicio": 18, "fin": 19},
+          {"dia": 3, "inicio": 18, "fin": 19},
+          {"dia": 4, "inicio": 18, "fin": 19}
+        ]
+      },
+      {
+        "id": "2026A-MEC-CALCDIF-H1",
+        "profesor": "Cerda Leon Erwin Rommel",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 13, "fin": 14},
+          {"dia": 1, "inicio": 13, "fin": 14},
+          {"dia": 2, "inicio": 13, "fin": 14},
+          {"dia": 3, "inicio": 13, "fin": 14},
+          {"dia": 4, "inicio": 13, "fin": 14}
+        ]
+      },
+      {
+        "id": "2026A-MEC-CALCDIF-I1",
+        "profesor": "Flores Villa Miguel Angel",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 15, "fin": 16},
+          {"dia": 1, "inicio": 15, "fin": 16},
+          {"dia": 2, "inicio": 15, "fin": 16},
+          {"dia": 3, "inicio": 15, "fin": 16},
+          {"dia": 4, "inicio": 15, "fin": 16}
+        ]
+      },
+      {
+        "id": "2026A-MEC-CALCDIF-J1",
+        "profesor": "Cordova Ventura Kevin Alberto",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 18, "fin": 19},
+          {"dia": 1, "inicio": 18, "fin": 19},
+          {"dia": 2, "inicio": 18, "fin": 19},
+          {"dia": 3, "inicio": 18, "fin": 19},
+          {"dia": 4, "inicio": 18, "fin": 19}
+        ]
+      },
+      {
+        "id": "2026A-MEC-CALCDIF-K1",
+        "profesor": "Cerda Leon Erwin Rommel",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 12, "fin": 13},
+          {"dia": 1, "inicio": 12, "fin": 13},
+          {"dia": 2, "inicio": 12, "fin": 13},
+          {"dia": 3, "inicio": 12, "fin": 13},
+          {"dia": 4, "inicio": 12, "fin": 13}
+        ]
+      },
+      {
+        "id": "2026A-MEC-CALCDIF-R",
+        "profesor": "Flores Villa Miguel Angel",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 16, "fin": 17},
+          {"dia": 1, "inicio": 16, "fin": 17},
+          {"dia": 2, "inicio": 16, "fin": 17},
+          {"dia": 3, "inicio": 16, "fin": 17},
+          {"dia": 4, "inicio": 16, "fin": 17}
+        ]
+      }
+    ]
+  },
+  "TAL_ETI": {
+    "nombre": "Taller De Ética",
+    "creditos": 4,
+    "semestre": 1,
+    "grupos": [
+      {
+        "id": "2026A-MEC-TALETI-A",
+        "profesor": "Cárdenas Aguirre Claudia Enriqueta",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 9, "fin": 10},
+          {"dia": 1, "inicio": 9, "fin": 10},
+          {"dia": 2, "inicio": 9, "fin": 10},
+          {"dia": 3, "inicio": 9, "fin": 10}
+        ]
+      },
+      {
+        "id": "2026A-MEC-TALETI-B",
+        "profesor": "Cárdenas Aguirre Claudia Enriqueta",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 8, "fin": 9},
+          {"dia": 1, "inicio": 8, "fin": 9},
+          {"dia": 2, "inicio": 8, "fin": 9},
+          {"dia": 3, "inicio": 8, "fin": 9}
+        ]
+      },
+      {
+        "id": "2026A-MEC-TALETI-C",
+        "profesor": "Ceballos Tello Arturo",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 15, "fin": 16},
+          {"dia": 1, "inicio": 15, "fin": 16},
+          {"dia": 2, "inicio": 15, "fin": 16},
+          {"dia": 3, "inicio": 15, "fin": 16}
+        ]
+      },
+      {
+        "id": "2026A-MEC-TALETI-D",
+        "profesor": "Escobar Martinez Iris Anahi",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 12, "fin": 13},
+          {"dia": 1, "inicio": 12, "fin": 13},
+          {"dia": 2, "inicio": 12, "fin": 13},
+          {"dia": 3, "inicio": 12, "fin": 13}
+        ]
+      },
+      {
+        "id": "2026A-MEC-TALETI-E",
+        "profesor": "Escobar Martinez Iris Anahi",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 13, "fin": 14},
+          {"dia": 1, "inicio": 13, "fin": 14},
+          {"dia": 2, "inicio": 13, "fin": 14},
+          {"dia": 3, "inicio": 13, "fin": 14}
+        ]
+      },
+      {
+        "id": "2026A-MEC-TALETI-P",
+        "profesor": "Arriaga Aguilar Carlos Benito",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 18, "fin": 19},
+          {"dia": 1, "inicio": 18, "fin": 19},
+          {"dia": 2, "inicio": 18, "fin": 19},
+          {"dia": 3, "inicio": 18, "fin": 19}
+        ]
+      },
+      {
+        "id": "2026A-MEC-TALETI-Q",
+        "profesor": "Quijano Urbano Maria Del Refugio",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 8, "fin": 9},
+          {"dia": 1, "inicio": 8, "fin": 9},
+          {"dia": 2, "inicio": 8, "fin": 9},
+          {"dia": 3, "inicio": 8, "fin": 9}
+        ]
+      },
+      {
+        "id": "2026A-MEC-TALETI-R",
+        "profesor": "Quijano Urbano Maria Del Refugio",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 7, "fin": 8},
+          {"dia": 1, "inicio": 7, "fin": 8},
+          {"dia": 2, "inicio": 7, "fin": 8},
+          {"dia": 3, "inicio": 7, "fin": 8}
+        ]
+      },
+      {
+        "id": "2026A-MEC-TALETI-S",
+        "profesor": "Espinoza Rocha Juana María",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 12, "fin": 13},
+          {"dia": 1, "inicio": 12, "fin": 13},
+          {"dia": 2, "inicio": 12, "fin": 13},
+          {"dia": 3, "inicio": 12, "fin": 13}
+        ]
+      },
+      {
+        "id": "2026A-MEC-TALETI-T",
+        "profesor": "López Arteaga Edgar Allan",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 18, "fin": 19},
+          {"dia": 1, "inicio": 18, "fin": 19},
+          {"dia": 2, "inicio": 18, "fin": 19},
+          {"dia": 3, "inicio": 18, "fin": 19}
+        ]
+      },
+      {
+        "id": "2026A-MEC-TALETI-U",
+        "profesor": "López Arteaga Edgar Allan",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 16, "fin": 17},
+          {"dia": 1, "inicio": 16, "fin": 17},
+          {"dia": 2, "inicio": 16, "fin": 17},
+          {"dia": 3, "inicio": 16, "fin": 17}
+        ]
+      },
+      {
+        "id": "2026A-MEC-TALETI-V",
+        "profesor": "Velarde Sanchez Emma Julia",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 7, "fin": 8},
+          {"dia": 1, "inicio": 7, "fin": 8},
+          {"dia": 2, "inicio": 7, "fin": 8},
+          {"dia": 3, "inicio": 7, "fin": 8}
+        ]
+      },
+      {
+        "id": "2026A-MEC-TALETI-W",
+        "profesor": "Espinoza Rocha Juana María",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 13, "fin": 14},
+          {"dia": 1, "inicio": 13, "fin": 14},
+          {"dia": 2, "inicio": 13, "fin": 14},
+          {"dia": 3, "inicio": 13, "fin": 14}
+        ]
+      },
+      {
+        "id": "2026A-MEC-TALETI-X",
+        "profesor": "Arriaga Aguilar Carlos Benito",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 20, "fin": 21},
+          {"dia": 1, "inicio": 20, "fin": 21},
+          {"dia": 2, "inicio": 20, "fin": 21},
+          {"dia": 3, "inicio": 20, "fin": 21}
+        ]
+      },
+      {
+        "id": "2026A-MEC-TALETI-Y",
+        "profesor": "Espinoza Rocha Juana María",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 9, "fin": 10},
+          {"dia": 1, "inicio": 9, "fin": 10},
+          {"dia": 2, "inicio": 9, "fin": 10},
+          {"dia": 3, "inicio": 9, "fin": 10}
+        ]
+      },
+      {
+        "id": "2026A-MEC-TALETI-Z",
+        "profesor": "Peña Cruz Guadalupe Del Socorro",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 9, "fin": 10},
+          {"dia": 1, "inicio": 9, "fin": 10},
+          {"dia": 2, "inicio": 9, "fin": 10},
+          {"dia": 3, "inicio": 9, "fin": 10}
+        ]
+      }
+    ]
+  },
+  "DIB_ASIS": {
+    "nombre": "Dibujo Asistido Por Computadora",
+    "creditos": 4,
+    "semestre": 1,
+    "grupos": [
+      {
+        "id": "2026A-MEC-DIBASIS-A",
+        "profesor": "Martinez Tovar Gloria Arcelia",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 14, "fin": 15},
+          {"dia": 1, "inicio": 14, "fin": 15},
+          {"dia": 2, "inicio": 14, "fin": 15},
+          {"dia": 3, "inicio": 14, "fin": 15}
+        ]
+      },
+      {
+        "id": "2026A-MEC-DIBASIS-B",
+        "profesor": "De La Peña Flores Isidro Gustavo",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 7, "fin": 8},
+          {"dia": 1, "inicio": 7, "fin": 8},
+          {"dia": 2, "inicio": 7, "fin": 8},
+          {"dia": 3, "inicio": 7, "fin": 8}
+        ]
+      },
+      {
+        "id": "2026A-MEC-DIBASIS-C",
+        "profesor": "Villegas Leza Laura",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 13, "fin": 14},
+          {"dia": 1, "inicio": 13, "fin": 14},
+          {"dia": 2, "inicio": 13, "fin": 14},
+          {"dia": 3, "inicio": 13, "fin": 14}
+        ]
+      },
+      {
+        "id": "2026A-MEC-DIBASIS-D",
+        "profesor": "De La Peña Flores Isidro Gustavo",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 10, "fin": 11},
+          {"dia": 1, "inicio": 10, "fin": 11},
+          {"dia": 2, "inicio": 10, "fin": 11},
+          {"dia": 3, "inicio": 10, "fin": 11}
+        ]
+      },
+      {
+        "id": "2026A-MEC-DIBASIS-E",
+        "profesor": "Hernandez Garcia Monica",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 17, "fin": 18},
+          {"dia": 1, "inicio": 17, "fin": 18},
+          {"dia": 2, "inicio": 17, "fin": 18},
+          {"dia": 3, "inicio": 17, "fin": 18}
+        ]
+      },
+      {
+        "id": "2026A-MEC-DIBASIS-R",
+        "profesor": "Ayala Ramos Alejandro",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 16, "fin": 17},
+          {"dia": 1, "inicio": 16, "fin": 17},
+          {"dia": 2, "inicio": 16, "fin": 17},
+          {"dia": 3, "inicio": 16, "fin": 17}
+        ]
+      },
+      {
+        "id": "2026A-MEC-DIBASIS-S",
+        "profesor": "Hernandez Garcia Monica",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 19, "fin": 20},
+          {"dia": 1, "inicio": 19, "fin": 20},
+          {"dia": 2, "inicio": 19, "fin": 20},
+          {"dia": 3, "inicio": 19, "fin": 20}
+        ]
+      }
+    ]
+  },
+  "MET_NORM": {
+    "nombre": "Metrología Y Normalización",
+    "creditos": 4,
+    "semestre": 1,
+    "grupos": [
+      {
+        "id": "2026A-MEC-METNORM-A",
+        "profesor": "Tovar Epifanio Juan Francisco",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 12, "fin": 13},
+          {"dia": 1, "inicio": 12, "fin": 13},
+          {"dia": 2, "inicio": 12, "fin": 13},
+          {"dia": 3, "inicio": 12, "fin": 13}
+        ]
+      },
+      {
+        "id": "2026A-MEC-METNORM-B",
+        "profesor": "Tovar Epifanio Juan Francisco",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 14, "fin": 15},
+          {"dia": 1, "inicio": 14, "fin": 15},
+          {"dia": 2, "inicio": 14, "fin": 15},
+          {"dia": 3, "inicio": 14, "fin": 15}
+        ]
+      },
+      {
+        "id": "2026A-MEC-METNORM-C",
+        "profesor": "Silva Torres Eustaquio",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 12, "fin": 13},
+          {"dia": 1, "inicio": 12, "fin": 13},
+          {"dia": 2, "inicio": 12, "fin": 13},
+          {"dia": 3, "inicio": 12, "fin": 13}
+        ]
+      },
+      {
+        "id": "2026A-MEC-METNORM-D",
+        "profesor": "Resendiz Galindo Carlos Eduardo",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 16, "fin": 17},
+          {"dia": 1, "inicio": 16, "fin": 17},
+          {"dia": 2, "inicio": 16, "fin": 17},
+          {"dia": 3, "inicio": 16, "fin": 17}
+        ]
+      },
+      {
+        "id": "2026A-MEC-METNORM-E",
+        "profesor": "Gonzalez Valdez Luis Alejandro",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 18, "fin": 19},
+          {"dia": 1, "inicio": 18, "fin": 19},
+          {"dia": 2, "inicio": 18, "fin": 19},
+          {"dia": 3, "inicio": 18, "fin": 19}
+        ]
+      },
+      {
+        "id": "2026A-MEC-METNORM-Q",
+        "profesor": "Lopez Martinez Pedro",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 10, "fin": 11},
+          {"dia": 1, "inicio": 10, "fin": 11},
+          {"dia": 2, "inicio": 10, "fin": 11},
+          {"dia": 3, "inicio": 10, "fin": 11}
+        ]
+      },
+      {
+        "id": "2026A-MEC-METNORM-R",
+        "profesor": "Mireles Samaniego David",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 9, "fin": 10},
+          {"dia": 1, "inicio": 9, "fin": 10},
+          {"dia": 2, "inicio": 9, "fin": 10},
+          {"dia": 3, "inicio": 9, "fin": 10}
+        ]
+      },
+      {
+        "id": "2026A-MEC-METNORM-S",
+        "profesor": "Cardenas Contreras Juan Carlos",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 10, "fin": 11},
+          {"dia": 1, "inicio": 10, "fin": 11},
+          {"dia": 2, "inicio": 10, "fin": 11},
+          {"dia": 3, "inicio": 10, "fin": 11}
+        ]
+      },
+      {
+        "id": "2026A-MEC-METNORM-T",
+        "profesor": "Ruiz Rosales Cesar Oswaldo",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 15, "fin": 16},
+          {"dia": 1, "inicio": 15, "fin": 16},
+          {"dia": 2, "inicio": 15, "fin": 16},
+          {"dia": 3, "inicio": 15, "fin": 16}
+        ]
+      }
+    ]
+  },
+  "FUND_INV": {
+    "nombre": "Fundamentos De Investigación",
+    "creditos": 4,
+    "semestre": 1,
+    "grupos": [
+      {
+        "id": "2026A-MEC-FUNDINV-A",
+        "profesor": "Perez Murillo Nora Laura",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 10, "fin": 11},
+          {"dia": 1, "inicio": 10, "fin": 11},
+          {"dia": 2, "inicio": 10, "fin": 11},
+          {"dia": 3, "inicio": 10, "fin": 11}
+        ]
+      },
+      {
+        "id": "2026A-MEC-FUNDINV-B",
+        "profesor": "Yeverino Martinez Cristobal Enrique",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 13, "fin": 14},
+          {"dia": 1, "inicio": 13, "fin": 14},
+          {"dia": 2, "inicio": 13, "fin": 14},
+          {"dia": 3, "inicio": 13, "fin": 14}
+        ]
+      },
+      {
+        "id": "2026A-MEC-FUNDINV-C",
+        "profesor": "Yeverino Martinez Cristobal Enrique",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 14, "fin": 15},
+          {"dia": 1, "inicio": 14, "fin": 15},
+          {"dia": 2, "inicio": 14, "fin": 15},
+          {"dia": 3, "inicio": 14, "fin": 15}
+        ]
+      },
+      {
+        "id": "2026A-MEC-FUNDINV-D",
+        "profesor": "Yeverino Martinez Cristobal Enrique",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 11, "fin": 12},
+          {"dia": 1, "inicio": 11, "fin": 12},
+          {"dia": 2, "inicio": 11, "fin": 12},
+          {"dia": 3, "inicio": 11, "fin": 12}
+        ]
+      },
+      {
+        "id": "2026A-MEC-FUNDINV-E",
+        "profesor": "Yeverino Martinez Cristobal Enrique",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 12, "fin": 13},
+          {"dia": 1, "inicio": 12, "fin": 13},
+          {"dia": 2, "inicio": 12, "fin": 13},
+          {"dia": 3, "inicio": 12, "fin": 13}
+        ]
+      },
+      {
+        "id": "2026A-MEC-FUNDINV-R",
+        "profesor": "Zavala Torres Ma. Elida",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 17, "fin": 18},
+          {"dia": 1, "inicio": 17, "fin": 18},
+          {"dia": 2, "inicio": 17, "fin": 18},
+          {"dia": 3, "inicio": 17, "fin": 18}
+        ]
+      },
+      {
+        "id": "2026A-MEC-FUNDINV-X",
+        "profesor": "Maldonado Hernández Juan De Dios Gerardo",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 14, "fin": 15},
+          {"dia": 1, "inicio": 14, "fin": 15},
+          {"dia": 2, "inicio": 14, "fin": 15},
+          {"dia": 3, "inicio": 14, "fin": 15}
+        ]
+      },
+      {
+        "id": "2026A-MEC-FUNDINV-Y",
+        "profesor": "Dueñaz Reyes Juana Maria",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 10, "fin": 11},
+          {"dia": 1, "inicio": 10, "fin": 11},
+          {"dia": 2, "inicio": 10, "fin": 11},
+          {"dia": 3, "inicio": 10, "fin": 11}
+        ]
+      }
+    ]
+  },
+  {
+  "EST_CON_CAL": {
+    "nombre": "Estadística Y Control De Calidad",
+    "creditos": 4,
+    "semestre": 2,
+    "grupos": [
+      {
+        "id": "2026A-MEC-ESTCONCAL-A",
+        "profesor": "Zertuche Luis Federico",
+        "salon": "B10",
+        "horario": [
+          {"dia": 0, "inicio": 11, "fin": 12},
+          {"dia": 1, "inicio": 11, "fin": 12},
+          {"dia": 2, "inicio": 11, "fin": 12},
+          {"dia": 3, "inicio": 11, "fin": 12}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ESTCONCAL-B",
+        "profesor": "Velez Name Jose Sirahuen",
+        "salon": "L2A",
+        "horario": [
+          {"dia": 0, "inicio": 14, "fin": 15},
+          {"dia": 1, "inicio": 14, "fin": 15},
+          {"dia": 2, "inicio": 14, "fin": 15},
+          {"dia": 3, "inicio": 14, "fin": 15}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ESTCONCAL-C",
+        "profesor": "Sanchez Villegas Gabriel",
+        "salon": "B20A",
+        "horario": [
+          {"dia": 0, "inicio": 18, "fin": 19},
+          {"dia": 1, "inicio": 18, "fin": 19},
+          {"dia": 2, "inicio": 18, "fin": 19},
+          {"dia": 3, "inicio": 18, "fin": 19}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ESTCONCAL-D",
+        "profesor": "Solis Rodriguez Georgina",
+        "salon": "B16",
+        "horario": [
+          {"dia": 0, "inicio": 9, "fin": 10},
+          {"dia": 1, "inicio": 9, "fin": 10},
+          {"dia": 2, "inicio": 9, "fin": 10},
+          {"dia": 3, "inicio": 9, "fin": 10}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ESTCONCAL-E",
+        "profesor": "Velez Name Jose Sirahuen",
+        "salon": "L2A",
+        "horario": [
+          {"dia": 0, "inicio": 15, "fin": 16},
+          {"dia": 1, "inicio": 15, "fin": 16},
+          {"dia": 2, "inicio": 15, "fin": 16},
+          {"dia": 3, "inicio": 15, "fin": 16}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ESTCONCAL-F",
+        "profesor": "Lopez De Leon Alma Patricia",
+        "salon": "L2A",
+        "horario": [
+          {"dia": 0, "inicio": 16, "fin": 17},
+          {"dia": 1, "inicio": 16, "fin": 17},
+          {"dia": 2, "inicio": 16, "fin": 17},
+          {"dia": 3, "inicio": 16, "fin": 17}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ESTCONCAL-G",
+        "profesor": "Velez Name Jose Sirahuen",
+        "salon": "L2A",
+        "horario": [
+          {"dia": 0, "inicio": 13, "fin": 14},
+          {"dia": 1, "inicio": 13, "fin": 14},
+          {"dia": 2, "inicio": 13, "fin": 14},
+          {"dia": 3, "inicio": 13, "fin": 14}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ESTCONCAL-H",
+        "profesor": "García Pimentel Irma Violeta",
+        "salon": "B03",
+        "horario": [
+          {"dia": 0, "inicio": 12, "fin": 13},
+          {"dia": 1, "inicio": 12, "fin": 13},
+          {"dia": 2, "inicio": 12, "fin": 13},
+          {"dia": 3, "inicio": 12, "fin": 13}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ESTCONCAL-I",
+        "profesor": "García Pimentel Irma Violeta",
+        "salon": "B03",
+        "horario": [
+          {"dia": 0, "inicio": 8, "fin": 9},
+          {"dia": 1, "inicio": 8, "fin": 9},
+          {"dia": 2, "inicio": 8, "fin": 9},
+          {"dia": 3, "inicio": 8, "fin": 9}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ESTCONCAL-J",
+        "profesor": "Zertuche Luis Federico",
+        "salon": "B10",
+        "horario": [
+          {"dia": 0, "inicio": 10, "fin": 11},
+          {"dia": 1, "inicio": 10, "fin": 11},
+          {"dia": 2, "inicio": 10, "fin": 11},
+          {"dia": 3, "inicio": 10, "fin": 11}
+        ]
+      }
+    ]
+  },
+  "ALG_LIN": {
+    "nombre": "Álgebra Lineal",
+    "creditos": 5,
+    "semestre": 2,
+    "grupos": [
+      {
+        "id": "2026A-MEC-ALGLIN-A",
+        "profesor": "Ruiz Muñiz Juan Antonio",
+        "salon": "N42",
+        "horario": [
+          {"dia": 0, "inicio": 9, "fin": 10},
+          {"dia": 1, "inicio": 9, "fin": 10},
+          {"dia": 2, "inicio": 9, "fin": 10},
+          {"dia": 3, "inicio": 9, "fin": 10},
+          {"dia": 4, "inicio": 9, "fin": 10}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ALGLIN-A1",
+        "profesor": "Benavides Ramos Juan Francisco",
+        "salon": "N37",
+        "horario": [
+          {"dia": 0, "inicio": 17, "fin": 18},
+          {"dia": 1, "inicio": 17, "fin": 18},
+          {"dia": 2, "inicio": 17, "fin": 18},
+          {"dia": 3, "inicio": 17, "fin": 18},
+          {"dia": 4, "inicio": 17, "fin": 18}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ALGLIN-B",
+        "profesor": "Ruiz Muñiz Juan Antonio",
+        "salon": "N42",
+        "horario": [
+          {"dia": 0, "inicio": 11, "fin": 12},
+          {"dia": 1, "inicio": 11, "fin": 12},
+          {"dia": 2, "inicio": 11, "fin": 12},
+          {"dia": 3, "inicio": 11, "fin": 12},
+          {"dia": 4, "inicio": 11, "fin": 12}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ALGLIN-B1",
+        "profesor": "Ruiz Muñiz Jorge Alberto",
+        "salon": "N41",
+        "horario": [
+          {"dia": 0, "inicio": 14, "fin": 15},
+          {"dia": 1, "inicio": 14, "fin": 15},
+          {"dia": 2, "inicio": 14, "fin": 15},
+          {"dia": 3, "inicio": 14, "fin": 15},
+          {"dia": 4, "inicio": 14, "fin": 15}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ALGLIN-C1",
+        "profesor": "Sánchez Espinoza Juan Angel",
+        "salon": "C06",
+        "horario": [
+          {"dia": 0, "inicio": 7, "fin": 8},
+          {"dia": 1, "inicio": 7, "fin": 8},
+          {"dia": 2, "inicio": 7, "fin": 8},
+          {"dia": 3, "inicio": 7, "fin": 8},
+          {"dia": 4, "inicio": 7, "fin": 8}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ALGLIN-D",
+        "profesor": "Ruiz Muñiz Juan Antonio",
+        "salon": "N42",
+        "horario": [
+          {"dia": 0, "inicio": 10, "fin": 11},
+          {"dia": 1, "inicio": 10, "fin": 11},
+          {"dia": 2, "inicio": 10, "fin": 11},
+          {"dia": 3, "inicio": 10, "fin": 11},
+          {"dia": 4, "inicio": 10, "fin": 11}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ALGLIN-E",
+        "profesor": "Benavides Ramos Juan Francisco",
+        "salon": "CR15",
+        "horario": [
+          {"dia": 0, "inicio": 8, "fin": 9},
+          {"dia": 1, "inicio": 8, "fin": 9},
+          {"dia": 2, "inicio": 8, "fin": 9},
+          {"dia": 3, "inicio": 8, "fin": 9},
+          {"dia": 4, "inicio": 8, "fin": 9}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ALGLIN-E1",
+        "profesor": "Sanchez Romina Denisse",
+        "salon": "N37",
+        "horario": [
+          {"dia": 0, "inicio": 8, "fin": 9},
+          {"dia": 1, "inicio": 8, "fin": 9},
+          {"dia": 2, "inicio": 8, "fin": 9},
+          {"dia": 3, "inicio": 8, "fin": 9},
+          {"dia": 4, "inicio": 8, "fin": 9}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ALGLIN-F1",
+        "profesor": "Sánchez Espinoza Juan Angel",
+        "salon": "C06",
+        "horario": [
+          {"dia": 0, "inicio": 8, "fin": 9},
+          {"dia": 1, "inicio": 8, "fin": 9},
+          {"dia": 2, "inicio": 8, "fin": 9},
+          {"dia": 3, "inicio": 8, "fin": 9},
+          {"dia": 4, "inicio": 8, "fin": 9}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ALGLIN-G",
+        "profesor": "Benavides Ramos Juan Francisco",
+        "salon": "N35",
+        "horario": [
+          {"dia": 0, "inicio": 7, "fin": 8},
+          {"dia": 1, "inicio": 7, "fin": 8},
+          {"dia": 2, "inicio": 7, "fin": 8},
+          {"dia": 3, "inicio": 7, "fin": 8},
+          {"dia": 4, "inicio": 7, "fin": 8}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ALGLIN-G1",
+        "profesor": "Benavides Ramos Juan Francisco",
+        "salon": "N34",
+        "horario": [
+          {"dia": 0, "inicio": 15, "fin": 16},
+          {"dia": 1, "inicio": 15, "fin": 16},
+          {"dia": 2, "inicio": 15, "fin": 16},
+          {"dia": 3, "inicio": 15, "fin": 16},
+          {"dia": 4, "inicio": 15, "fin": 16}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ALGLIN-H",
+        "profesor": "Gaytan Tanguma Celina",
+        "salon": "C02",
+        "horario": [
+          {"dia": 0, "inicio": 12, "fin": 13},
+          {"dia": 1, "inicio": 12, "fin": 13},
+          {"dia": 2, "inicio": 12, "fin": 13},
+          {"dia": 3, "inicio": 12, "fin": 13},
+          {"dia": 4, "inicio": 12, "fin": 13}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ALGLIN-H1",
+        "profesor": "Velázquez Rodríguez Liliana",
+        "salon": "N35",
+        "horario": [
+          {"dia": 0, "inicio": 13, "fin": 14},
+          {"dia": 1, "inicio": 13, "fin": 14},
+          {"dia": 2, "inicio": 13, "fin": 14},
+          {"dia": 3, "inicio": 13, "fin": 14},
+          {"dia": 4, "inicio": 13, "fin": 14}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ALGLIN-J",
+        "profesor": "Martinez Villafuerte Veronica",
+        "salon": "B21",
+        "horario": [
+          {"dia": 0, "inicio": 17, "fin": 18},
+          {"dia": 1, "inicio": 17, "fin": 18},
+          {"dia": 2, "inicio": 17, "fin": 18},
+          {"dia": 3, "inicio": 17, "fin": 18},
+          {"dia": 4, "inicio": 17, "fin": 18}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ALGLIN-J1",
+        "profesor": "Sánchez Espinoza Juan Angel",
+        "salon": "C06",
+        "horario": [
+          {"dia": 0, "inicio": 9, "fin": 10},
+          {"dia": 1, "inicio": 9, "fin": 10},
+          {"dia": 2, "inicio": 9, "fin": 10},
+          {"dia": 3, "inicio": 9, "fin": 10},
+          {"dia": 4, "inicio": 9, "fin": 10}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ALGLIN-K",
+        "profesor": "Martinez Villafuerte Veronica",
+        "salon": "B21",
+        "horario": [
+          {"dia": 0, "inicio": 16, "fin": 17},
+          {"dia": 1, "inicio": 16, "fin": 17},
+          {"dia": 2, "inicio": 16, "fin": 17},
+          {"dia": 3, "inicio": 16, "fin": 17},
+          {"dia": 4, "inicio": 16, "fin": 17}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ALGLIN-K1",
+        "profesor": "Gaytan Tanguma Celina",
+        "salon": "C02",
+        "horario": [
+          {"dia": 0, "inicio": 14, "fin": 15},
+          {"dia": 1, "inicio": 14, "fin": 15},
+          {"dia": 2, "inicio": 14, "fin": 15},
+          {"dia": 3, "inicio": 14, "fin": 15},
+          {"dia": 4, "inicio": 14, "fin": 15}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ALGLIN-L",
+        "profesor": "Barrales Montes Justino",
+        "salon": "N34",
+        "horario": [
+          {"dia": 0, "inicio": 18, "fin": 19},
+          {"dia": 1, "inicio": 18, "fin": 19},
+          {"dia": 2, "inicio": 18, "fin": 19},
+          {"dia": 3, "inicio": 18, "fin": 19},
+          {"dia": 4, "inicio": 18, "fin": 19}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ALGLIN-M",
+        "profesor": "Ruiz Muñiz Juan Antonio",
+        "salon": "N42",
+        "horario": [
+          {"dia": 0, "inicio": 12, "fin": 13},
+          {"dia": 1, "inicio": 12, "fin": 13},
+          {"dia": 2, "inicio": 12, "fin": 13},
+          {"dia": 3, "inicio": 12, "fin": 13},
+          {"dia": 4, "inicio": 12, "fin": 13}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ALGLIN-N",
+        "profesor": "Sánchez Espinoza Juan Angel",
+        "salon": "C06",
+        "horario": [
+          {"dia": 0, "inicio": 10, "fin": 11},
+          {"dia": 1, "inicio": 10, "fin": 11},
+          {"dia": 2, "inicio": 10, "fin": 11},
+          {"dia": 3, "inicio": 10, "fin": 11},
+          {"dia": 4, "inicio": 10, "fin": 11}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ALGLIN-O",
+        "profesor": "Dávila Ríos Ignacio",
+        "salon": "N42",
+        "horario": [
+          {"dia": 0, "inicio": 15, "fin": 16},
+          {"dia": 1, "inicio": 15, "fin": 16},
+          {"dia": 2, "inicio": 15, "fin": 16},
+          {"dia": 3, "inicio": 15, "fin": 16},
+          {"dia": 4, "inicio": 15, "fin": 16}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ALGLIN-P",
+        "profesor": "Velázquez Rodríguez Liliana",
+        "salon": "N35",
+        "horario": [
+          {"dia": 0, "inicio": 14, "fin": 15},
+          {"dia": 1, "inicio": 14, "fin": 15},
+          {"dia": 2, "inicio": 14, "fin": 15},
+          {"dia": 3, "inicio": 14, "fin": 15},
+          {"dia": 4, "inicio": 14, "fin": 15}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ALGLIN-R",
+        "profesor": "Barrales Montes Justino",
+        "salon": "N34",
+        "horario": [
+          {"dia": 0, "inicio": 17, "fin": 18},
+          {"dia": 1, "inicio": 17, "fin": 18},
+          {"dia": 2, "inicio": 17, "fin": 18},
+          {"dia": 3, "inicio": 17, "fin": 18},
+          {"dia": 4, "inicio": 17, "fin": 18}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ALGLIN-T",
+        "profesor": "Dávila Ríos Ignacio",
+        "salon": "N42",
+        "horario": [
+          {"dia": 0, "inicio": 18, "fin": 19},
+          {"dia": 1, "inicio": 18, "fin": 19},
+          {"dia": 2, "inicio": 18, "fin": 19},
+          {"dia": 3, "inicio": 18, "fin": 19},
+          {"dia": 4, "inicio": 18, "fin": 19}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ALGLIN-U",
+        "profesor": "Sanchez Romina Denisse",
+        "salon": "N37",
+        "horario": [
+          {"dia": 0, "inicio": 7, "fin": 8},
+          {"dia": 1, "inicio": 7, "fin": 8},
+          {"dia": 2, "inicio": 7, "fin": 8},
+          {"dia": 3, "inicio": 7, "fin": 8},
+          {"dia": 4, "inicio": 7, "fin": 8}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ALGLIN-W",
+        "profesor": "Benavides Ramos Juan Francisco",
+        "salon": "CR09",
+        "horario": [
+          {"dia": 0, "inicio": 9, "fin": 10},
+          {"dia": 1, "inicio": 9, "fin": 10},
+          {"dia": 2, "inicio": 9, "fin": 10},
+          {"dia": 3, "inicio": 9, "fin": 10},
+          {"dia": 4, "inicio": 9, "fin": 10}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ALGLIN-X",
+        "profesor": "Barrales Montes Justino",
+        "salon": "N34",
+        "horario": [
+          {"dia": 0, "inicio": 19, "fin": 20},
+          {"dia": 1, "inicio": 19, "fin": 20},
+          {"dia": 2, "inicio": 19, "fin": 20},
+          {"dia": 3, "inicio": 19, "fin": 20},
+          {"dia": 4, "inicio": 19, "fin": 20}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ALGLIN-Y",
+        "profesor": "Gaytan Tanguma Celina",
+        "salon": "C02",
+        "horario": [
+          {"dia": 0, "inicio": 13, "fin": 14},
+          {"dia": 1, "inicio": 13, "fin": 14},
+          {"dia": 2, "inicio": 13, "fin": 14},
+          {"dia": 3, "inicio": 13, "fin": 14},
+          {"dia": 4, "inicio": 13, "fin": 14}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ALGLIN-Z",
+        "profesor": "Benavides Ramos Juan Francisco",
+        "salon": "N37",
+        "horario": [
+          {"dia": 0, "inicio": 16, "fin": 17},
+          {"dia": 1, "inicio": 16, "fin": 17},
+          {"dia": 2, "inicio": 16, "fin": 17},
+          {"dia": 3, "inicio": 16, "fin": 17},
+          {"dia": 4, "inicio": 16, "fin": 17}
+        ]
+      }
+    ]
+  },
+  "CALC_INT": {
+    "nombre": "Cálculo Integral",
+    "creditos": 5,
+    "semestre": 2,
+    "grupos": [
+      {
+        "id": "2026A-MEC-CALCINT-A",
+        "profesor": "Mendoza Morales Felipe De Jesus",
+        "salon": "B21",
+        "horario": [
+          {"dia": 0, "inicio": 7, "fin": 8},
+          {"dia": 1, "inicio": 7, "fin": 8},
+          {"dia": 2, "inicio": 7, "fin": 8},
+          {"dia": 3, "inicio": 7, "fin": 8},
+          {"dia": 4, "inicio": 7, "fin": 8}
+        ]
+      },
+      {
+        "id": "2026A-MEC-CALCINT-A1",
+        "profesor": "Ferniza Pérez Víctor Arturo",
+        "salon": "C04",
+        "horario": [
+          {"dia": 0, "inicio": 7, "fin": 8},
+          {"dia": 1, "inicio": 7, "fin": 8},
+          {"dia": 2, "inicio": 7, "fin": 8},
+          {"dia": 3, "inicio": 7, "fin": 8},
+          {"dia": 4, "inicio": 7, "fin": 8}
+        ]
+      },
+      {
+        "id": "2026A-MEC-CALCINT-B",
+        "profesor": "Polendo Luis Silvia",
+        "salon": "C02",
+        "horario": [
+          {"dia": 0, "inicio": 8, "fin": 9},
+          {"dia": 1, "inicio": 8, "fin": 9},
+          {"dia": 2, "inicio": 8, "fin": 9},
+          {"dia": 3, "inicio": 8, "fin": 9},
+          {"dia": 4, "inicio": 8, "fin": 9}
+        ]
+      },
+      {
+        "id": "2026A-MEC-CALCINT-C",
+        "profesor": "Polendo Luis Silvia",
+        "salon": "C02",
+        "horario": [
+          {"dia": 0, "inicio": 9, "fin": 10},
+          {"dia": 1, "inicio": 9, "fin": 10},
+          {"dia": 2, "inicio": 9, "fin": 10},
+          {"dia": 3, "inicio": 9, "fin": 10},
+          {"dia": 4, "inicio": 9, "fin": 10}
+        ]
+      },
+      {
+        "id": "2026A-MEC-CALCINT-C1",
+        "profesor": "Mendoza Morales Felipe De Jesus",
+        "salon": "B21",
+        "horario": [
+          {"dia": 0, "inicio": 8, "fin": 9},
+          {"dia": 1, "inicio": 8, "fin": 9},
+          {"dia": 2, "inicio": 8, "fin": 9},
+          {"dia": 3, "inicio": 8, "fin": 9},
+          {"dia": 4, "inicio": 8, "fin": 9}
+        ]
+      },
+      {
+        "id": "2026A-MEC-CALCINT-D",
+        "profesor": "Cantú Perez Jesus",
+        "salon": "N38",
+        "horario": [
+          {"dia": 0, "inicio": 11, "fin": 12},
+          {"dia": 1, "inicio": 11, "fin": 12},
+          {"dia": 2, "inicio": 11, "fin": 12},
+          {"dia": 3, "inicio": 11, "fin": 12},
+          {"dia": 4, "inicio": 11, "fin": 12}
+        ]
+      },
+      {
+        "id": "2026A-MEC-CALCINT-E",
+        "profesor": "López Campos Fabio",
+        "salon": "C09",
+        "horario": [
+          {"dia": 0, "inicio": 13, "fin": 14},
+          {"dia": 1, "inicio": 13, "fin": 14},
+          {"dia": 2, "inicio": 13, "fin": 14},
+          {"dia": 3, "inicio": 13, "fin": 14},
+          {"dia": 4, "inicio": 13, "fin": 14}
+        ]
+      },
+      {
+        "id": "2026A-MEC-CALCINT-E1",
+        "profesor": "Polendo Luis Silvia",
+        "salon": "C02",
+        "horario": [
+          {"dia": 0, "inicio": 10, "fin": 11},
+          {"dia": 1, "inicio": 10, "fin": 11},
+          {"dia": 2, "inicio": 10, "fin": 11},
+          {"dia": 3, "inicio": 10, "fin": 11},
+          {"dia": 4, "inicio": 10, "fin": 11}
+        ]
+      },
+      {
+        "id": "2026A-MEC-CALCINT-F",
+        "profesor": "López Campos Fabio",
+        "salon": "C09",
+        "horario": [
+          {"dia": 0, "inicio": 12, "fin": 13},
+          {"dia": 1, "inicio": 12, "fin": 13},
+          {"dia": 2, "inicio": 12, "fin": 13},
+          {"dia": 3, "inicio": 12, "fin": 13},
+          {"dia": 4, "inicio": 12, "fin": 13}
+        ]
+      },
+      {
+        "id": "2026A-MEC-CALCINT-F1",
+        "profesor": "Cabello Rangel Luis Alberto",
+        "salon": "CR15",
+        "horario": [
+          {"dia": 0, "inicio": 9, "fin": 10},
+          {"dia": 1, "inicio": 9, "fin": 10},
+          {"dia": 2, "inicio": 9, "fin": 10},
+          {"dia": 3, "inicio": 9, "fin": 10},
+          {"dia": 4, "inicio": 9, "fin": 10}
+        ]
+      },
+      {
+        "id": "2026A-MEC-CALCINT-G",
+        "profesor": "Valdez Perez J. Santos",
+        "salon": "C12",
+        "horario": [
+          {"dia": 0, "inicio": 10, "fin": 11},
+          {"dia": 1, "inicio": 10, "fin": 11},
+          {"dia": 2, "inicio": 10, "fin": 11},
+          {"dia": 3, "inicio": 10, "fin": 11},
+          {"dia": 4, "inicio": 10, "fin": 11}
+        ]
+      },
+      {
+        "id": "2026A-MEC-CALCINT-G1",
+        "profesor": "Ing. Cantú César Iván",
+        "salon": "N07",
+        "horario": [
+          {"dia": 0, "inicio": 10, "fin": 11},
+          {"dia": 1, "inicio": 10, "fin": 11},
+          {"dia": 2, "inicio": 10, "fin": 11},
+          {"dia": 3, "inicio": 10, "fin": 11},
+          {"dia": 4, "inicio": 10, "fin": 11}
+        ]
+      },
+      {
+        "id": "2026A-MEC-CALCINT-H",
+        "profesor": "Valdez Perez J. Santos",
+        "salon": "C12",
+        "horario": [
+          {"dia": 0, "inicio": 8, "fin": 9},
+          {"dia": 1, "inicio": 8, "fin": 9},
+          {"dia": 2, "inicio": 8, "fin": 9},
+          {"dia": 3, "inicio": 8, "fin": 9},
+          {"dia": 4, "inicio": 8, "fin": 9}
+        ]
+      },
+      {
+        "id": "2026A-MEC-CALCINT-I",
+        "profesor": "Ferniza Pérez Luis Manuel",
+        "salon": "C04",
+        "horario": [
+          {"dia": 0, "inicio": 10, "fin": 11},
+          {"dia": 1, "inicio": 10, "fin": 11},
+          {"dia": 2, "inicio": 10, "fin": 11},
+          {"dia": 3, "inicio": 10, "fin": 11},
+          {"dia": 4, "inicio": 10, "fin": 11}
+        ]
+      },
+      {
+        "id": "2026A-MEC-CALCINT-J",
+        "profesor": "Reyes Acosta Narda Lucely",
+        "salon": "N35",
+        "horario": [
+          {"dia": 0, "inicio": 11, "fin": 12},
+          {"dia": 1, "inicio": 11, "fin": 12},
+          {"dia": 2, "inicio": 11, "fin": 12},
+          {"dia": 3, "inicio": 11, "fin": 12},
+          {"dia": 4, "inicio": 11, "fin": 12}
+        ]
+      },
+      {
+        "id": "2026A-MEC-CALCINT-K",
+        "profesor": "López Campos Fabio",
+        "salon": "C09",
+        "horario": [
+          {"dia": 0, "inicio": 14, "fin": 15},
+          {"dia": 1, "inicio": 14, "fin": 15},
+          {"dia": 2, "inicio": 14, "fin": 15},
+          {"dia": 3, "inicio": 14, "fin": 15},
+          {"dia": 4, "inicio": 14, "fin": 15}
+        ]
+      },
+      {
+        "id": "2026A-MEC-CALCINT-L",
+        "profesor": "Valdez Perez J. Santos",
+        "salon": "C12",
+        "horario": [
+          {"dia": 0, "inicio": 9, "fin": 10},
+          {"dia": 1, "inicio": 9, "fin": 10},
+          {"dia": 2, "inicio": 9, "fin": 10},
+          {"dia": 3, "inicio": 9, "fin": 10},
+          {"dia": 4, "inicio": 9, "fin": 10}
+        ]
+      },
+      {
+        "id": "2026A-MEC-CALCINT-M",
+        "profesor": "López Campos Fabio",
+        "salon": "C09",
+        "horario": [
+          {"dia": 0, "inicio": 11, "fin": 12},
+          {"dia": 1, "inicio": 11, "fin": 12},
+          {"dia": 2, "inicio": 11, "fin": 12},
+          {"dia": 3, "inicio": 11, "fin": 12},
+          {"dia": 4, "inicio": 11, "fin": 12}
+        ]
+      },
+      {
+        "id": "2026A-MEC-CALCINT-N",
+        "profesor": "Polendo Luis Silvia",
+        "salon": "C02",
+        "horario": [
+          {"dia": 0, "inicio": 7, "fin": 8},
+          {"dia": 1, "inicio": 7, "fin": 8},
+          {"dia": 2, "inicio": 7, "fin": 8},
+          {"dia": 3, "inicio": 7, "fin": 8},
+          {"dia": 4, "inicio": 7, "fin": 8}
+        ]
+      },
+      {
+        "id": "2026A-MEC-CALCINT-O",
+        "profesor": "Dávila Ríos Ignacio",
+        "salon": "N42",
+        "horario": [
+          {"dia": 0, "inicio": 16, "fin": 17},
+          {"dia": 1, "inicio": 16, "fin": 17},
+          {"dia": 2, "inicio": 16, "fin": 17},
+          {"dia": 3, "inicio": 16, "fin": 17},
+          {"dia": 4, "inicio": 16, "fin": 17}
+        ]
+      },
+      {
+        "id": "2026A-MEC-CALCINT-P",
+        "profesor": "Ing. Cantú César Iván",
+        "salon": "N34",
+        "horario": [
+          {"dia": 0, "inicio": 8, "fin": 9},
+          {"dia": 1, "inicio": 8, "fin": 9},
+          {"dia": 2, "inicio": 8, "fin": 9},
+          {"dia": 3, "inicio": 8, "fin": 9},
+          {"dia": 4, "inicio": 8, "fin": 9}
+        ]
+      },
+      {
+        "id": "2026A-MEC-CALCINT-Q",
+        "profesor": "Dávila Ríos Ignacio",
+        "salon": "N42",
+        "horario": [
+          {"dia": 0, "inicio": 19, "fin": 20},
+          {"dia": 1, "inicio": 19, "fin": 20},
+          {"dia": 2, "inicio": 19, "fin": 20},
+          {"dia": 3, "inicio": 19, "fin": 20},
+          {"dia": 4, "inicio": 19, "fin": 20}
+        ]
+      },
+      {
+        "id": "2026A-MEC-CALCINT-R",
+        "profesor": "Ferniza Pérez Víctor Arturo",
+        "salon": "C04",
+        "horario": [
+          {"dia": 0, "inicio": 8, "fin": 9},
+          {"dia": 1, "inicio": 8, "fin": 9},
+          {"dia": 2, "inicio": 8, "fin": 9},
+          {"dia": 3, "inicio": 8, "fin": 9},
+          {"dia": 4, "inicio": 8, "fin": 9}
+        ]
+      },
+      {
+        "id": "2026A-MEC-CALCINT-S",
+        "profesor": "Polendo Luis Silvia",
+        "salon": "C02",
+        "horario": [
+          {"dia": 0, "inicio": 11, "fin": 12},
+          {"dia": 1, "inicio": 11, "fin": 12},
+          {"dia": 2, "inicio": 11, "fin": 12},
+          {"dia": 3, "inicio": 11, "fin": 12},
+          {"dia": 4, "inicio": 11, "fin": 12}
+        ]
+      },
+      {
+        "id": "2026A-MEC-CALCINT-T",
+        "profesor": "Ferniza Pérez Luis Manuel",
+        "salon": "C04",
+        "horario": [
+          {"dia": 0, "inicio": 12, "fin": 13},
+          {"dia": 1, "inicio": 12, "fin": 13},
+          {"dia": 2, "inicio": 12, "fin": 13},
+          {"dia": 3, "inicio": 12, "fin": 13},
+          {"dia": 4, "inicio": 12, "fin": 13}
+        ]
+      },
+      {
+        "id": "2026A-MEC-CALCINT-U",
+        "profesor": "Mendoza Morales Felipe De Jesus",
+        "salon": "B21",
+        "horario": [
+          {"dia": 0, "inicio": 9, "fin": 10},
+          {"dia": 1, "inicio": 9, "fin": 10},
+          {"dia": 2, "inicio": 9, "fin": 10},
+          {"dia": 3, "inicio": 9, "fin": 10},
+          {"dia": 4, "inicio": 9, "fin": 10}
+        ]
+      },
+      {
+        "id": "2026A-MEC-CALCINT-V",
+        "profesor": "Ferniza Pérez Luis Manuel",
+        "salon": "C04",
+        "horario": [
+          {"dia": 0, "inicio": 13, "fin": 14},
+          {"dia": 1, "inicio": 13, "fin": 14},
+          {"dia": 2, "inicio": 13, "fin": 14},
+          {"dia": 3, "inicio": 13, "fin": 14},
+          {"dia": 4, "inicio": 13, "fin": 14}
+        ]
+      },
+      {
+        "id": "2026A-MEC-CALCINT-W",
+        "profesor": "Mendoza Morales Felipe De Jesus",
+        "salon": "B21",
+        "horario": [
+          {"dia": 0, "inicio": 10, "fin": 11},
+          {"dia": 1, "inicio": 10, "fin": 11},
+          {"dia": 2, "inicio": 10, "fin": 11},
+          {"dia": 3, "inicio": 10, "fin": 11},
+          {"dia": 4, "inicio": 10, "fin": 11}
+        ]
+      },
+      {
+        "id": "2026A-MEC-CALCINT-X",
+        "profesor": "Ferniza Pérez Víctor Arturo",
+        "salon": "C04",
+        "horario": [
+          {"dia": 0, "inicio": 9, "fin": 10},
+          {"dia": 1, "inicio": 9, "fin": 10},
+          {"dia": 2, "inicio": 9, "fin": 10},
+          {"dia": 3, "inicio": 9, "fin": 10},
+          {"dia": 4, "inicio": 9, "fin": 10}
+        ]
+      },
+      {
+        "id": "2026A-MEC-CALCINT-Y",
+        "profesor": "Reyes Acosta Narda Lucely",
+        "salon": "N35",
+        "horario": [
+          {"dia": 0, "inicio": 10, "fin": 11},
+          {"dia": 1, "inicio": 10, "fin": 11},
+          {"dia": 2, "inicio": 10, "fin": 11},
+          {"dia": 3, "inicio": 10, "fin": 11},
+          {"dia": 4, "inicio": 10, "fin": 11}
+        ]
+      },
+      {
+        "id": "2026A-MEC-CALCINT-Z",
+        "profesor": "Valdez Perez J. Santos",
+        "salon": "C12",
+        "horario": [
+          {"dia": 0, "inicio": 11, "fin": 12},
+          {"dia": 1, "inicio": 11, "fin": 12},
+          {"dia": 2, "inicio": 11, "fin": 12},
+          {"dia": 3, "inicio": 11, "fin": 12},
+          {"dia": 4, "inicio": 11, "fin": 12}
+        ]
+      }
+    ]
+  },
+  "CIE_ING_MAT": {
+    "nombre": "Ciencia E Ingeniería De Materiales",
+    "creditos": 5,
+    "semestre": 2,
+    "grupos": [
+      {
+        "id": "2026A-MEC-CIEINGMAT-A",
+        "profesor": "García De León Dolores",
+        "salon": "N22",
+        "horario": [
+          {"dia": 0, "inicio": 9, "fin": 10},
+          {"dia": 1, "inicio": 9, "fin": 10},
+          {"dia": 2, "inicio": 9, "fin": 10},
+          {"dia": 3, "inicio": 9, "fin": 10},
+          {"dia": 4, "inicio": 9, "fin": 10}
+        ]
+      },
+      {
+        "id": "2026A-MEC-CIEINGMAT-B",
+        "profesor": "Terrazas Ramos Luis Alberto",
+        "salon": "N24",
+        "horario": [
+          {"dia": 0, "inicio": 10, "fin": 11},
+          {"dia": 1, "inicio": 10, "fin": 11},
+          {"dia": 2, "inicio": 10, "fin": 11},
+          {"dia": 3, "inicio": 10, "fin": 11},
+          {"dia": 4, "inicio": 10, "fin": 11}
+        ]
+      },
+      {
+        "id": "2026A-MEC-CIEINGMAT-C",
+        "profesor": "Ruiz Moreno Raquel Guadalupe",
+        "salon": "N17",
+        "horario": [
+          {"dia": 0, "inicio": 11, "fin": 12},
+          {"dia": 1, "inicio": 11, "fin": 12},
+          {"dia": 2, "inicio": 11, "fin": 12},
+          {"dia": 3, "inicio": 11, "fin": 12},
+          {"dia": 4, "inicio": 11, "fin": 12}
+        ]
+      },
+      {
+        "id": "2026A-MEC-CIEINGMAT-D",
+        "profesor": "Salazar Zertuche Madelyne",
+        "salon": "N01",
+        "horario": [
+          {"dia": 0, "inicio": 16, "fin": 17},
+          {"dia": 1, "inicio": 16, "fin": 17},
+          {"dia": 2, "inicio": 16, "fin": 17},
+          {"dia": 3, "inicio": 16, "fin": 17},
+          {"dia": 4, "inicio": 16, "fin": 17}
+        ]
+      },
+      {
+        "id": "2026A-MEC-CIEINGMAT-E",
+        "profesor": "Ruiz Moreno Raquel Guadalupe",
+        "salon": "N17",
+        "horario": [
+          {"dia": 0, "inicio": 12, "fin": 13},
+          {"dia": 1, "inicio": 12, "fin": 13},
+          {"dia": 2, "inicio": 12, "fin": 13},
+          {"dia": 3, "inicio": 12, "fin": 13},
+          {"dia": 4, "inicio": 12, "fin": 13}
+        ]
+      },
+      {
+        "id": "2026A-MEC-CIEINGMAT-F",
+        "profesor": "García De León Dolores",
+        "salon": "N20",
+        "horario": [
+          {"dia": 0, "inicio": 12, "fin": 13},
+          {"dia": 1, "inicio": 12, "fin": 13},
+          {"dia": 2, "inicio": 12, "fin": 13},
+          {"dia": 3, "inicio": 12, "fin": 13},
+          {"dia": 4, "inicio": 12, "fin": 13}
+        ]
+      },
+      {
+        "id": "2026A-MEC-CIEINGMAT-G",
+        "profesor": "Acevedo Davila Jorge Leobardo",
+        "salon": "AM2",
+        "horario": [
+          {"dia": 0, "inicio": 15, "fin": 16},
+          {"dia": 1, "inicio": 15, "fin": 16},
+          {"dia": 2, "inicio": 15, "fin": 16},
+          {"dia": 3, "inicio": 15, "fin": 16},
+          {"dia": 4, "inicio": 15, "fin": 16}
+        ]
+      },
+      {
+        "id": "2026A-MEC-CIEINGMAT-H",
+        "profesor": "García De León Dolores",
+        "salon": "N20",
+        "horario": [
+          {"dia": 0, "inicio": 13, "fin": 14},
+          {"dia": 1, "inicio": 13, "fin": 14},
+          {"dia": 2, "inicio": 13, "fin": 14},
+          {"dia": 3, "inicio": 13, "fin": 14},
+          {"dia": 4, "inicio": 13, "fin": 14}
+        ]
+      }
+    ]
+  },
+  "PROG_BAS": {
+    "nombre": "Programación Básica",
+    "creditos": 5,
+    "semestre": 2,
+    "grupos": [
+      {
+        "id": "2026A-MEC-PROGBAS-A",
+        "profesor": "De Leon Macias Francisco Javier",
+        "salon": "R08 / LS1",
+        "horario": [
+          {"dia": 0, "inicio": 7, "fin": 8},
+          {"dia": 1, "inicio": 7, "fin": 8},
+          {"dia": 2, "inicio": 7, "fin": 8},
+          {"dia": 3, "inicio": 7, "fin": 8},
+          {"dia": 4, "inicio": 7, "fin": 8}
+        ]
+      },
+      {
+        "id": "2026A-MEC-PROGBAS-B",
+        "profesor": "Carranza Mellado Eunice Raziel",
+        "salon": "R13 / R06",
+        "horario": [
+          {"dia": 0, "inicio": 10, "fin": 11},
+          {"dia": 1, "inicio": 10, "fin": 11},
+          {"dia": 2, "inicio": 10, "fin": 11},
+          {"dia": 3, "inicio": 10, "fin": 11},
+          {"dia": 4, "inicio": 10, "fin": 11}
+        ]
+      },
+      {
+        "id": "2026A-MEC-PROGBAS-C",
+        "profesor": "Domínguez Martínez Arturo Alejandro",
+        "salon": "LS1 / R05",
+        "horario": [
+          {"dia": 0, "inicio": 11, "fin": 12},
+          {"dia": 1, "inicio": 11, "fin": 12},
+          {"dia": 2, "inicio": 11, "fin": 12},
+          {"dia": 3, "inicio": 11, "fin": 12},
+          {"dia": 4, "inicio": 11, "fin": 12}
+        ]
+      },
+      {
+        "id": "2026A-MEC-PROGBAS-D",
+        "profesor": "Castillo Hernández Leticia",
+        "salon": "R13 / R09",
+        "horario": [
+          {"dia": 0, "inicio": 9, "fin": 10},
+          {"dia": 1, "inicio": 9, "fin": 10},
+          {"dia": 2, "inicio": 9, "fin": 10},
+          {"dia": 3, "inicio": 9, "fin": 10},
+          {"dia": 4, "inicio": 9, "fin": 10}
+        ]
+      },
+      {
+        "id": "2026A-MEC-PROGBAS-E",
+        "profesor": "Muñiz Jimenez Araceli Estefania",
+        "salon": "R09 / LC1",
+        "horario": [
+          {"dia": 0, "inicio": 14, "fin": 15},
+          {"dia": 1, "inicio": 14, "fin": 15},
+          {"dia": 2, "inicio": 14, "fin": 15},
+          {"dia": 3, "inicio": 14, "fin": 15},
+          {"dia": 4, "inicio": 14, "fin": 15}
+        ]
+      },
+      {
+        "id": "2026A-MEC-PROGBAS-F",
+        "profesor": "Garcia Hernandez Hector",
+        "salon": "LS4",
+        "horario": [
+          {"dia": 0, "inicio": 17, "fin": 18},
+          {"dia": 1, "inicio": 17, "fin": 18},
+          {"dia": 2, "inicio": 17, "fin": 18},
+          {"dia": 3, "inicio": 17, "fin": 18},
+          {"dia": 4, "inicio": 17, "fin": 18}
+        ]
+      },
+      {
+        "id": "2026A-MEC-PROGBAS-G",
+        "profesor": "Castillo Hernández Leticia",
+        "salon": "R05 / R14",
+        "horario": [
+          {"dia": 0, "inicio": 14, "fin": 15},
+          {"dia": 1, "inicio": 14, "fin": 15},
+          {"dia": 2, "inicio": 14, "fin": 15},
+          {"dia": 3, "inicio": 14, "fin": 15},
+          {"dia": 4, "inicio": 14, "fin": 15}
+        ]
+      },
+      {
+        "id": "2026A-MEC-PROGBAS-H",
+        "profesor": "Garcia Hernandez Hector",
+        "salon": "LC1",
+        "horario": [
+          {"dia": 0, "inicio": 15, "fin": 16},
+          {"dia": 1, "inicio": 15, "fin": 16},
+          {"dia": 2, "inicio": 15, "fin": 16},
+          {"dia": 3, "inicio": 15, "fin": 16},
+          {"dia": 4, "inicio": 15, "fin": 16}
+        ]
+      },
+      {
+        "id": "2026A-MEC-PROGBAS-I",
+        "profesor": "Garcia Hernandez Hector",
+        "salon": "LS4",
+        "horario": [
+          {"dia": 0, "inicio": 16, "fin": 17},
+          {"dia": 1, "inicio": 16, "fin": 17},
+          {"dia": 2, "inicio": 16, "fin": 17},
+          {"dia": 3, "inicio": 16, "fin": 17},
+          {"dia": 4, "inicio": 16, "fin": 17}
+        ]
+      },
+      {
+        "id": "2026A-MEC-PROGBAS-J",
+        "profesor": "Castillo Hernández Leticia",
+        "salon": "R05 / R14",
+        "horario": [
+          {"dia": 0, "inicio": 13, "fin": 14},
+          {"dia": 1, "inicio": 13, "fin": 14},
+          {"dia": 2, "inicio": 13, "fin": 14},
+          {"dia": 3, "inicio": 13, "fin": 14},
+          {"dia": 4, "inicio": 13, "fin": 14}
+        ]
+      },
+      {
+        "id": "2026A-MEC-PROGBAS-K",
+        "profesor": "De Leon Macias Francisco Javier",
+        "salon": "R08 / LS1",
+        "horario": [
+          {"dia": 0, "inicio": 8, "fin": 9},
+          {"dia": 1, "inicio": 8, "fin": 9},
+          {"dia": 2, "inicio": 8, "fin": 9},
+          {"dia": 3, "inicio": 8, "fin": 9},
+          {"dia": 4, "inicio": 8, "fin": 9}
+        ]
+      }
+    ]
+  },
+  "ADM_CONT": {
+    "nombre": "Administración Y Contabilidad",
+    "creditos": 4,
+    "semestre": 2,
+    "grupos": [
+      {
+        "id": "2026A-MEC-ADMCONT-A",
+        "profesor": "Rodriguez Contreras Martin",
+        "salon": "A17",
+        "horario": [
+          {"dia": 0, "inicio": 13, "fin": 14},
+          {"dia": 1, "inicio": 13, "fin": 14},
+          {"dia": 2, "inicio": 13, "fin": 14},
+          {"dia": 3, "inicio": 13, "fin": 14}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ADMCONT-B",
+        "profesor": "Barajas Salazar Verónica Arlaine",
+        "salon": "CR11",
+        "horario": [
+          {"dia": 0, "inicio": 19, "fin": 20},
+          {"dia": 1, "inicio": 19, "fin": 20},
+          {"dia": 2, "inicio": 19, "fin": 20},
+          {"dia": 3, "inicio": 19, "fin": 20}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ADMCONT-C",
+        "profesor": "Galindo González Francisco Alberto",
+        "salon": "N29",
+        "horario": [
+          {"dia": 0, "inicio": 16, "fin": 17},
+          {"dia": 1, "inicio": 16, "fin": 17},
+          {"dia": 2, "inicio": 16, "fin": 17},
+          {"dia": 3, "inicio": 16, "fin": 17}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ADMCONT-D",
+        "profesor": "Fernandez Rangel Patricia Alejandra",
+        "salon": "A19",
+        "horario": [
+          {"dia": 0, "inicio": 12, "fin": 13},
+          {"dia": 1, "inicio": 12, "fin": 13},
+          {"dia": 2, "inicio": 12, "fin": 13},
+          {"dia": 3, "inicio": 12, "fin": 13}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ADMCONT-E",
+        "profesor": "Galindo González Francisco Alberto",
+        "salon": "N29",
+        "horario": [
+          {"dia": 0, "inicio": 19, "fin": 20},
+          {"dia": 1, "inicio": 19, "fin": 20},
+          {"dia": 2, "inicio": 19, "fin": 20},
+          {"dia": 3, "inicio": 19, "fin": 20}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ADMCONT-F",
+        "profesor": "Rodriguez Contreras Martin",
+        "salon": "A12",
+        "horario": [
+          {"dia": 0, "inicio": 14, "fin": 15},
+          {"dia": 1, "inicio": 14, "fin": 15},
+          {"dia": 2, "inicio": 14, "fin": 15},
+          {"dia": 3, "inicio": 14, "fin": 15}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ADMCONT-G",
+        "profesor": "Rodriguez Contreras Martin",
+        "salon": "A12",
+        "horario": [
+          {"dia": 0, "inicio": 16, "fin": 17},
+          {"dia": 1, "inicio": 16, "fin": 17},
+          {"dia": 2, "inicio": 16, "fin": 17},
+          {"dia": 3, "inicio": 16, "fin": 17}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ADMCONT-H",
+        "profesor": "Aguillon Padilla Dalia Veronica",
+        "salon": "LAC",
+        "horario": [
+          {"dia": 0, "inicio": 8, "fin": 9},
+          {"dia": 1, "inicio": 8, "fin": 9},
+          {"dia": 2, "inicio": 8, "fin": 9},
+          {"dia": 3, "inicio": 8, "fin": 9}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ADMCONT-I",
+        "profesor": "Aguillon Padilla Dalia Veronica",
+        "salon": "A12",
+        "horario": [
+          {"dia": 0, "inicio": 7, "fin": 8},
+          {"dia": 1, "inicio": 7, "fin": 8},
+          {"dia": 2, "inicio": 7, "fin": 8},
+          {"dia": 3, "inicio": 7, "fin": 8}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ADMCONT-J",
+        "profesor": "Galindo González Francisco Alberto",
+        "salon": "N29",
+        "horario": [
+          {"dia": 0, "inicio": 20, "fin": 21},
+          {"dia": 1, "inicio": 20, "fin": 21},
+          {"dia": 2, "inicio": 20, "fin": 21},
+          {"dia": 3, "inicio": 20, "fin": 21}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ADMCONT-K",
+        "profesor": "Cabral Mireles Rosa Gabriela",
+        "salon": "CR11",
+        "horario": [
+          {"dia": 0, "inicio": 8, "fin": 9},
+          {"dia": 1, "inicio": 8, "fin": 9},
+          {"dia": 2, "inicio": 8, "fin": 9},
+          {"dia": 3, "inicio": 8, "fin": 9}
+        ]
+      }
+    ]
+  },
+  {
+  "DES_SUS": {
+    "nombre": "Desarrollo Sustentable",
+    "creditos": 5,
+    "semestre": 3,
+    "grupos": [
+      {
+        "id": "2026A-MEC-DESSUS-1",
+        "profesor": "Fernández De La Cerda Aida Isolda",
+        "salon": "AM5",
+        "horario": [
+          {"dia": 0, "inicio": 10, "fin": 11},
+          {"dia": 1, "inicio": 10, "fin": 11},
+          {"dia": 2, "inicio": 10, "fin": 11},
+          {"dia": 3, "inicio": 10, "fin": 11},
+          {"dia": 4, "inicio": 10, "fin": 11}
+        ]
+      },
+      {
+        "id": "2026A-MEC-DESSUS-10",
+        "profesor": "Flores Gaytan Virginia",
+        "salon": "N01",
+        "horario": [
+          {"dia": 0, "inicio": 8, "fin": 9},
+          {"dia": 1, "inicio": 8, "fin": 9},
+          {"dia": 2, "inicio": 8, "fin": 9},
+          {"dia": 3, "inicio": 8, "fin": 9},
+          {"dia": 4, "inicio": 8, "fin": 9}
+        ]
+      },
+      {
+        "id": "2026A-MEC-DESSUS-2",
+        "profesor": "Loyola Licea Juan Carlos",
+        "salon": "N26",
+        "horario": [
+          {"dia": 0, "inicio": 11, "fin": 12},
+          {"dia": 1, "inicio": 11, "fin": 12},
+          {"dia": 2, "inicio": 11, "fin": 12},
+          {"dia": 3, "inicio": 11, "fin": 12},
+          {"dia": 4, "inicio": 11, "fin": 12}
+        ]
+      },
+      {
+        "id": "2026A-MEC-DESSUS-3",
+        "profesor": "Loyola Licea Juan Carlos",
+        "salon": "N03",
+        "horario": [
+          {"dia": 0, "inicio": 14, "fin": 15},
+          {"dia": 1, "inicio": 14, "fin": 15},
+          {"dia": 2, "inicio": 14, "fin": 15},
+          {"dia": 3, "inicio": 14, "fin": 15},
+          {"dia": 4, "inicio": 14, "fin": 15}
+        ]
+      },
+      {
+        "id": "2026A-MEC-DESSUS-4",
+        "profesor": "Orta Mendoza Alicia",
+        "salon": "N28",
+        "horario": [
+          {"dia": 0, "inicio": 16, "fin": 17},
+          {"dia": 1, "inicio": 16, "fin": 17},
+          {"dia": 2, "inicio": 16, "fin": 17},
+          {"dia": 3, "inicio": 16, "fin": 17},
+          {"dia": 4, "inicio": 16, "fin": 17}
+        ]
+      },
+      {
+        "id": "2026A-MEC-DESSUS-5",
+        "profesor": "Rodarte Carrillo Manuel",
+        "salon": "N28",
+        "horario": [
+          {"dia": 0, "inicio": 14, "fin": 15},
+          {"dia": 1, "inicio": 14, "fin": 15},
+          {"dia": 2, "inicio": 14, "fin": 15},
+          {"dia": 3, "inicio": 14, "fin": 15},
+          {"dia": 4, "inicio": 14, "fin": 15}
+        ]
+      },
+      {
+        "id": "2026A-MEC-DESSUS-6",
+        "profesor": "Fernández De La Cerda Aida Isolda",
+        "salon": "AM5",
+        "horario": [
+          {"dia": 0, "inicio": 9, "fin": 10},
+          {"dia": 1, "inicio": 9, "fin": 10},
+          {"dia": 2, "inicio": 9, "fin": 10},
+          {"dia": 3, "inicio": 9, "fin": 10},
+          {"dia": 4, "inicio": 9, "fin": 10}
+        ]
+      },
+      {
+        "id": "2026A-MEC-DESSUS-7",
+        "profesor": "Moreno Padilla Marcela Guadalupe",
+        "salon": "N28",
+        "horario": [
+          {"dia": 0, "inicio": 9, "fin": 10},
+          {"dia": 1, "inicio": 9, "fin": 10},
+          {"dia": 2, "inicio": 9, "fin": 10},
+          {"dia": 3, "inicio": 9, "fin": 10},
+          {"dia": 4, "inicio": 9, "fin": 10}
+        ]
+      },
+      {
+        "id": "2026A-MEC-DESSUS-8",
+        "profesor": "Gonzalez Barrera Pedro Angel",
+        "salon": "LMA",
+        "horario": [
+          {"dia": 0, "inicio": 11, "fin": 12},
+          {"dia": 1, "inicio": 11, "fin": 12},
+          {"dia": 2, "inicio": 11, "fin": 12},
+          {"dia": 3, "inicio": 11, "fin": 12},
+          {"dia": 4, "inicio": 11, "fin": 12}
+        ]
+      },
+      {
+        "id": "2026A-MEC-DESSUS-9",
+        "profesor": "Gonzalez Barrera Pedro Angel",
+        "salon": "LMA",
+        "horario": [
+          {"dia": 0, "inicio": 12, "fin": 13},
+          {"dia": 1, "inicio": 12, "fin": 13},
+          {"dia": 2, "inicio": 12, "fin": 13},
+          {"dia": 3, "inicio": 12, "fin": 13},
+          {"dia": 4, "inicio": 12, "fin": 13}
+        ]
+      },
+      {
+        "id": "2026A-MEC-DESSUS-A",
+        "profesor": "Flores Sanchez Alexeyevich",
+        "salon": "N28",
+        "horario": [
+          {"dia": 0, "inicio": 11, "fin": 12},
+          {"dia": 1, "inicio": 11, "fin": 12},
+          {"dia": 2, "inicio": 11, "fin": 12},
+          {"dia": 3, "inicio": 11, "fin": 12},
+          {"dia": 4, "inicio": 11, "fin": 12}
+        ]
+      },
+      {
+        "id": "2026A-MEC-DESSUS-B",
+        "profesor": "Loyola Licea Juan Carlos",
+        "salon": "N26",
+        "horario": [
+          {"dia": 0, "inicio": 10, "fin": 11},
+          {"dia": 1, "inicio": 10, "fin": 11},
+          {"dia": 2, "inicio": 10, "fin": 11},
+          {"dia": 3, "inicio": 10, "fin": 11},
+          {"dia": 4, "inicio": 10, "fin": 11}
+        ]
+      },
+      {
+        "id": "2026A-MEC-DESSUS-C",
+        "profesor": "Gonzalez Barrera Pedro Angel",
+        "salon": "LMA",
+        "horario": [
+          {"dia": 0, "inicio": 10, "fin": 11},
+          {"dia": 1, "inicio": 10, "fin": 11},
+          {"dia": 2, "inicio": 10, "fin": 11},
+          {"dia": 3, "inicio": 10, "fin": 11},
+          {"dia": 4, "inicio": 10, "fin": 11}
+        ]
+      },
+      {
+        "id": "2026A-MEC-DESSUS-D",
+        "profesor": "Flores Gaytan Virginia",
+        "salon": "N04",
+        "horario": [
+          {"dia": 0, "inicio": 12, "fin": 13},
+          {"dia": 1, "inicio": 12, "fin": 13},
+          {"dia": 2, "inicio": 12, "fin": 13},
+          {"dia": 3, "inicio": 12, "fin": 13},
+          {"dia": 4, "inicio": 12, "fin": 13}
+        ]
+      },
+      {
+        "id": "2026A-MEC-DESSUS-E",
+        "profesor": "Loyola Licea Juan Carlos",
+        "salon": "N03",
+        "horario": [
+          {"dia": 0, "inicio": 15, "fin": 16},
+          {"dia": 1, "inicio": 15, "fin": 16},
+          {"dia": 2, "inicio": 15, "fin": 16},
+          {"dia": 3, "inicio": 15, "fin": 16},
+          {"dia": 4, "inicio": 15, "fin": 16}
+        ]
+      },
+      {
+        "id": "2026A-MEC-DESSUS-F",
+        "profesor": "Flores Gaytan Virginia",
+        "salon": "N01",
+        "horario": [
+          {"dia": 0, "inicio": 9, "fin": 10},
+          {"dia": 1, "inicio": 9, "fin": 10},
+          {"dia": 2, "inicio": 9, "fin": 10},
+          {"dia": 3, "inicio": 9, "fin": 10},
+          {"dia": 4, "inicio": 9, "fin": 10}
+        ]
+      },
+      {
+        "id": "2026A-MEC-DESSUS-G",
+        "profesor": "De La Rosa Cepeda Mario Alberto",
+        "salon": "AM3",
+        "horario": [
+          {"dia": 0, "inicio": 15, "fin": 16},
+          {"dia": 1, "inicio": 15, "fin": 16},
+          {"dia": 2, "inicio": 15, "fin": 16},
+          {"dia": 3, "inicio": 15, "fin": 16},
+          {"dia": 4, "inicio": 15, "fin": 16}
+        ]
+      },
+      {
+        "id": "2026A-MEC-DESSUS-H",
+        "profesor": "Durón Ibarra Ramon Andres",
+        "salon": "AM4",
+        "horario": [
+          {"dia": 0, "inicio": 16, "fin": 17},
+          {"dia": 1, "inicio": 16, "fin": 17},
+          {"dia": 2, "inicio": 16, "fin": 17},
+          {"dia": 3, "inicio": 16, "fin": 17},
+          {"dia": 4, "inicio": 16, "fin": 17}
+        ]
+      },
+      {
+        "id": "2026A-MEC-DESSUS-I",
+        "profesor": "Moreno Padilla Marcela Guadalupe",
+        "salon": "N28",
+        "horario": [
+          {"dia": 0, "inicio": 10, "fin": 11},
+          {"dia": 1, "inicio": 10, "fin": 11},
+          {"dia": 2, "inicio": 10, "fin": 11},
+          {"dia": 3, "inicio": 10, "fin": 11},
+          {"dia": 4, "inicio": 10, "fin": 11}
+        ]
+      },
+      {
+        "id": "2026A-MEC-DESSUS-J",
+        "profesor": "Flores Gaytan Virginia",
+        "salon": "N04",
+        "horario": [
+          {"dia": 0, "inicio": 11, "fin": 12},
+          {"dia": 1, "inicio": 11, "fin": 12},
+          {"dia": 2, "inicio": 11, "fin": 12},
+          {"dia": 3, "inicio": 11, "fin": 12},
+          {"dia": 4, "inicio": 11, "fin": 12}
+        ]
+      },
+      {
+        "id": "2026A-MEC-DESSUS-K",
+        "profesor": "Viesca Farias Fernando Miguel",
+        "salon": "CR04",
+        "horario": [
+          {"dia": 0, "inicio": 8, "fin": 9},
+          {"dia": 1, "inicio": 8, "fin": 9},
+          {"dia": 2, "inicio": 8, "fin": 9},
+          {"dia": 3, "inicio": 8, "fin": 9},
+          {"dia": 4, "inicio": 8, "fin": 9}
+        ]
+      },
+      {
+        "id": "2026A-MEC-DESSUS-L",
+        "profesor": "Moreno Padilla Marcela Guadalupe",
+        "salon": "N27",
+        "horario": [
+          {"dia": 0, "inicio": 13, "fin": 14},
+          {"dia": 1, "inicio": 13, "fin": 14},
+          {"dia": 2, "inicio": 13, "fin": 14},
+          {"dia": 3, "inicio": 13, "fin": 14},
+          {"dia": 4, "inicio": 13, "fin": 14}
+        ]
+      },
+      {
+        "id": "2026A-MEC-DESSUS-M",
+        "profesor": "De La Rosa Cepeda Mario Alberto",
+        "salon": "AM3",
+        "horario": [
+          {"dia": 0, "inicio": 18, "fin": 19},
+          {"dia": 1, "inicio": 18, "fin": 19},
+          {"dia": 2, "inicio": 18, "fin": 19},
+          {"dia": 3, "inicio": 18, "fin": 19},
+          {"dia": 4, "inicio": 18, "fin": 19}
+        ]
+      },
+      {
+        "id": "2026A-MEC-DESSUS-N",
+        "profesor": "Martinez Perez Rene",
+        "salon": "AM2",
+        "horario": [
+          {"dia": 0, "inicio": 19, "fin": 20},
+          {"dia": 1, "inicio": 19, "fin": 20},
+          {"dia": 2, "inicio": 19, "fin": 20},
+          {"dia": 3, "inicio": 19, "fin": 20},
+          {"dia": 4, "inicio": 19, "fin": 20}
+        ]
+      },
+      {
+        "id": "2026A-MEC-DESSUS-O",
+        "profesor": "Viesca Farias Fernando Miguel",
+        "salon": "CR04",
+        "horario": [
+          {"dia": 0, "inicio": 7, "fin": 8},
+          {"dia": 1, "inicio": 7, "fin": 8},
+          {"dia": 2, "inicio": 7, "fin": 8},
+          {"dia": 3, "inicio": 7, "fin": 8},
+          {"dia": 4, "inicio": 7, "fin": 8}
+        ]
+      },
+      {
+        "id": "2026A-MEC-DESSUS-P",
+        "profesor": "Orta Mendoza Alicia",
+        "salon": "N28",
+        "horario": [
+          {"dia": 0, "inicio": 15, "fin": 16},
+          {"dia": 1, "inicio": 15, "fin": 16},
+          {"dia": 2, "inicio": 15, "fin": 16},
+          {"dia": 3, "inicio": 15, "fin": 16},
+          {"dia": 4, "inicio": 15, "fin": 16}
+        ]
+      },
+      {
+        "id": "2026A-MEC-DESSUS-Q",
+        "profesor": "Martinez Perez Rene",
+        "salon": "AM2",
+        "horario": [
+          {"dia": 0, "inicio": 18, "fin": 19},
+          {"dia": 1, "inicio": 18, "fin": 19},
+          {"dia": 2, "inicio": 18, "fin": 19},
+          {"dia": 3, "inicio": 18, "fin": 19},
+          {"dia": 4, "inicio": 18, "fin": 19}
+        ]
+      },
+      {
+        "id": "2026A-MEC-DESSUS-R",
+        "profesor": "Rodarte Carrillo Manuel",
+        "salon": "N28",
+        "horario": [
+          {"dia": 0, "inicio": 18, "fin": 19},
+          {"dia": 1, "inicio": 18, "fin": 19},
+          {"dia": 2, "inicio": 18, "fin": 19},
+          {"dia": 3, "inicio": 18, "fin": 19},
+          {"dia": 4, "inicio": 18, "fin": 19}
+        ]
+      },
+      {
+        "id": "2026A-MEC-DESSUS-S",
+        "profesor": "Orta Mendoza Alicia",
+        "salon": "N27",
+        "horario": [
+          {"dia": 0, "inicio": 12, "fin": 13},
+          {"dia": 1, "inicio": 12, "fin": 13},
+          {"dia": 2, "inicio": 12, "fin": 13},
+          {"dia": 3, "inicio": 12, "fin": 13},
+          {"dia": 4, "inicio": 12, "fin": 13}
+        ]
+      },
+      {
+        "id": "2026A-MEC-DESSUS-T",
+        "profesor": "De La Rosa Cepeda Mario Alberto",
+        "salon": "AM3",
+        "horario": [
+          {"dia": 0, "inicio": 16, "fin": 17},
+          {"dia": 1, "inicio": 16, "fin": 17},
+          {"dia": 2, "inicio": 16, "fin": 17},
+          {"dia": 3, "inicio": 16, "fin": 17},
+          {"dia": 4, "inicio": 16, "fin": 17}
+        ]
+      },
+      {
+        "id": "2026A-MEC-DESSUS-U",
+        "profesor": "Rodarte Carrillo Manuel",
+        "salon": "N28",
+        "horario": [
+          {"dia": 0, "inicio": 17, "fin": 18},
+          {"dia": 1, "inicio": 17, "fin": 18},
+          {"dia": 2, "inicio": 17, "fin": 18},
+          {"dia": 3, "inicio": 17, "fin": 18},
+          {"dia": 4, "inicio": 17, "fin": 18}
+        ]
+      },
+      {
+        "id": "2026A-MEC-DESSUS-V",
+        "profesor": "Rodarte Carrillo Manuel",
+        "salon": "N28",
+        "horario": [
+          {"dia": 0, "inicio": 19, "fin": 20},
+          {"dia": 1, "inicio": 19, "fin": 20},
+          {"dia": 2, "inicio": 19, "fin": 20},
+          {"dia": 3, "inicio": 19, "fin": 20},
+          {"dia": 4, "inicio": 19, "fin": 20}
+        ]
+      },
+      {
+        "id": "2026A-MEC-DESSUS-W",
+        "profesor": "Viesca Farias Fernando Miguel",
+        "salon": "CR04",
+        "horario": [
+          {"dia": 0, "inicio": 9, "fin": 10},
+          {"dia": 1, "inicio": 9, "fin": 10},
+          {"dia": 2, "inicio": 9, "fin": 10},
+          {"dia": 3, "inicio": 9, "fin": 10},
+          {"dia": 4, "inicio": 9, "fin": 10}
+        ]
+      },
+      {
+        "id": "2026A-MEC-DESSUS-X",
+        "profesor": "De La Rosa Cepeda Mario Alberto",
+        "salon": "AM3",
+        "horario": [
+          {"dia": 0, "inicio": 17, "fin": 18},
+          {"dia": 1, "inicio": 17, "fin": 18},
+          {"dia": 2, "inicio": 17, "fin": 18},
+          {"dia": 3, "inicio": 17, "fin": 18},
+          {"dia": 4, "inicio": 17, "fin": 18}
+        ]
+      },
+      {
+        "id": "2026A-MEC-DESSUS-Y",
+        "profesor": "Flores Sanchez Alexeyevich",
+        "salon": "N23",
+        "horario": [
+          {"dia": 0, "inicio": 10, "fin": 11},
+          {"dia": 1, "inicio": 10, "fin": 11},
+          {"dia": 2, "inicio": 10, "fin": 11},
+          {"dia": 3, "inicio": 10, "fin": 11},
+          {"dia": 4, "inicio": 10, "fin": 11}
+        ]
+      },
+      {
+        "id": "2026A-MEC-DESSUS-Z",
+        "profesor": "Orta Mendoza Alicia",
+        "salon": "N27",
+        "horario": [
+          {"dia": 0, "inicio": 11, "fin": 12},
+          {"dia": 1, "inicio": 11, "fin": 12},
+          {"dia": 2, "inicio": 11, "fin": 12},
+          {"dia": 3, "inicio": 11, "fin": 12},
+          {"dia": 4, "inicio": 11, "fin": 12}
+        ]
+      }
+    ]
+  },
+  "MET_NUM": {
+    "nombre": "Métodos Numéricos",
+    "creditos": 4,
+    "semestre": 3,
+    "grupos": [
+      {
+        "id": "2026A-MEC-METNUM-B",
+        "profesor": "Lopez Guarin Gustavo",
+        "salon": "C06",
+        "horario": [
+          {"dia": 0, "inicio": 14, "fin": 15},
+          {"dia": 1, "inicio": 14, "fin": 15},
+          {"dia": 2, "inicio": 14, "fin": 15},
+          {"dia": 3, "inicio": 14, "fin": 15}
+        ]
+      },
+      {
+        "id": "2026A-MEC-METNUM-E",
+        "profesor": "Mora Gonzalez Ada Paulina",
+        "salon": "AV1",
+        "horario": [
+          {"dia": 0, "inicio": 8, "fin": 9},
+          {"dia": 1, "inicio": 8, "fin": 9},
+          {"dia": 2, "inicio": 8, "fin": 9},
+          {"dia": 3, "inicio": 8, "fin": 9}
+        ]
+      },
+      {
+        "id": "2026A-MEC-METNUM-F",
+        "profesor": "Barrales Montes Justino",
+        "salon": "C03",
+        "horario": [
+          {"dia": 0, "inicio": 15, "fin": 16},
+          {"dia": 1, "inicio": 15, "fin": 16},
+          {"dia": 2, "inicio": 15, "fin": 16},
+          {"dia": 3, "inicio": 15, "fin": 16}
+        ]
+      },
+      {
+        "id": "2026A-MEC-METNUM-I",
+        "profesor": "Barrales Montes Justino",
+        "salon": "C03",
+        "horario": [
+          {"dia": 0, "inicio": 16, "fin": 17},
+          {"dia": 1, "inicio": 16, "fin": 17},
+          {"dia": 2, "inicio": 16, "fin": 17},
+          {"dia": 3, "inicio": 16, "fin": 17}
+        ]
+      },
+      {
+        "id": "2026A-MEC-METNUM-K",
+        "profesor": "Lopez Guarin Gustavo",
+        "salon": "C05",
+        "horario": [
+          {"dia": 0, "inicio": 12, "fin": 13},
+          {"dia": 1, "inicio": 12, "fin": 13},
+          {"dia": 2, "inicio": 12, "fin": 13},
+          {"dia": 3, "inicio": 12, "fin": 13}
+        ]
+      }
+    ]
+  },
+  "ELEC_MAG": {
+    "nombre": "Electromagnetismo",
+    "creditos": 5,
+    "semestre": 3,
+    "grupos": [
+      {
+        "id": "2026A-MEC-ELECMAG-A",
+        "profesor": "Arellano Orozco Benjamin",
+        "salon": "N07",
+        "horario": [
+          {"dia": 0, "inicio": 19, "fin": 20},
+          {"dia": 1, "inicio": 19, "fin": 20},
+          {"dia": 2, "inicio": 19, "fin": 20},
+          {"dia": 3, "inicio": 19, "fin": 20},
+          {"dia": 4, "inicio": 19, "fin": 20}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ELECMAG-B",
+        "profesor": "Aldaco González Christian",
+        "salon": "LF1",
+        "horario": [
+          {"dia": 0, "inicio": 12, "fin": 13},
+          {"dia": 1, "inicio": 12, "fin": 13},
+          {"dia": 2, "inicio": 12, "fin": 13},
+          {"dia": 3, "inicio": 12, "fin": 13},
+          {"dia": 4, "inicio": 12, "fin": 13}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ELECMAG-C",
+        "profesor": "Arellano Orozco Benjamin",
+        "salon": "N07",
+        "horario": [
+          {"dia": 0, "inicio": 16, "fin": 17},
+          {"dia": 1, "inicio": 16, "fin": 17},
+          {"dia": 2, "inicio": 16, "fin": 17},
+          {"dia": 3, "inicio": 16, "fin": 17},
+          {"dia": 4, "inicio": 16, "fin": 17}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ELECMAG-D",
+        "profesor": "Arellano Orozco Benjamin",
+        "salon": "N07",
+        "horario": [
+          {"dia": 0, "inicio": 15, "fin": 16},
+          {"dia": 1, "inicio": 15, "fin": 16},
+          {"dia": 2, "inicio": 15, "fin": 16},
+          {"dia": 3, "inicio": 15, "fin": 16},
+          {"dia": 4, "inicio": 15, "fin": 16}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ELECMAG-E",
+        "profesor": "Arellano Orozco Benjamin",
+        "salon": "N07",
+        "horario": [
+          {"dia": 0, "inicio": 14, "fin": 15},
+          {"dia": 1, "inicio": 14, "fin": 15},
+          {"dia": 2, "inicio": 14, "fin": 15},
+          {"dia": 3, "inicio": 14, "fin": 15},
+          {"dia": 4, "inicio": 14, "fin": 15}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ELECMAG-G",
+        "profesor": "Arellano Orozco Benjamin",
+        "salon": "N07",
+        "horario": [
+          {"dia": 0, "inicio": 18, "fin": 19},
+          {"dia": 1, "inicio": 18, "fin": 19},
+          {"dia": 2, "inicio": 18, "fin": 19},
+          {"dia": 3, "inicio": 18, "fin": 19},
+          {"dia": 4, "inicio": 18, "fin": 19}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ELECMAG-H",
+        "profesor": "Aldaco González Christian",
+        "salon": "LF1",
+        "horario": [
+          {"dia": 0, "inicio": 9, "fin": 10},
+          {"dia": 1, "inicio": 9, "fin": 10},
+          {"dia": 2, "inicio": 9, "fin": 10},
+          {"dia": 3, "inicio": 9, "fin": 10},
+          {"dia": 4, "inicio": 9, "fin": 10}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ELECMAG-J",
+        "profesor": "Arellano Orozco Benjamin",
+        "salon": "N07",
+        "horario": [
+          {"dia": 0, "inicio": 17, "fin": 18},
+          {"dia": 1, "inicio": 17, "fin": 18},
+          {"dia": 2, "inicio": 17, "fin": 18},
+          {"dia": 3, "inicio": 17, "fin": 18},
+          {"dia": 4, "inicio": 17, "fin": 18}
+        ]
+      }
+    ]
+  },
+  "PROC_FAB": {
+    "nombre": "Procesos De Fabricación",
+    "creditos": 4,
+    "semestre": 3,
+    "grupos": [
+      {
+        "id": "2026A-MEC-PROCFAB-A",
+        "profesor": "Almanza Casas Efrain",
+        "salon": "AM2",
+        "horario": [
+          {"dia": 0, "inicio": 8, "fin": 9},
+          {"dia": 1, "inicio": 8, "fin": 9},
+          {"dia": 2, "inicio": 8, "fin": 9},
+          {"dia": 3, "inicio": 8, "fin": 9}
+        ]
+      },
+      {
+        "id": "2026A-MEC-PROCFAB-C",
+        "profesor": "Terrazas Ramos Luis Alberto",
+        "salon": "AM4",
+        "horario": [
+          {"dia": 0, "inicio": 15, "fin": 16},
+          {"dia": 1, "inicio": 15, "fin": 16},
+          {"dia": 2, "inicio": 15, "fin": 16},
+          {"dia": 3, "inicio": 15, "fin": 16}
+        ]
+      },
+      {
+        "id": "2026A-MEC-PROCFAB-D",
+        "profesor": "Almanza Casas Efrain",
+        "salon": "AM5",
+        "horario": [
+          {"dia": 0, "inicio": 13, "fin": 14},
+          {"dia": 1, "inicio": 13, "fin": 14},
+          {"dia": 2, "inicio": 13, "fin": 14},
+          {"dia": 3, "inicio": 13, "fin": 14}
+        ]
+      },
+      {
+        "id": "2026A-MEC-PROCFAB-E",
+        "profesor": "Terrazas Ramos Luis Alberto",
+        "salon": "N24",
+        "horario": [
+          {"dia": 0, "inicio": 9, "fin": 10},
+          {"dia": 1, "inicio": 9, "fin": 10},
+          {"dia": 2, "inicio": 9, "fin": 10},
+          {"dia": 3, "inicio": 9, "fin": 10}
+        ]
+      },
+      {
+        "id": "2026A-MEC-PROCFAB-F",
+        "profesor": "Solis Covarrubias Arnoldo",
+        "salon": "N02",
+        "horario": [
+          {"dia": 0, "inicio": 19, "fin": 20},
+          {"dia": 1, "inicio": 19, "fin": 20},
+          {"dia": 2, "inicio": 19, "fin": 20},
+          {"dia": 3, "inicio": 19, "fin": 20}
+        ]
+      },
+      {
+        "id": "2026A-MEC-PROCFAB-G",
+        "profesor": "García Nájera Jesús",
+        "salon": "N02",
+        "horario": [
+          {"dia": 0, "inicio": 17, "fin": 18},
+          {"dia": 1, "inicio": 17, "fin": 18},
+          {"dia": 2, "inicio": 17, "fin": 18},
+          {"dia": 3, "inicio": 17, "fin": 18}
+        ]
+      },
+      {
+        "id": "2026A-MEC-PROCFAB-H",
+        "profesor": "Terrazas Ramos Luis Alberto",
+        "salon": "N24",
+        "horario": [
+          {"dia": 0, "inicio": 11, "fin": 12},
+          {"dia": 1, "inicio": 11, "fin": 12},
+          {"dia": 2, "inicio": 11, "fin": 12},
+          {"dia": 3, "inicio": 11, "fin": 12}
+        ]
+      },
+      {
+        "id": "2026A-MEC-PROCFAB-I",
+        "profesor": "Herrera Trejo Martin",
+        "salon": "N08",
+        "horario": [
+          {"dia": 0, "inicio": 7, "fin": 8},
+          {"dia": 1, "inicio": 7, "fin": 8},
+          {"dia": 2, "inicio": 7, "fin": 8},
+          {"dia": 3, "inicio": 7, "fin": 8}
+        ]
+      },
+      {
+        "id": "2026A-MEC-PROCFAB-J",
+        "profesor": "Solis Covarrubias Arnoldo",
+        "salon": "N02",
+        "horario": [
+          {"dia": 0, "inicio": 15, "fin": 16},
+          {"dia": 1, "inicio": 15, "fin": 16},
+          {"dia": 2, "inicio": 15, "fin": 16},
+          {"dia": 3, "inicio": 15, "fin": 16}
+        ]
+      },
+      {
+        "id": "2026A-MEC-PROCFAB-K",
+        "profesor": "Almanza Casas Efrain",
+        "salon": "AM5",
+        "horario": [
+          {"dia": 0, "inicio": 12, "fin": 13},
+          {"dia": 1, "inicio": 12, "fin": 13},
+          {"dia": 2, "inicio": 12, "fin": 13},
+          {"dia": 3, "inicio": 12, "fin": 13}
+        ]
+      }
+    ]
+  },
+  "CALC_VEC": {
+    "nombre": "Cálculo Vectorial",
+    "creditos": 5,
+    "semestre": 3,
+    "grupos": [
+      {
+        "id": "2026A-MEC-CALCVEC-A",
+        "profesor": "Flores Villa Miguel Angel",
+        "salon": "C13",
+        "horario": [
+          {"dia": 0, "inicio": 19, "fin": 20},
+          {"dia": 1, "inicio": 19, "fin": 20},
+          {"dia": 2, "inicio": 19, "fin": 20},
+          {"dia": 3, "inicio": 19, "fin": 20},
+          {"dia": 4, "inicio": 19, "fin": 20}
+        ]
+      },
+      {
+        "id": "2026A-MEC-CALCVEC-A1",
+        "profesor": "Ruiz Benitez Jose Jesus Israel",
+        "salon": "C11",
+        "horario": [
+          {"dia": 0, "inicio": 18, "fin": 19},
+          {"dia": 1, "inicio": 18, "fin": 19},
+          {"dia": 2, "inicio": 18, "fin": 19},
+          {"dia": 3, "inicio": 18, "fin": 19},
+          {"dia": 4, "inicio": 18, "fin": 19}
+        ]
+      },
+      {
+        "id": "2026A-MEC-CALCVEC-B",
+        "profesor": "Garcia Alvarez Jose Ignacio",
+        "salon": "C12",
+        "horario": [
+          {"dia": 0, "inicio": 13, "fin": 14},
+          {"dia": 1, "inicio": 13, "fin": 14},
+          {"dia": 2, "inicio": 13, "fin": 14},
+          {"dia": 3, "inicio": 13, "fin": 14},
+          {"dia": 4, "inicio": 13, "fin": 14}
+        ]
+      },
+      {
+        "id": "2026A-MEC-CALCVEC-C",
+        "profesor": "Garcia Alvarez Jose Ignacio",
+        "salon": "C12",
+        "horario": [
+          {"dia": 0, "inicio": 14, "fin": 15},
+          {"dia": 1, "inicio": 14, "fin": 15},
+          {"dia": 2, "inicio": 14, "fin": 15},
+          {"dia": 3, "inicio": 14, "fin": 15},
+          {"dia": 4, "inicio": 14, "fin": 15}
+        ]
+      },
+      {
+        "id": "2026A-MEC-CALCVEC-D",
+        "profesor": "Rodriguez Luna Silvia Deyanira",
+        "salon": "N34",
+        "horario": [
+          {"dia": 0, "inicio": 9, "fin": 10},
+          {"dia": 1, "inicio": 9, "fin": 10},
+          {"dia": 2, "inicio": 9, "fin": 10},
+          {"dia": 3, "inicio": 9, "fin": 10},
+          {"dia": 4, "inicio": 9, "fin": 10}
+        ]
+      },
+      {
+        "id": "2026A-MEC-CALCVEC-E",
+        "profesor": "Rodriguez Luna Silvia Deyanira",
+        "salon": "N34",
+        "horario": [
+          {"dia": 0, "inicio": 10, "fin": 11},
+          {"dia": 1, "inicio": 10, "fin": 11},
+          {"dia": 2, "inicio": 10, "fin": 11},
+          {"dia": 3, "inicio": 10, "fin": 11},
+          {"dia": 4, "inicio": 10, "fin": 11}
+        ]
+      },
+      {
+        "id": "2026A-MEC-CALCVEC-G",
+        "profesor": "Garcia Alvarez Jose Ignacio",
+        "salon": "C12",
+        "horario": [
+          {"dia": 0, "inicio": 15, "fin": 16},
+          {"dia": 1, "inicio": 15, "fin": 16},
+          {"dia": 2, "inicio": 15, "fin": 16},
+          {"dia": 3, "inicio": 15, "fin": 16},
+          {"dia": 4, "inicio": 15, "fin": 16}
+        ]
+      },
+      {
+        "id": "2026A-MEC-CALCVEC-I",
+        "profesor": "Garcia Alvarez Jose Ignacio",
+        "salon": "C12",
+        "horario": [
+          {"dia": 0, "inicio": 16, "fin": 17},
+          {"dia": 1, "inicio": 16, "fin": 17},
+          {"dia": 2, "inicio": 16, "fin": 17},
+          {"dia": 3, "inicio": 16, "fin": 17},
+          {"dia": 4, "inicio": 16, "fin": 17}
+        ]
+      },
+      {
+        "id": "2026A-MEC-CALCVEC-K",
+        "profesor": "Valdes Gonzalez Lucia Marisol",
+        "salon": "N39",
+        "horario": [
+          {"dia": 0, "inicio": 8, "fin": 9},
+          {"dia": 1, "inicio": 8, "fin": 9},
+          {"dia": 2, "inicio": 8, "fin": 9},
+          {"dia": 3, "inicio": 8, "fin": 9},
+          {"dia": 4, "inicio": 8, "fin": 9}
+        ]
+      },
+      {
+        "id": "2026A-MEC-CALCVEC-L",
+        "profesor": "Del Bosque Martínez Alicia Guadalupe",
+        "salon": "C11",
+        "horario": [
+          {"dia": 0, "inicio": 11, "fin": 12},
+          {"dia": 1, "inicio": 11, "fin": 12},
+          {"dia": 2, "inicio": 11, "fin": 12},
+          {"dia": 3, "inicio": 11, "fin": 12},
+          {"dia": 4, "inicio": 11, "fin": 12}
+        ]
+      },
+      {
+        "id": "2026A-MEC-CALCVEC-M",
+        "profesor": "Del Bosque Martínez Alicia Guadalupe",
+        "salon": "C10",
+        "horario": [
+          {"dia": 0, "inicio": 14, "fin": 15},
+          {"dia": 1, "inicio": 14, "fin": 15},
+          {"dia": 2, "inicio": 14, "fin": 15},
+          {"dia": 3, "inicio": 14, "fin": 15},
+          {"dia": 4, "inicio": 14, "fin": 15}
+        ]
+      },
+      {
+        "id": "2026A-MEC-CALCVEC-O",
+        "profesor": "Martinez Montemayor Gloria Estela",
+        "salon": "AV1",
+        "horario": [
+          {"dia": 0, "inicio": 16, "fin": 17},
+          {"dia": 1, "inicio": 16, "fin": 17},
+          {"dia": 2, "inicio": 16, "fin": 17},
+          {"dia": 3, "inicio": 16, "fin": 17},
+          {"dia": 4, "inicio": 16, "fin": 17}
+        ]
+      },
+      {
+        "id": "2026A-MEC-CALCVEC-P",
+        "profesor": "Berlanga Ortiz Maria Elena",
+        "salon": "CR09",
+        "horario": [
+          {"dia": 0, "inicio": 10, "fin": 11},
+          {"dia": 1, "inicio": 10, "fin": 11},
+          {"dia": 2, "inicio": 10, "fin": 11},
+          {"dia": 3, "inicio": 10, "fin": 11},
+          {"dia": 4, "inicio": 10, "fin": 11}
+        ]
+      },
+      {
+        "id": "2026A-MEC-CALCVEC-S",
+        "profesor": "Rodriguez Luna Silvia Deyanira",
+        "salon": "N34",
+        "horario": [
+          {"dia": 0, "inicio": 11, "fin": 12},
+          {"dia": 1, "inicio": 11, "fin": 12},
+          {"dia": 2, "inicio": 11, "fin": 12},
+          {"dia": 3, "inicio": 11, "fin": 12},
+          {"dia": 4, "inicio": 11, "fin": 12}
+        ]
+      },
+      {
+        "id": "2026A-MEC-CALCVEC-T",
+        "profesor": "Berlanga Ortiz Maria Elena",
+        "salon": "N35",
+        "horario": [
+          {"dia": 0, "inicio": 12, "fin": 13},
+          {"dia": 1, "inicio": 12, "fin": 13},
+          {"dia": 2, "inicio": 12, "fin": 13},
+          {"dia": 3, "inicio": 12, "fin": 13},
+          {"dia": 4, "inicio": 12, "fin": 13}
+        ]
+      },
+      {
+        "id": "2026A-MEC-CALCVEC-V",
+        "profesor": "Flores Villa Miguel Angel",
+        "salon": "C13",
+        "horario": [
+          {"dia": 0, "inicio": 17, "fin": 18},
+          {"dia": 1, "inicio": 17, "fin": 18},
+          {"dia": 2, "inicio": 17, "fin": 18},
+          {"dia": 3, "inicio": 17, "fin": 18},
+          {"dia": 4, "inicio": 17, "fin": 18}
+        ]
+      },
+      {
+        "id": "2026A-MEC-CALCVEC-W",
+        "profesor": "Rodriguez Luna Silvia Deyanira",
+        "salon": "N34",
+        "horario": [
+          {"dia": 0, "inicio": 12, "fin": 13},
+          {"dia": 1, "inicio": 12, "fin": 13},
+          {"dia": 2, "inicio": 12, "fin": 13},
+          {"dia": 3, "inicio": 12, "fin": 13},
+          {"dia": 4, "inicio": 12, "fin": 13}
+        ]
+      },
+      {
+        "id": "2026A-MEC-CALCVEC-X",
+        "profesor": "Rodriguez Contreras Araceli Elizabeth",
+        "salon": "C13",
+        "horario": [
+          {"dia": 0, "inicio": 11, "fin": 12},
+          {"dia": 1, "inicio": 11, "fin": 12},
+          {"dia": 2, "inicio": 11, "fin": 12},
+          {"dia": 3, "inicio": 11, "fin": 12},
+          {"dia": 4, "inicio": 11, "fin": 12}
+        ]
+      },
+      {
+        "id": "2026A-MEC-CALCVEC-Y",
+        "profesor": "Rodriguez Contreras Araceli Elizabeth",
+        "salon": "C13",
+        "horario": [
+          {"dia": 0, "inicio": 12, "fin": 13},
+          {"dia": 1, "inicio": 12, "fin": 13},
+          {"dia": 2, "inicio": 12, "fin": 13},
+          {"dia": 3, "inicio": 12, "fin": 13},
+          {"dia": 4, "inicio": 12, "fin": 13}
+        ]
+      },
+      {
+        "id": "2026A-MEC-CALCVEC-Z",
+        "profesor": "Flores Villa Miguel Angel",
+        "salon": "C13",
+        "horario": [
+          {"dia": 0, "inicio": 20, "fin": 21},
+          {"dia": 1, "inicio": 20, "fin": 21},
+          {"dia": 2, "inicio": 20, "fin": 21},
+          {"dia": 3, "inicio": 20, "fin": 21},
+          {"dia": 4, "inicio": 20, "fin": 21}
+        ]
+      }
+    ]
+  },
+  "ESTAT": {
+    "nombre": "Estática",
+    "creditos": 4,
+    "semestre": 3,
+    "grupos": [
+      {
+        "id": "2026A-MEC-ESTAT-A",
+        "profesor": "Oyervides Valdez Jorge",
+        "salon": "S20",
+        "horario": [
+          {"dia": 0, "inicio": 10, "fin": 11},
+          {"dia": 1, "inicio": 10, "fin": 11},
+          {"dia": 2, "inicio": 10, "fin": 11},
+          {"dia": 3, "inicio": 10, "fin": 11}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ESTAT-B",
+        "profesor": "Oyervides Valdez Jorge",
+        "salon": "S20",
+        "horario": [
+          {"dia": 0, "inicio": 9, "fin": 10},
+          {"dia": 1, "inicio": 9, "fin": 10},
+          {"dia": 2, "inicio": 9, "fin": 10},
+          {"dia": 3, "inicio": 9, "fin": 10}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ESTAT-C",
+        "profesor": "Oyervides Valdez Jorge",
+        "salon": "S20",
+        "horario": [
+          {"dia": 0, "inicio": 17, "fin": 18},
+          {"dia": 1, "inicio": 17, "fin": 18},
+          {"dia": 2, "inicio": 17, "fin": 18},
+          {"dia": 3, "inicio": 17, "fin": 18}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ESTAT-D",
+        "profesor": "Oyervides Valdez Jorge",
+        "salon": "S20",
+        "horario": [
+          {"dia": 0, "inicio": 18, "fin": 19},
+          {"dia": 1, "inicio": 18, "fin": 19},
+          {"dia": 2, "inicio": 18, "fin": 19},
+          {"dia": 3, "inicio": 18, "fin": 19}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ESTAT-E",
+        "profesor": "Oyervides Valdez Jorge",
+        "salon": "S20",
+        "horario": [
+          {"dia": 0, "inicio": 8, "fin": 9},
+          {"dia": 1, "inicio": 8, "fin": 9},
+          {"dia": 2, "inicio": 8, "fin": 9},
+          {"dia": 3, "inicio": 8, "fin": 9}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ESTAT-F",
+        "profesor": "Urbina Valdes Leticia",
+        "salon": "S14",
+        "horario": [
+          {"dia": 0, "inicio": 12, "fin": 13},
+          {"dia": 1, "inicio": 12, "fin": 13},
+          {"dia": 2, "inicio": 12, "fin": 13},
+          {"dia": 3, "inicio": 12, "fin": 13}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ESTAT-G",
+        "profesor": "Urbina Valdes Leticia",
+        "salon": "S14",
+        "horario": [
+          {"dia": 0, "inicio": 11, "fin": 12},
+          {"dia": 1, "inicio": 11, "fin": 12},
+          {"dia": 2, "inicio": 11, "fin": 12},
+          {"dia": 3, "inicio": 11, "fin": 12}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ESTAT-H",
+        "profesor": "Urbina Valdes Leticia",
+        "salon": "S14",
+        "horario": [
+          {"dia": 0, "inicio": 10, "fin": 11},
+          {"dia": 1, "inicio": 10, "fin": 11},
+          {"dia": 2, "inicio": 10, "fin": 11},
+          {"dia": 3, "inicio": 10, "fin": 11}
+        ]
+      }
+    ]
+  },
+  {
+  "MEC_MAT": {
+    "nombre": "Mecánica De Materiales",
+    "creditos": 6,
+    "semestre": 4,
+    "grupos": [
+      {
+        "id": "2026A-MEC-MECMAT-A",
+        "profesor": "Cardenas Contreras Juan Carlos",
+        "salon": "N22",
+        "horario": [
+          {"dia": 0, "inicio": 13, "fin": 14},
+          {"dia": 1, "inicio": 13, "fin": 14},
+          {"dia": 2, "inicio": 13, "fin": 14},
+          {"dia": 3, "inicio": 13, "fin": 14},
+          {"dia": 4, "inicio": 12, "fin": 14}
+        ]
+      },
+      {
+        "id": "2026A-MEC-MECMAT-B",
+        "profesor": "Tovar Epifanio Juan Francisco",
+        "salon": "N19",
+        "horario": [
+          {"dia": 0, "inicio": 7, "fin": 8},
+          {"dia": 1, "inicio": 7, "fin": 8},
+          {"dia": 2, "inicio": 7, "fin": 8},
+          {"dia": 3, "inicio": 7, "fin": 8},
+          {"dia": 4, "inicio": 7, "fin": 9}
+        ]
+      },
+      {
+        "id": "2026A-MEC-MECMAT-C",
+        "profesor": "Cardenas Contreras Juan Carlos",
+        "salon": "N23",
+        "horario": [
+          {"dia": 0, "inicio": 9, "fin": 10},
+          {"dia": 1, "inicio": 9, "fin": 10},
+          {"dia": 2, "inicio": 9, "fin": 10},
+          {"dia": 3, "inicio": 9, "fin": 10},
+          {"dia": 4, "inicio": 8, "fin": 10}
+        ]
+      },
+      {
+        "id": "2026A-MEC-MECMAT-D",
+        "profesor": "Ruiz Rosales Cesar Oswaldo",
+        "salon": "N17",
+        "horario": [
+          {"dia": 0, "inicio": 19, "fin": 20},
+          {"dia": 1, "inicio": 19, "fin": 20},
+          {"dia": 2, "inicio": 19, "fin": 20},
+          {"dia": 3, "inicio": 19, "fin": 20},
+          {"dia": 4, "inicio": 18, "fin": 20}
+        ]
+      },
+      {
+        "id": "2026A-MEC-MECMAT-E",
+        "profesor": "Tovar Epifanio Juan Francisco",
+        "salon": "N19",
+        "horario": [
+          {"dia": 0, "inicio": 11, "fin": 12},
+          {"dia": 1, "inicio": 11, "fin": 12},
+          {"dia": 2, "inicio": 11, "fin": 12},
+          {"dia": 3, "inicio": 11, "fin": 12},
+          {"dia": 4, "inicio": 11, "fin": 13}
+        ]
+      }
+    ]
+  },
+  "DIN": {
+    "nombre": "Dinámica",
+    "creditos": 4,
+    "semestre": 4,
+    "grupos": [
+      {
+        "id": "2026A-MEC-DIN-A",
+        "profesor": "Alvarado González Cipriano",
+        "salon": "S16",
+        "horario": [
+          {"dia": 0, "inicio": 12, "fin": 13},
+          {"dia": 1, "inicio": 12, "fin": 13},
+          {"dia": 2, "inicio": 12, "fin": 13},
+          {"dia": 3, "inicio": 12, "fin": 13}
+        ]
+      },
+      {
+        "id": "2026A-MEC-DIN-B",
+        "profesor": "Franco Martinez Claudia Yvonne",
+        "salon": "N09",
+        "horario": [
+          {"dia": 0, "inicio": 8, "fin": 9},
+          {"dia": 1, "inicio": 8, "fin": 9},
+          {"dia": 2, "inicio": 8, "fin": 9},
+          {"dia": 3, "inicio": 8, "fin": 9}
+        ]
+      },
+      {
+        "id": "2026A-MEC-DIN-D",
+        "profesor": "De La Peña Alcala Ismene Guadalupe",
+        "salon": "N12",
+        "horario": [
+          {"dia": 0, "inicio": 19, "fin": 20},
+          {"dia": 1, "inicio": 19, "fin": 20},
+          {"dia": 2, "inicio": 19, "fin": 20},
+          {"dia": 3, "inicio": 19, "fin": 20}
+        ]
+      },
+      {
+        "id": "2026A-MEC-DIN-E",
+        "profesor": "Alvarado González Cipriano",
+        "salon": "S15",
+        "horario": [
+          {"dia": 0, "inicio": 7, "fin": 8},
+          {"dia": 1, "inicio": 7, "fin": 8},
+          {"dia": 2, "inicio": 7, "fin": 8},
+          {"dia": 3, "inicio": 7, "fin": 8}
+        ]
+      },
+      {
+        "id": "2026A-MEC-DIN-F",
+        "profesor": "Arredondo Valdez Juan",
+        "salon": "S14",
+        "horario": [
+          {"dia": 0, "inicio": 17, "fin": 18},
+          {"dia": 1, "inicio": 17, "fin": 18},
+          {"dia": 2, "inicio": 17, "fin": 18},
+          {"dia": 3, "inicio": 17, "fin": 18}
+        ]
+      },
+      {
+        "id": "2026A-MEC-DIN-G",
+        "profesor": "Alvarado González Cipriano",
+        "salon": "S15",
+        "horario": [
+          {"dia": 0, "inicio": 10, "fin": 11},
+          {"dia": 1, "inicio": 10, "fin": 11},
+          {"dia": 2, "inicio": 10, "fin": 11},
+          {"dia": 3, "inicio": 10, "fin": 11}
+        ]
+      },
+      {
+        "id": "2026A-MEC-DIN-H",
+        "profesor": "Alvarado González Cipriano",
+        "salon": "S15",
+        "horario": [
+          {"dia": 0, "inicio": 9, "fin": 10},
+          {"dia": 1, "inicio": 9, "fin": 10},
+          {"dia": 2, "inicio": 9, "fin": 10},
+          {"dia": 3, "inicio": 9, "fin": 10}
+        ]
+      },
+      {
+        "id": "2026A-MEC-DIN-I",
+        "profesor": "De La Peña Alcala Ismene Guadalupe",
+        "salon": "N12",
+        "horario": [
+          {"dia": 0, "inicio": 20, "fin": 21},
+          {"dia": 1, "inicio": 20, "fin": 21},
+          {"dia": 2, "inicio": 20, "fin": 21},
+          {"dia": 3, "inicio": 20, "fin": 21}
+        ]
+      }
+    ]
+  },
+  "ECU_DIF": {
+    "nombre": "Ecuaciones Diferenciales",
+    "creditos": 5,
+    "semestre": 4,
+    "grupos": [
+      {
+        "id": "2026A-MEC-ECUDIF-A",
+        "profesor": "Sanchez Romina Denisse",
+        "salon": "N37",
+        "horario": [
+          {"dia": 0, "inicio": 11, "fin": 12},
+          {"dia": 1, "inicio": 11, "fin": 12},
+          {"dia": 2, "inicio": 11, "fin": 12},
+          {"dia": 3, "inicio": 11, "fin": 12},
+          {"dia": 4, "inicio": 11, "fin": 12}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ECUDIF-B",
+        "profesor": "Ing. Cantú César Iván",
+        "salon": "N07",
+        "horario": [
+          {"dia": 0, "inicio": 9, "fin": 10},
+          {"dia": 1, "inicio": 9, "fin": 10},
+          {"dia": 2, "inicio": 9, "fin": 10},
+          {"dia": 3, "inicio": 9, "fin": 10},
+          {"dia": 4, "inicio": 9, "fin": 10}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ECUDIF-D",
+        "profesor": "Cantú Perez Jesus",
+        "salon": "N38",
+        "horario": [
+          {"dia": 0, "inicio": 13, "fin": 14},
+          {"dia": 1, "inicio": 13, "fin": 14},
+          {"dia": 2, "inicio": 13, "fin": 14},
+          {"dia": 3, "inicio": 13, "fin": 14},
+          {"dia": 4, "inicio": 13, "fin": 14}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ECUDIF-E",
+        "profesor": "Valdes Gonzalez Lucia Marisol",
+        "salon": "N39",
+        "horario": [
+          {"dia": 0, "inicio": 10, "fin": 11},
+          {"dia": 1, "inicio": 10, "fin": 11},
+          {"dia": 2, "inicio": 10, "fin": 11},
+          {"dia": 3, "inicio": 10, "fin": 11},
+          {"dia": 4, "inicio": 10, "fin": 11}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ECUDIF-F",
+        "profesor": "Reyes Acosta Narda Lucely",
+        "salon": "N35",
+        "horario": [
+          {"dia": 0, "inicio": 9, "fin": 10},
+          {"dia": 1, "inicio": 9, "fin": 10},
+          {"dia": 2, "inicio": 9, "fin": 10},
+          {"dia": 3, "inicio": 9, "fin": 10},
+          {"dia": 4, "inicio": 9, "fin": 10}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ECUDIF-G",
+        "profesor": "Cantú Perez Jesus",
+        "salon": "N38",
+        "horario": [
+          {"dia": 0, "inicio": 12, "fin": 13},
+          {"dia": 1, "inicio": 12, "fin": 13},
+          {"dia": 2, "inicio": 12, "fin": 13},
+          {"dia": 3, "inicio": 12, "fin": 13},
+          {"dia": 4, "inicio": 12, "fin": 13}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ECUDIF-H",
+        "profesor": "Valdes Gonzalez Lucia Marisol",
+        "salon": "N39",
+        "horario": [
+          {"dia": 0, "inicio": 11, "fin": 12},
+          {"dia": 1, "inicio": 11, "fin": 12},
+          {"dia": 2, "inicio": 11, "fin": 12},
+          {"dia": 3, "inicio": 11, "fin": 12},
+          {"dia": 4, "inicio": 11, "fin": 12}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ECUDIF-I",
+        "profesor": "Sanchez Romina Denisse",
+        "salon": "N37",
+        "horario": [
+          {"dia": 0, "inicio": 10, "fin": 11},
+          {"dia": 1, "inicio": 10, "fin": 11},
+          {"dia": 2, "inicio": 10, "fin": 11},
+          {"dia": 3, "inicio": 10, "fin": 11},
+          {"dia": 4, "inicio": 10, "fin": 11}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ECUDIF-J",
+        "profesor": "Del Bosque Martínez Alicia Guadalupe",
+        "salon": "C11",
+        "horario": [
+          {"dia": 0, "inicio": 10, "fin": 11},
+          {"dia": 1, "inicio": 10, "fin": 11},
+          {"dia": 2, "inicio": 10, "fin": 11},
+          {"dia": 3, "inicio": 10, "fin": 11},
+          {"dia": 4, "inicio": 10, "fin": 11}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ECUDIF-K",
+        "profesor": "Del Bosque Martínez Alicia Guadalupe",
+        "salon": "C10",
+        "horario": [
+          {"dia": 0, "inicio": 13, "fin": 14},
+          {"dia": 1, "inicio": 13, "fin": 14},
+          {"dia": 2, "inicio": 13, "fin": 14},
+          {"dia": 3, "inicio": 13, "fin": 14},
+          {"dia": 4, "inicio": 13, "fin": 14}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ECUDIF-L",
+        "profesor": "Luevano Martinez Ismael",
+        "salon": "C03",
+        "horario": [
+          {"dia": 0, "inicio": 8, "fin": 9},
+          {"dia": 1, "inicio": 8, "fin": 9},
+          {"dia": 2, "inicio": 8, "fin": 9},
+          {"dia": 3, "inicio": 8, "fin": 9},
+          {"dia": 4, "inicio": 8, "fin": 9}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ECUDIF-M",
+        "profesor": "García Calvillo Olivia",
+        "salon": "C03",
+        "horario": [
+          {"dia": 0, "inicio": 14, "fin": 15},
+          {"dia": 1, "inicio": 14, "fin": 15},
+          {"dia": 2, "inicio": 14, "fin": 15},
+          {"dia": 3, "inicio": 14, "fin": 15},
+          {"dia": 4, "inicio": 14, "fin": 15}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ECUDIF-N",
+        "profesor": "García Calvillo Olivia",
+        "salon": "C03",
+        "horario": [
+          {"dia": 0, "inicio": 13, "fin": 14},
+          {"dia": 1, "inicio": 13, "fin": 14},
+          {"dia": 2, "inicio": 13, "fin": 14},
+          {"dia": 3, "inicio": 13, "fin": 14},
+          {"dia": 4, "inicio": 13, "fin": 14}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ECUDIF-O",
+        "profesor": "Ramos Oliveira Jorge Alberto",
+        "salon": "C04",
+        "horario": [
+          {"dia": 0, "inicio": 16, "fin": 17},
+          {"dia": 1, "inicio": 16, "fin": 17},
+          {"dia": 2, "inicio": 16, "fin": 17},
+          {"dia": 3, "inicio": 16, "fin": 17},
+          {"dia": 4, "inicio": 16, "fin": 17}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ECUDIF-P",
+        "profesor": "Reyes Acosta Narda Lucely",
+        "salon": "N35",
+        "horario": [
+          {"dia": 0, "inicio": 8, "fin": 9},
+          {"dia": 1, "inicio": 8, "fin": 9},
+          {"dia": 2, "inicio": 8, "fin": 9},
+          {"dia": 3, "inicio": 8, "fin": 9},
+          {"dia": 4, "inicio": 8, "fin": 9}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ECUDIF-Q",
+        "profesor": "García Calvillo Olivia",
+        "salon": "C03",
+        "horario": [
+          {"dia": 0, "inicio": 10, "fin": 11},
+          {"dia": 1, "inicio": 10, "fin": 11},
+          {"dia": 2, "inicio": 10, "fin": 11},
+          {"dia": 3, "inicio": 10, "fin": 11},
+          {"dia": 4, "inicio": 10, "fin": 11}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ECUDIF-R",
+        "profesor": "García Calvillo Olivia",
+        "salon": "C03",
+        "horario": [
+          {"dia": 0, "inicio": 11, "fin": 12},
+          {"dia": 1, "inicio": 11, "fin": 12},
+          {"dia": 2, "inicio": 11, "fin": 12},
+          {"dia": 3, "inicio": 11, "fin": 12},
+          {"dia": 4, "inicio": 11, "fin": 12}
+        ]
+      }
+    ]
+  },
+  "TAL_INV_1": {
+    "nombre": "Taller De Investigación I",
+    "creditos": 4,
+    "semestre": 4,
+    "grupos": [
+      {
+        "id": "2026A-MEC-TALINV1-A",
+        "profesor": "Ruiz Moreno Fernando Alfonso",
+        "salon": "S16",
+        "horario": [
+          {"dia": 0, "inicio": 10, "fin": 11},
+          {"dia": 1, "inicio": 10, "fin": 11},
+          {"dia": 2, "inicio": 10, "fin": 11},
+          {"dia": 3, "inicio": 10, "fin": 11}
+        ]
+      },
+      {
+        "id": "2026A-MEC-TALINV1-C",
+        "profesor": "Ruiz Moreno Fernando Alfonso",
+        "salon": "S16",
+        "horario": [
+          {"dia": 0, "inicio": 11, "fin": 12},
+          {"dia": 1, "inicio": 11, "fin": 12},
+          {"dia": 2, "inicio": 11, "fin": 12},
+          {"dia": 3, "inicio": 11, "fin": 12}
+        ]
+      },
+      {
+        "id": "2026A-MEC-TALINV1-D",
+        "profesor": "Ruiz Moreno Fernando Alfonso",
+        "salon": "S13",
+        "horario": [
+          {"dia": 0, "inicio": 7, "fin": 8},
+          {"dia": 1, "inicio": 7, "fin": 8},
+          {"dia": 2, "inicio": 7, "fin": 8},
+          {"dia": 3, "inicio": 7, "fin": 8}
+        ]
+      },
+      {
+        "id": "2026A-MEC-TALINV1-E",
+        "profesor": "Ruiz Moreno Fernando Alfonso",
+        "salon": "S13",
+        "horario": [
+          {"dia": 0, "inicio": 8, "fin": 9},
+          {"dia": 1, "inicio": 8, "fin": 9},
+          {"dia": 2, "inicio": 8, "fin": 9},
+          {"dia": 3, "inicio": 8, "fin": 9}
+        ]
+      },
+      {
+        "id": "2026A-MEC-TALINV1-G",
+        "profesor": "Navarro Huitron Luis Manuel",
+        "salon": "LE4",
+        "horario": [
+          {"dia": 0, "inicio": 12, "fin": 13},
+          {"dia": 1, "inicio": 12, "fin": 13},
+          {"dia": 2, "inicio": 12, "fin": 13},
+          {"dia": 3, "inicio": 12, "fin": 13}
+        ]
+      },
+      {
+        "id": "2026A-MEC-TALINV1-I",
+        "profesor": "Dueñaz Reyes Juana Maria",
+        "salon": "S19",
+        "horario": [
+          {"dia": 0, "inicio": 7, "fin": 8},
+          {"dia": 1, "inicio": 7, "fin": 8},
+          {"dia": 2, "inicio": 7, "fin": 8},
+          {"dia": 3, "inicio": 7, "fin": 8}
+        ]
+      },
+      {
+        "id": "2026A-MEC-TALINV1-J",
+        "profesor": "Dueñaz Reyes Juana Maria",
+        "salon": "S19",
+        "horario": [
+          {"dia": 0, "inicio": 8, "fin": 9},
+          {"dia": 1, "inicio": 8, "fin": 9},
+          {"dia": 2, "inicio": 8, "fin": 9},
+          {"dia": 3, "inicio": 8, "fin": 9}
+        ]
+      },
+      {
+        "id": "2026A-MEC-TALINV1-K",
+        "profesor": "Dueñaz Reyes Juana Maria",
+        "salon": "S18",
+        "horario": [
+          {"dia": 0, "inicio": 12, "fin": 13},
+          {"dia": 1, "inicio": 12, "fin": 13},
+          {"dia": 2, "inicio": 12, "fin": 13},
+          {"dia": 3, "inicio": 12, "fin": 13}
+        ]
+      },
+      {
+        "id": "2026A-MEC-TALINV1-X",
+        "profesor": "Navarro Huitron Luis Manuel",
+        "salon": "LE4",
+        "horario": [
+          {"dia": 0, "inicio": 13, "fin": 14},
+          {"dia": 1, "inicio": 13, "fin": 14},
+          {"dia": 2, "inicio": 13, "fin": 14},
+          {"dia": 3, "inicio": 13, "fin": 14}
+        ]
+      },
+      {
+        "id": "2026A-MEC-TALINV1-Y",
+        "profesor": "POR ASIGNAR",
+        "salon": "N14",
+        "horario": [
+          {"dia": 0, "inicio": 7, "fin": 8},
+          {"dia": 1, "inicio": 7, "fin": 8},
+          {"dia": 2, "inicio": 7, "fin": 8},
+          {"dia": 3, "inicio": 7, "fin": 8}
+        ]
+      }
+    ]
+  },
+  "ANA_CIR_ELEC": {
+    "nombre": "Análisis De Circuitos Eléctricos",
+    "creditos": 6,
+    "semestre": 4,
+    "grupos": [
+      {
+        "id": "2026A-MEC-ANACIRELEC-A",
+        "profesor": "Epifanio López Iván De Jesús",
+        "salon": "N15",
+        "horario": [
+          {"dia": 0, "inicio": 9, "fin": 10},
+          {"dia": 1, "inicio": 9, "fin": 10},
+          {"dia": 2, "inicio": 9, "fin": 10},
+          {"dia": 3, "inicio": 9, "fin": 10},
+          {"dia": 4, "inicio": 9, "fin": 11}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ANACIRELEC-B",
+        "profesor": "Martínez Hernández Alejandro",
+        "salon": "S15",
+        "horario": [
+          {"dia": 0, "inicio": 12, "fin": 13},
+          {"dia": 1, "inicio": 12, "fin": 13},
+          {"dia": 2, "inicio": 12, "fin": 13},
+          {"dia": 3, "inicio": 12, "fin": 13},
+          {"dia": 4, "inicio": 12, "fin": 14}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ANACIRELEC-C",
+        "profesor": "Tolentino Quilantan Horacio",
+        "salon": "N15",
+        "horario": [
+          {"dia": 0, "inicio": 16, "fin": 17},
+          {"dia": 1, "inicio": 16, "fin": 17},
+          {"dia": 2, "inicio": 16, "fin": 17},
+          {"dia": 3, "inicio": 16, "fin": 17},
+          {"dia": 4, "inicio": 16, "fin": 18}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ANACIRELEC-D",
+        "profesor": "Najera Diaz Josue Isrrael",
+        "salon": "N32",
+        "horario": [
+          {"dia": 0, "inicio": 18, "fin": 19},
+          {"dia": 1, "inicio": 18, "fin": 19},
+          {"dia": 2, "inicio": 18, "fin": 19},
+          {"dia": 3, "inicio": 18, "fin": 19},
+          {"dia": 4, "inicio": 17, "fin": 19}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ANACIRELEC-E",
+        "profesor": "Epifanio López Iván De Jesús",
+        "salon": "N09",
+        "horario": [
+          {"dia": 0, "inicio": 7, "fin": 8},
+          {"dia": 1, "inicio": 7, "fin": 8},
+          {"dia": 2, "inicio": 7, "fin": 8},
+          {"dia": 3, "inicio": 7, "fin": 8},
+          {"dia": 4, "inicio": 7, "fin": 9}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ANACIRELEC-F",
+        "profesor": "Najera Diaz Josue Isrrael",
+        "salon": "N32",
+        "horario": [
+          {"dia": 0, "inicio": 20, "fin": 21},
+          {"dia": 1, "inicio": 20, "fin": 21},
+          {"dia": 2, "inicio": 20, "fin": 21},
+          {"dia": 3, "inicio": 20, "fin": 21},
+          {"dia": 4, "inicio": 20, "fin": 22}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ANACIRELEC-G",
+        "profesor": "Aguilar Gaona Fernando",
+        "salon": "S20",
+        "horario": [
+          {"dia": 0, "inicio": 11, "fin": 12},
+          {"dia": 1, "inicio": 11, "fin": 12},
+          {"dia": 2, "inicio": 11, "fin": 12},
+          {"dia": 3, "inicio": 11, "fin": 12},
+          {"dia": 4, "inicio": 10, "fin": 12}
+        ]
+      }
+    ]
+  },
+  "FUND_TERM": {
+    "nombre": "Fundamentos De Termodinámica",
+    "creditos": 4,
+    "semestre": 4,
+    "grupos": [
+      {
+        "id": "2026A-MEC-FUNDTERM-A",
+        "profesor": "Luques Lopez Elena Guadalupe",
+        "salon": "N04",
+        "horario": [
+          {"dia": 0, "inicio": 8, "fin": 9},
+          {"dia": 1, "inicio": 8, "fin": 9},
+          {"dia": 2, "inicio": 8, "fin": 9},
+          {"dia": 3, "inicio": 8, "fin": 9}
+        ]
+      },
+      {
+        "id": "2026A-MEC-FUNDTERM-B",
+        "profesor": "Gamon Perales Erendira Del Rocio",
+        "salon": "N01",
+        "horario": [
+          {"dia": 0, "inicio": 11, "fin": 12},
+          {"dia": 1, "inicio": 11, "fin": 12},
+          {"dia": 2, "inicio": 11, "fin": 12},
+          {"dia": 3, "inicio": 11, "fin": 12}
+        ]
+      },
+      {
+        "id": "2026A-MEC-FUNDTERM-C",
+        "profesor": "Luques Lopez Elena Guadalupe",
+        "salon": "N04",
+        "horario": [
+          {"dia": 0, "inicio": 13, "fin": 14},
+          {"dia": 1, "inicio": 13, "fin": 14},
+          {"dia": 2, "inicio": 13, "fin": 14},
+          {"dia": 3, "inicio": 13, "fin": 14}
+        ]
+      },
+      {
+        "id": "2026A-MEC-FUNDTERM-E",
+        "profesor": "Cisneros Morales Massiel Cristina",
+        "salon": "N27",
+        "horario": [
+          {"dia": 0, "inicio": 15, "fin": 16},
+          {"dia": 1, "inicio": 15, "fin": 16},
+          {"dia": 2, "inicio": 15, "fin": 16},
+          {"dia": 3, "inicio": 15, "fin": 16}
+        ]
+      },
+      {
+        "id": "2026A-MEC-FUNDTERM-F",
+        "profesor": "Navarro Leal Rocio Guadalupe",
+        "salon": "N24",
+        "horario": [
+          {"dia": 0, "inicio": 18, "fin": 19},
+          {"dia": 1, "inicio": 18, "fin": 19},
+          {"dia": 2, "inicio": 18, "fin": 19},
+          {"dia": 3, "inicio": 18, "fin": 19}
+        ]
+      },
+      {
+        "id": "2026A-MEC-FUNDTERM-G",
+        "profesor": "Cisneros Morales Massiel Cristina",
+        "salon": "N27",
+        "horario": [
+          {"dia": 0, "inicio": 18, "fin": 19},
+          {"dia": 1, "inicio": 18, "fin": 19},
+          {"dia": 2, "inicio": 18, "fin": 19},
+          {"dia": 3, "inicio": 18, "fin": 19}
+        ]
+      },
+      {
+        "id": "2026A-MEC-FUNDTERM-H",
+        "profesor": "Gamon Perales Erendira Del Rocio",
+        "salon": "N01",
+        "horario": [
+          {"dia": 0, "inicio": 12, "fin": 13},
+          {"dia": 1, "inicio": 12, "fin": 13},
+          {"dia": 2, "inicio": 12, "fin": 13},
+          {"dia": 3, "inicio": 12, "fin": 13}
+        ]
+      }
+    ]
+  },
+  {
+  "MECANISMOS": {
+    "nombre": "Mecanismos",
+    "creditos": 5,
+    "semestre": 5,
+    "grupos": [
+      {
+        "id": "2026A-MEC-MECANISMOS-2",
+        "profesor": "Guerrero Martínez Arturo Gerardo",
+        "salon": "S19",
+        "horario": [
+          {"dia": 0, "inicio": 17, "fin": 18},
+          {"dia": 1, "inicio": 17, "fin": 18},
+          {"dia": 2, "inicio": 17, "fin": 18},
+          {"dia": 3, "inicio": 17, "fin": 18},
+          {"dia": 4, "inicio": 17, "fin": 18}
+        ]
+      },
+      {
+        "id": "2026A-MEC-MECANISMOS-A",
+        "profesor": "Alvarado González Cipriano",
+        "salon": "S15",
+        "horario": [
+          {"dia": 0, "inicio": 8, "fin": 9},
+          {"dia": 1, "inicio": 8, "fin": 9},
+          {"dia": 2, "inicio": 8, "fin": 9},
+          {"dia": 3, "inicio": 8, "fin": 9},
+          {"dia": 4, "inicio": 8, "fin": 9}
+        ]
+      },
+      {
+        "id": "2026A-MEC-MECANISMOS-B",
+        "profesor": "Hernandez De La Rosa Julian Javier",
+        "salon": "S19",
+        "horario": [
+          {"dia": 0, "inicio": 12, "fin": 13},
+          {"dia": 1, "inicio": 12, "fin": 13},
+          {"dia": 2, "inicio": 12, "fin": 13},
+          {"dia": 3, "inicio": 12, "fin": 13},
+          {"dia": 4, "inicio": 12, "fin": 13}
+        ]
+      },
+      {
+        "id": "2026A-MEC-MECANISMOS-C",
+        "profesor": "Hernandez De La Rosa Julian Javier",
+        "salon": "S19",
+        "horario": [
+          {"dia": 0, "inicio": 11, "fin": 12},
+          {"dia": 1, "inicio": 11, "fin": 12},
+          {"dia": 2, "inicio": 11, "fin": 12},
+          {"dia": 3, "inicio": 11, "fin": 12},
+          {"dia": 4, "inicio": 11, "fin": 12}
+        ]
+      },
+      {
+        "id": "2026A-MEC-MECANISMOS-D",
+        "profesor": "Arredondo Valdez Juan",
+        "salon": "S14",
+        "horario": [
+          {"dia": 0, "inicio": 18, "fin": 19},
+          {"dia": 1, "inicio": 18, "fin": 19},
+          {"dia": 2, "inicio": 18, "fin": 19},
+          {"dia": 3, "inicio": 18, "fin": 19},
+          {"dia": 4, "inicio": 18, "fin": 19}
+        ]
+      },
+      {
+        "id": "2026A-MEC-MECANISMOS-E",
+        "profesor": "Hernandez De La Rosa Julian Javier",
+        "salon": "S19",
+        "horario": [
+          {"dia": 0, "inicio": 15, "fin": 16},
+          {"dia": 1, "inicio": 15, "fin": 16},
+          {"dia": 2, "inicio": 15, "fin": 16},
+          {"dia": 3, "inicio": 15, "fin": 16},
+          {"dia": 4, "inicio": 15, "fin": 16}
+        ]
+      },
+      {
+        "id": "2026A-MEC-MECANISMOS-G",
+        "profesor": "Guerrero Martínez Arturo Gerardo",
+        "salon": "S19",
+        "horario": [
+          {"dia": 0, "inicio": 16, "fin": 17},
+          {"dia": 1, "inicio": 16, "fin": 17},
+          {"dia": 2, "inicio": 16, "fin": 17},
+          {"dia": 3, "inicio": 16, "fin": 17},
+          {"dia": 4, "inicio": 16, "fin": 17}
+        ]
+      }
+    ]
+  },
+  "PROG_AVA": {
+    "nombre": "Programación Avanzada",
+    "creditos": 6,
+    "semestre": 5,
+    "grupos": [
+      {
+        "id": "2026A-MEC-PROGAVA-A",
+        "profesor": "Piña Villanueva Martha Patricia",
+        "salon": "R05 / LC2",
+        "horario": [
+          {"dia": 0, "inicio": 11, "fin": 12},
+          {"dia": 1, "inicio": 11, "fin": 12},
+          {"dia": 2, "inicio": 11, "fin": 12},
+          {"dia": 3, "inicio": 11, "fin": 12},
+          {"dia": 4, "inicio": 11, "fin": 13}
+        ]
+      },
+      {
+        "id": "2026A-MEC-PROGAVA-B",
+        "profesor": "Navarro Rodriguez Juan Gilberto",
+        "salon": "LS2",
+        "horario": [
+          {"dia": 0, "inicio": 7, "fin": 8},
+          {"dia": 1, "inicio": 7, "fin": 8},
+          {"dia": 2, "inicio": 7, "fin": 8},
+          {"dia": 3, "inicio": 7, "fin": 8},
+          {"dia": 4, "inicio": 7, "fin": 9}
+        ]
+      },
+      {
+        "id": "2026A-MEC-PROGAVA-D",
+        "profesor": "Mexicano Reyes Yolanda",
+        "salon": "LC1",
+        "horario": [
+          {"dia": 0, "inicio": 12, "fin": 13},
+          {"dia": 1, "inicio": 12, "fin": 13},
+          {"dia": 2, "inicio": 12, "fin": 13},
+          {"dia": 3, "inicio": 12, "fin": 13},
+          {"dia": 4, "inicio": 12, "fin": 14}
+        ]
+      },
+      {
+        "id": "2026A-MEC-PROGAVA-E",
+        "profesor": "Vidal Vazquez Olga Lidia",
+        "salon": "R14 / R01",
+        "horario": [
+          {"dia": 0, "inicio": 7, "fin": 8},
+          {"dia": 1, "inicio": 7, "fin": 8},
+          {"dia": 2, "inicio": 7, "fin": 8},
+          {"dia": 3, "inicio": 7, "fin": 8},
+          {"dia": 4, "inicio": 7, "fin": 9}
+        ]
+      },
+      {
+        "id": "2026A-MEC-PROGAVA-F",
+        "profesor": "Piña Villanueva Martha Patricia",
+        "salon": "R05 / LC2",
+        "horario": [
+          {"dia": 0, "inicio": 8, "fin": 9},
+          {"dia": 1, "inicio": 8, "fin": 9},
+          {"dia": 2, "inicio": 8, "fin": 9},
+          {"dia": 3, "inicio": 8, "fin": 9},
+          {"dia": 4, "inicio": 8, "fin": 10}
+        ]
+      },
+      {
+        "id": "2026A-MEC-PROGAVA-G",
+        "profesor": "Salazar Garcia Alfredo",
+        "salon": "LS2",
+        "horario": [
+          {"dia": 0, "inicio": 17, "fin": 18},
+          {"dia": 1, "inicio": 17, "fin": 18},
+          {"dia": 2, "inicio": 17, "fin": 18},
+          {"dia": 3, "inicio": 17, "fin": 18},
+          {"dia": 4, "inicio": 16, "fin": 18}
+        ]
+      },
+      {
+        "id": "2026A-MEC-PROGAVA-H",
+        "profesor": "Mexicano Reyes Yolanda",
+        "salon": "LC1",
+        "horario": [
+          {"dia": 0, "inicio": 10, "fin": 11},
+          {"dia": 1, "inicio": 10, "fin": 11},
+          {"dia": 2, "inicio": 10, "fin": 11},
+          {"dia": 3, "inicio": 10, "fin": 11},
+          {"dia": 4, "inicio": 10, "fin": 12}
+        ]
+      },
+      {
+        "id": "2026A-MEC-PROGAVA-I",
+        "profesor": "Vidal Vazquez Olga Lidia",
+        "salon": "R10 / R14",
+        "horario": [
+          {"dia": 0, "inicio": 12, "fin": 13},
+          {"dia": 1, "inicio": 12, "fin": 13},
+          {"dia": 2, "inicio": 12, "fin": 13},
+          {"dia": 3, "inicio": 12, "fin": 13},
+          {"dia": 4, "inicio": 12, "fin": 14}
+        ]
+      },
+      {
+        "id": "2026A-MEC-PROGAVA-J",
+        "profesor": "Mexicano Reyes Yolanda",
+        "salon": "LC1",
+        "horario": [
+          {"dia": 0, "inicio": 9, "fin": 10},
+          {"dia": 1, "inicio": 9, "fin": 10},
+          {"dia": 2, "inicio": 9, "fin": 10},
+          {"dia": 3, "inicio": 9, "fin": 10},
+          {"dia": 4, "inicio": 8, "fin": 10}
+        ]
+      },
+      {
+        "id": "2026A-MEC-PROGAVA-K",
+        "profesor": "Navarro Rodriguez Juan Gilberto",
+        "salon": "LS2",
+        "horario": [
+          {"dia": 0, "inicio": 13, "fin": 14},
+          {"dia": 1, "inicio": 13, "fin": 14},
+          {"dia": 2, "inicio": 13, "fin": 14},
+          {"dia": 3, "inicio": 13, "fin": 14},
+          {"dia": 4, "inicio": 13, "fin": 15}
+        ]
+      }
+    ]
+  },
+  "TAL_INV_2": {
+    "nombre": "Taller De Investigación II",
+    "creditos": 4,
+    "semestre": 5,
+    "grupos": [
+      {
+        "id": "2026A-MEC-TALINV2-A",
+        "profesor": "Medina Hernandez Iovana Acenet",
+        "salon": "S13",
+        "horario": [
+          {"dia": 0, "inicio": 14, "fin": 15},
+          {"dia": 1, "inicio": 14, "fin": 15},
+          {"dia": 2, "inicio": 14, "fin": 15},
+          {"dia": 3, "inicio": 14, "fin": 15}
+        ]
+      },
+      {
+        "id": "2026A-MEC-TALINV2-E",
+        "profesor": "Velarde Sanchez Ada Karina",
+        "salon": "S18",
+        "horario": [
+          {"dia": 0, "inicio": 11, "fin": 12},
+          {"dia": 1, "inicio": 11, "fin": 12},
+          {"dia": 2, "inicio": 11, "fin": 12},
+          {"dia": 3, "inicio": 11, "fin": 12}
+        ]
+      },
+      {
+        "id": "2026A-MEC-TALINV2-F",
+        "profesor": "Velarde Sanchez Ada Karina",
+        "salon": "S18",
+        "horario": [
+          {"dia": 0, "inicio": 9, "fin": 10},
+          {"dia": 1, "inicio": 9, "fin": 10},
+          {"dia": 2, "inicio": 9, "fin": 10},
+          {"dia": 3, "inicio": 9, "fin": 10}
+        ]
+      },
+      {
+        "id": "2026A-MEC-TALINV2-X",
+        "profesor": "Ibarra Gonzalez Brenda Del Rocio",
+        "salon": "N09",
+        "horario": [
+          {"dia": 0, "inicio": 13, "fin": 14},
+          {"dia": 1, "inicio": 13, "fin": 14},
+          {"dia": 2, "inicio": 13, "fin": 14},
+          {"dia": 3, "inicio": 13, "fin": 14}
+        ]
+      },
+      {
+        "id": "2026A-MEC-TALINV2-Y",
+        "profesor": "Garcia Granados Gonzalo",
+        "salon": "N14",
+        "horario": [
+          {"dia": 0, "inicio": 15, "fin": 16},
+          {"dia": 1, "inicio": 15, "fin": 16},
+          {"dia": 2, "inicio": 15, "fin": 16},
+          {"dia": 3, "inicio": 15, "fin": 16}
+        ]
+      },
+      {
+        "id": "2026A-MEC-TALINV2-Z",
+        "profesor": "Zavala Torres Ma. Elida",
+        "salon": "N13",
+        "horario": [
+          {"dia": 0, "inicio": 18, "fin": 19},
+          {"dia": 1, "inicio": 18, "fin": 19},
+          {"dia": 2, "inicio": 18, "fin": 19},
+          {"dia": 3, "inicio": 18, "fin": 19}
+        ]
+      }
+    ]
+  },
+  "MAQ_ELEC": {
+    "nombre": "Máquinas Eléctricas",
+    "creditos": 5,
+    "semestre": 5,
+    "grupos": [
+      {
+        "id": "2026A-MEC-MAQELEC-A",
+        "profesor": "Ponce Llamas Mario Alberto",
+        "salon": "LE2",
+        "horario": [
+          {"dia": 0, "inicio": 10, "fin": 11},
+          {"dia": 1, "inicio": 10, "fin": 11},
+          {"dia": 2, "inicio": 10, "fin": 11},
+          {"dia": 3, "inicio": 10, "fin": 11},
+          {"dia": 4, "inicio": 10, "fin": 11}
+        ]
+      },
+      {
+        "id": "2026A-MEC-MAQELEC-B",
+        "profesor": "Allende Sancho Gabriel",
+        "salon": "LEL",
+        "horario": [
+          {"dia": 0, "inicio": 9, "fin": 10},
+          {"dia": 1, "inicio": 9, "fin": 10},
+          {"dia": 2, "inicio": 9, "fin": 10},
+          {"dia": 3, "inicio": 9, "fin": 10},
+          {"dia": 4, "inicio": 9, "fin": 10}
+        ]
+      },
+      {
+        "id": "2026A-MEC-MAQELEC-D",
+        "profesor": "Ponce Llamas Mario Alberto",
+        "salon": "LE2",
+        "horario": [
+          {"dia": 0, "inicio": 11, "fin": 12},
+          {"dia": 1, "inicio": 11, "fin": 12},
+          {"dia": 2, "inicio": 11, "fin": 12},
+          {"dia": 3, "inicio": 11, "fin": 12},
+          {"dia": 4, "inicio": 11, "fin": 12}
+        ]
+      },
+      {
+        "id": "2026A-MEC-MAQELEC-E",
+        "profesor": "Hernandez Rodriguez Alejandra",
+        "salon": "N09",
+        "horario": [
+          {"dia": 0, "inicio": 14, "fin": 15},
+          {"dia": 1, "inicio": 14, "fin": 15},
+          {"dia": 2, "inicio": 14, "fin": 15},
+          {"dia": 3, "inicio": 14, "fin": 15},
+          {"dia": 4, "inicio": 14, "fin": 15}
+        ]
+      },
+      {
+        "id": "2026A-MEC-MAQELEC-F",
+        "profesor": "Allende Sancho Gabriel",
+        "salon": "LEL",
+        "horario": [
+          {"dia": 0, "inicio": 8, "fin": 9},
+          {"dia": 1, "inicio": 8, "fin": 9},
+          {"dia": 2, "inicio": 8, "fin": 9},
+          {"dia": 3, "inicio": 8, "fin": 9},
+          {"dia": 4, "inicio": 8, "fin": 9}
+        ]
+      },
+      {
+        "id": "2026A-MEC-MAQELEC-G",
+        "profesor": "Ponce Llamas Mario Alberto",
+        "salon": "LE2",
+        "horario": [
+          {"dia": 0, "inicio": 12, "fin": 13},
+          {"dia": 1, "inicio": 12, "fin": 13},
+          {"dia": 2, "inicio": 12, "fin": 13},
+          {"dia": 3, "inicio": 12, "fin": 13},
+          {"dia": 4, "inicio": 12, "fin": 13}
+        ]
+      },
+      {
+        "id": "2026A-MEC-MAQELEC-X",
+        "profesor": "Hernandez Rodriguez Alejandra",
+        "salon": "N09",
+        "horario": [
+          {"dia": 0, "inicio": 15, "fin": 16},
+          {"dia": 1, "inicio": 15, "fin": 16},
+          {"dia": 2, "inicio": 15, "fin": 16},
+          {"dia": 3, "inicio": 15, "fin": 16},
+          {"dia": 4, "inicio": 15, "fin": 16}
+        ]
+      }
+    ]
+  },
+  "ANA_FLUI": {
+    "nombre": "Análisis De Fluidos",
+    "creditos": 4,
+    "semestre": 5,
+    "grupos": [
+      {
+        "id": "2026A-MEC-ANAFLUI-A",
+        "profesor": "González Ordaz Ignacio Javier",
+        "salon": "N25",
+        "horario": [
+          {"dia": 0, "inicio": 19, "fin": 20},
+          {"dia": 1, "inicio": 19, "fin": 20},
+          {"dia": 2, "inicio": 19, "fin": 20},
+          {"dia": 3, "inicio": 19, "fin": 20}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ANAFLUI-C",
+        "profesor": "García Bustos Luis Uriel",
+        "salon": "N22",
+        "horario": [
+          {"dia": 0, "inicio": 19, "fin": 20},
+          {"dia": 1, "inicio": 19, "fin": 20},
+          {"dia": 2, "inicio": 19, "fin": 20},
+          {"dia": 3, "inicio": 19, "fin": 20}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ANAFLUI-D",
+        "profesor": "Ruiz Rosales Cesar Oswaldo",
+        "salon": "N17",
+        "horario": [
+          {"dia": 0, "inicio": 20, "fin": 21},
+          {"dia": 1, "inicio": 20, "fin": 21},
+          {"dia": 2, "inicio": 20, "fin": 21},
+          {"dia": 3, "inicio": 20, "fin": 21}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ANAFLUI-E",
+        "profesor": "Gonzalez Valdez Luis Alejandro",
+        "salon": "N03",
+        "horario": [
+          {"dia": 0, "inicio": 20, "fin": 21},
+          {"dia": 1, "inicio": 20, "fin": 21},
+          {"dia": 2, "inicio": 20, "fin": 21},
+          {"dia": 3, "inicio": 20, "fin": 21}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ANAFLUI-F",
+        "profesor": "Martinez Mercado Edgar Benito",
+        "salon": "N25",
+        "horario": [
+          {"dia": 0, "inicio": 11, "fin": 12},
+          {"dia": 1, "inicio": 11, "fin": 12},
+          {"dia": 2, "inicio": 11, "fin": 12},
+          {"dia": 3, "inicio": 11, "fin": 12}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ANAFLUI-G",
+        "profesor": "Martinez Mercado Edgar Benito",
+        "salon": "N25",
+        "horario": [
+          {"dia": 0, "inicio": 13, "fin": 14},
+          {"dia": 1, "inicio": 13, "fin": 14},
+          {"dia": 2, "inicio": 13, "fin": 14},
+          {"dia": 3, "inicio": 13, "fin": 14}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ANAFLUI-H",
+        "profesor": "González Ordaz Ignacio Javier",
+        "salon": "N25",
+        "horario": [
+          {"dia": 0, "inicio": 18, "fin": 19},
+          {"dia": 1, "inicio": 18, "fin": 19},
+          {"dia": 2, "inicio": 18, "fin": 19},
+          {"dia": 3, "inicio": 18, "fin": 19}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ANAFLUI-I",
+        "profesor": "Gonzalez Valdez Luis Alejandro",
+        "salon": "N03",
+        "horario": [
+          {"dia": 0, "inicio": 17, "fin": 18},
+          {"dia": 1, "inicio": 17, "fin": 18},
+          {"dia": 2, "inicio": 17, "fin": 18},
+          {"dia": 3, "inicio": 17, "fin": 18}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ANAFLUI-J",
+        "profesor": "Martinez Mercado Edgar Benito",
+        "salon": "N24",
+        "horario": [
+          {"dia": 0, "inicio": 7, "fin": 8},
+          {"dia": 1, "inicio": 7, "fin": 8},
+          {"dia": 2, "inicio": 7, "fin": 8},
+          {"dia": 3, "inicio": 7, "fin": 8}
+        ]
+      }
+    ]
+  },
+  "ELEC_ANA": {
+    "nombre": "Electrónica Analógica",
+    "creditos": 6,
+    "semestre": 5,
+    "grupos": [
+      {
+        "id": "2026A-MEC-ELECANA-A",
+        "profesor": "Alvarado Bustos Joaquin Antonio",
+        "salon": "N16",
+        "horario": [
+          {"dia": 0, "inicio": 14, "fin": 15},
+          {"dia": 1, "inicio": 14, "fin": 15},
+          {"dia": 2, "inicio": 14, "fin": 15},
+          {"dia": 3, "inicio": 14, "fin": 15},
+          {"dia": 4, "inicio": 13, "fin": 15}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ELECANA-B",
+        "profesor": "Rodriguez Pimentel Rolando",
+        "salon": "S13",
+        "horario": [
+          {"dia": 0, "inicio": 9, "fin": 10},
+          {"dia": 1, "inicio": 9, "fin": 10},
+          {"dia": 2, "inicio": 9, "fin": 10},
+          {"dia": 3, "inicio": 9, "fin": 10},
+          {"dia": 4, "inicio": 9, "fin": 11}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ELECANA-C",
+        "profesor": "Aguilar Gaona Fernando",
+        "salon": "S20",
+        "horario": [
+          {"dia": 0, "inicio": 13, "fin": 14},
+          {"dia": 1, "inicio": 13, "fin": 14},
+          {"dia": 2, "inicio": 13, "fin": 14},
+          {"dia": 3, "inicio": 13, "fin": 14},
+          {"dia": 4, "inicio": 13, "fin": 15}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ELECANA-D",
+        "profesor": "Ruiz Carranza Leonardo Daniel",
+        "salon": "LEL",
+        "horario": [
+          {"dia": 0, "inicio": 17, "fin": 18},
+          {"dia": 1, "inicio": 17, "fin": 18},
+          {"dia": 2, "inicio": 17, "fin": 18},
+          {"dia": 3, "inicio": 17, "fin": 18},
+          {"dia": 4, "inicio": 17, "fin": 19}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ELECANA-F",
+        "profesor": "Aguilar Gaona Fernando",
+        "salon": "N10",
+        "horario": [
+          {"dia": 0, "inicio": 8, "fin": 9},
+          {"dia": 1, "inicio": 8, "fin": 9},
+          {"dia": 2, "inicio": 8, "fin": 9},
+          {"dia": 3, "inicio": 8, "fin": 9},
+          {"dia": 4, "inicio": 8, "fin": 10}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ELECANA-G",
+        "profesor": "Martinez Sanchez Cesar Gerardo",
+        "salon": "N11",
+        "horario": [
+          {"dia": 0, "inicio": 12, "fin": 13},
+          {"dia": 1, "inicio": 12, "fin": 13},
+          {"dia": 2, "inicio": 12, "fin": 13},
+          {"dia": 3, "inicio": 12, "fin": 13},
+          {"dia": 4, "inicio": 12, "fin": 14}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ELECANA-H",
+        "profesor": "Ruiz Carranza Leonardo Daniel",
+        "salon": "LEL",
+        "horario": [
+          {"dia": 0, "inicio": 15, "fin": 16},
+          {"dia": 1, "inicio": 15, "fin": 16},
+          {"dia": 2, "inicio": 15, "fin": 16},
+          {"dia": 3, "inicio": 15, "fin": 16},
+          {"dia": 4, "inicio": 15, "fin": 17}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ELECANA-I",
+        "profesor": "Gonzalez Roblero Neider",
+        "salon": "S15 / S20",
+        "horario": [
+          {"dia": 0, "inicio": 17, "fin": 18},
+          {"dia": 1, "inicio": 17, "fin": 18},
+          {"dia": 2, "inicio": 17, "fin": 18},
+          {"dia": 3, "inicio": 17, "fin": 18},
+          {"dia": 4, "inicio": 17, "fin": 18},
+          {"dia": 5, "inicio": 18, "fin": 19}
+        ]
+      }
+    ]
+  },
+  {
+  "ELEC_POT_APL": {
+    "nombre": "Electrónica De Potencia Aplicada",
+    "creditos": 6,
+    "semestre": 6,
+    "grupos": [
+      {
+        "id": "2026A-MEC-ELECPOTAPL-A",
+        "profesor": "Epifanio López Iván De Jesús",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 13, "fin": 14},
+          {"dia": 1, "inicio": 13, "fin": 14},
+          {"dia": 2, "inicio": 13, "fin": 14},
+          {"dia": 3, "inicio": 13, "fin": 14},
+          {"dia": 4, "inicio": 12, "fin": 14}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ELECPOTAPL-B",
+        "profesor": "Martinez Hernandez Hector Alejandro",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 16, "fin": 17},
+          {"dia": 1, "inicio": 16, "fin": 17},
+          {"dia": 2, "inicio": 16, "fin": 17},
+          {"dia": 3, "inicio": 16, "fin": 17},
+          {"dia": 4, "inicio": 15, "fin": 17}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ELECPOTAPL-E",
+        "profesor": "Martínez Hernández Alejandro",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 11, "fin": 12},
+          {"dia": 1, "inicio": 11, "fin": 12},
+          {"dia": 2, "inicio": 11, "fin": 12},
+          {"dia": 3, "inicio": 11, "fin": 12},
+          {"dia": 4, "inicio": 10, "fin": 12}
+        ]
+      }
+    ]
+  },
+  "INST": {
+    "nombre": "Instrumentación",
+    "creditos": 5,
+    "semestre": 6,
+    "grupos": [
+      {
+        "id": "2026A-MEC-INST-A",
+        "profesor": "Rodriguez Vargas Flavio",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 11, "fin": 12},
+          {"dia": 1, "inicio": 11, "fin": 12},
+          {"dia": 2, "inicio": 11, "fin": 12},
+          {"dia": 3, "inicio": 11, "fin": 12},
+          {"dia": 4, "inicio": 11, "fin": 12}
+        ]
+      },
+      {
+        "id": "2026A-MEC-INST-B",
+        "profesor": "Vazquez Esquivel Francisco Agustin",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 15, "fin": 16},
+          {"dia": 1, "inicio": 15, "fin": 16},
+          {"dia": 2, "inicio": 15, "fin": 16},
+          {"dia": 3, "inicio": 15, "fin": 16},
+          {"dia": 4, "inicio": 15, "fin": 16}
+        ]
+      },
+      {
+        "id": "2026A-MEC-INST-C",
+        "profesor": "Vazquez Esquivel Francisco Agustin",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 16, "fin": 17},
+          {"dia": 1, "inicio": 16, "fin": 17},
+          {"dia": 2, "inicio": 16, "fin": 17},
+          {"dia": 3, "inicio": 16, "fin": 17},
+          {"dia": 4, "inicio": 16, "fin": 17}
+        ]
+      },
+      {
+        "id": "2026A-MEC-INST-D",
+        "profesor": "Fritsche Ramírez Ewald",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 13, "fin": 14},
+          {"dia": 1, "inicio": 13, "fin": 14},
+          {"dia": 2, "inicio": 13, "fin": 14},
+          {"dia": 3, "inicio": 13, "fin": 14},
+          {"dia": 4, "inicio": 13, "fin": 14}
+        ]
+      },
+      {
+        "id": "2026A-MEC-INST-E",
+        "profesor": "Mendoza Rivas Cecilia",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 13, "fin": 14},
+          {"dia": 1, "inicio": 13, "fin": 14},
+          {"dia": 2, "inicio": 13, "fin": 14},
+          {"dia": 3, "inicio": 13, "fin": 14},
+          {"dia": 4, "inicio": 13, "fin": 14}
+        ]
+      },
+      {
+        "id": "2026A-MEC-INST-X",
+        "profesor": "Vazquez Esquivel Francisco Agustin",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 7, "fin": 8},
+          {"dia": 1, "inicio": 7, "fin": 8},
+          {"dia": 2, "inicio": 7, "fin": 8},
+          {"dia": 3, "inicio": 7, "fin": 8},
+          {"dia": 4, "inicio": 7, "fin": 8}
+        ]
+      },
+      {
+        "id": "2026A-MEC-INST-Y",
+        "profesor": "Vazquez Esquivel Francisco Agustin",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 9, "fin": 10},
+          {"dia": 1, "inicio": 9, "fin": 10},
+          {"dia": 2, "inicio": 9, "fin": 10},
+          {"dia": 3, "inicio": 9, "fin": 10},
+          {"dia": 4, "inicio": 9, "fin": 10}
+        ]
+      },
+      {
+        "id": "2026A-MEC-INST-Z",
+        "profesor": "Rodriguez Vargas Flavio",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 10, "fin": 11},
+          {"dia": 1, "inicio": 10, "fin": 11},
+          {"dia": 2, "inicio": 10, "fin": 11},
+          {"dia": 3, "inicio": 10, "fin": 11},
+          {"dia": 4, "inicio": 10, "fin": 11}
+        ]
+      }
+    ]
+  },
+  "DIS_ELEM_MEC": {
+    "nombre": "Diseño De Elementos Mecánicos",
+    "creditos": 5,
+    "semestre": 6,
+    "grupos": [
+      {
+        "id": "2026A-MEC-DISELEMMEC-A",
+        "profesor": "Adame Oviedo Lourdes Guadalupe",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 15, "fin": 16},
+          {"dia": 1, "inicio": 15, "fin": 16},
+          {"dia": 2, "inicio": 15, "fin": 16},
+          {"dia": 3, "inicio": 15, "fin": 16},
+          {"dia": 4, "inicio": 15, "fin": 16}
+        ]
+      },
+      {
+        "id": "2026A-MEC-DISELEMMEC-B",
+        "profesor": "Navarro Leal Rocio Guadalupe",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 19, "fin": 20},
+          {"dia": 1, "inicio": 19, "fin": 20},
+          {"dia": 2, "inicio": 19, "fin": 20},
+          {"dia": 3, "inicio": 19, "fin": 20},
+          {"dia": 4, "inicio": 19, "fin": 20}
+        ]
+      },
+      {
+        "id": "2026A-MEC-DISELEMMEC-D",
+        "profesor": "Guerrero Hernández Juan Antonio",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 18, "fin": 19},
+          {"dia": 1, "inicio": 18, "fin": 19},
+          {"dia": 2, "inicio": 18, "fin": 19},
+          {"dia": 3, "inicio": 18, "fin": 19},
+          {"dia": 4, "inicio": 18, "fin": 19}
+        ]
+      },
+      {
+        "id": "2026A-MEC-DISELEMMEC-E",
+        "profesor": "Guerrero Hernández Juan Antonio",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 16, "fin": 17},
+          {"dia": 1, "inicio": 16, "fin": 17},
+          {"dia": 2, "inicio": 16, "fin": 17},
+          {"dia": 3, "inicio": 16, "fin": 17},
+          {"dia": 4, "inicio": 16, "fin": 17}
+        ]
+      },
+      {
+        "id": "2026A-MEC-DISELEMMEC-F",
+        "profesor": "Saavedra Camacho Nestor Roberto",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 7, "fin": 8},
+          {"dia": 1, "inicio": 7, "fin": 8},
+          {"dia": 2, "inicio": 7, "fin": 8},
+          {"dia": 3, "inicio": 7, "fin": 8},
+          {"dia": 4, "inicio": 7, "fin": 8}
+        ]
+      }
+    ]
+  },
+  "ELEC_DIG": {
+    "nombre": "Electrónica Digital",
+    "creditos": 5,
+    "semestre": 6,
+    "grupos": [
+      {
+        "id": "2026A-MEC-ELECDIG-A",
+        "profesor": "Diaz Rosas Karina",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 9, "fin": 10},
+          {"dia": 1, "inicio": 9, "fin": 10},
+          {"dia": 2, "inicio": 9, "fin": 10},
+          {"dia": 3, "inicio": 9, "fin": 10},
+          {"dia": 4, "inicio": 9, "fin": 10}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ELECDIG-B",
+        "profesor": "Benitez Gutierrez Alejandro",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 12, "fin": 13},
+          {"dia": 1, "inicio": 12, "fin": 13},
+          {"dia": 2, "inicio": 12, "fin": 13},
+          {"dia": 3, "inicio": 12, "fin": 13},
+          {"dia": 4, "inicio": 12, "fin": 13}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ELECDIG-D",
+        "profesor": "Maldonado Leza Miguel",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 20, "fin": 21},
+          {"dia": 1, "inicio": 20, "fin": 21},
+          {"dia": 2, "inicio": 20, "fin": 21},
+          {"dia": 3, "inicio": 20, "fin": 21},
+          {"dia": 4, "inicio": 20, "fin": 21}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ELECDIG-E",
+        "profesor": "Maldonado Leza Miguel",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 21, "fin": 22},
+          {"dia": 1, "inicio": 21, "fin": 22},
+          {"dia": 2, "inicio": 21, "fin": 22},
+          {"dia": 3, "inicio": 21, "fin": 22},
+          {"dia": 4, "inicio": 21, "fin": 22}
+        ]
+      }
+    ]
+  },
+  "VIB_MEC": {
+    "nombre": "Vibraciones Mecánicas",
+    "creditos": 5,
+    "semestre": 6,
+    "grupos": [
+      {
+        "id": "2026A-MEC-VIBMEC-1",
+        "profesor": "Flores Campos Ruben",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 10, "fin": 11},
+          {"dia": 1, "inicio": 10, "fin": 11},
+          {"dia": 2, "inicio": 10, "fin": 11},
+          {"dia": 3, "inicio": 10, "fin": 11},
+          {"dia": 4, "inicio": 10, "fin": 11}
+        ]
+      },
+      {
+        "id": "2026A-MEC-VIBMEC-2",
+        "profesor": "García Bustos Luis Uriel",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 15, "fin": 16},
+          {"dia": 1, "inicio": 15, "fin": 16},
+          {"dia": 2, "inicio": 15, "fin": 16},
+          {"dia": 3, "inicio": 15, "fin": 16},
+          {"dia": 4, "inicio": 15, "fin": 16}
+        ]
+      },
+      {
+        "id": "2026A-MEC-VIBMEC-3",
+        "profesor": "Flores Campos Ruben",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 12, "fin": 13},
+          {"dia": 1, "inicio": 12, "fin": 13},
+          {"dia": 2, "inicio": 12, "fin": 13},
+          {"dia": 3, "inicio": 12, "fin": 13},
+          {"dia": 4, "inicio": 12, "fin": 13}
+        ]
+      },
+      {
+        "id": "2026A-MEC-VIBMEC-A",
+        "profesor": "Flores Campos Ruben",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 7, "fin": 8},
+          {"dia": 1, "inicio": 7, "fin": 8},
+          {"dia": 2, "inicio": 7, "fin": 8},
+          {"dia": 3, "inicio": 7, "fin": 8},
+          {"dia": 4, "inicio": 7, "fin": 8}
+        ]
+      },
+      {
+        "id": "2026A-MEC-VIBMEC-B",
+        "profesor": "Reyna Valdes Erendira Guadalupe",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 19, "fin": 20},
+          {"dia": 1, "inicio": 19, "fin": 20},
+          {"dia": 2, "inicio": 19, "fin": 20},
+          {"dia": 3, "inicio": 19, "fin": 20},
+          {"dia": 4, "inicio": 19, "fin": 20}
+        ]
+      },
+      {
+        "id": "2026A-MEC-VIBMEC-C",
+        "profesor": "García Bustos Luis Uriel",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 17, "fin": 18},
+          {"dia": 1, "inicio": 17, "fin": 18},
+          {"dia": 2, "inicio": 17, "fin": 18},
+          {"dia": 3, "inicio": 17, "fin": 18},
+          {"dia": 4, "inicio": 17, "fin": 18}
+        ]
+      },
+      {
+        "id": "2026A-MEC-VIBMEC-D",
+        "profesor": "Flores Campos Ruben",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 11, "fin": 12},
+          {"dia": 1, "inicio": 11, "fin": 12},
+          {"dia": 2, "inicio": 11, "fin": 12},
+          {"dia": 3, "inicio": 11, "fin": 12},
+          {"dia": 4, "inicio": 11, "fin": 12}
+        ]
+      },
+      {
+        "id": "2026A-MEC-VIBMEC-E",
+        "profesor": "Arredondo Valdez Juan",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 11, "fin": 12},
+          {"dia": 1, "inicio": 11, "fin": 12},
+          {"dia": 2, "inicio": 11, "fin": 12},
+          {"dia": 3, "inicio": 11, "fin": 12},
+          {"dia": 4, "inicio": 11, "fin": 12}
+        ]
+      }
+    ]
+  },
+  "ADM_MANT": {
+    "nombre": "Administración del Mantenimiento",
+    "creditos": 4,
+    "semestre": 6,
+    "grupos": [
+      {
+        "id": "2026A-MEC-ADMMANT-A",
+        "profesor": "Saucedo Alonso Juan Manuel",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 8, "fin": 9},
+          {"dia": 1, "inicio": 8, "fin": 9},
+          {"dia": 2, "inicio": 8, "fin": 9},
+          {"dia": 3, "inicio": 8, "fin": 9}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ADMMANT-B",
+        "profesor": "Avendaño Malacara Cesar Humberto",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 19, "fin": 20},
+          {"dia": 1, "inicio": 19, "fin": 20},
+          {"dia": 2, "inicio": 19, "fin": 20},
+          {"dia": 3, "inicio": 19, "fin": 20}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ADMMANT-C",
+        "profesor": "Avendaño Malacara Cesar Humberto",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 20, "fin": 21},
+          {"dia": 1, "inicio": 20, "fin": 21},
+          {"dia": 2, "inicio": 20, "fin": 21},
+          {"dia": 3, "inicio": 20, "fin": 21}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ADMMANT-D",
+        "profesor": "Velarde Sánchez Orquidea Esmeralda",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 12, "fin": 13},
+          {"dia": 1, "inicio": 12, "fin": 13},
+          {"dia": 2, "inicio": 12, "fin": 13},
+          {"dia": 3, "inicio": 12, "fin": 13}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ADMMANT-E",
+        "profesor": "Velarde Sánchez Orquidea Esmeralda",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 11, "fin": 12},
+          {"dia": 1, "inicio": 11, "fin": 12},
+          {"dia": 2, "inicio": 11, "fin": 12},
+          {"dia": 3, "inicio": 11, "fin": 12}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ADMMANT-F",
+        "profesor": "Contreras Silva Iván De Jesús",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 18, "fin": 19},
+          {"dia": 1, "inicio": 18, "fin": 19},
+          {"dia": 2, "inicio": 18, "fin": 19},
+          {"dia": 3, "inicio": 18, "fin": 19}
+        ]
+      }
+    ]
+  },
+  {
+  "DIN_SIST": {
+    "nombre": "Dinámica De Sistemas",
+    "creditos": 5,
+    "semestre": 7,
+    "grupos": [
+      {
+        "id": "2026A-MEC-DINSIST-C5",
+        "profesor": "Jarquín Hernández Gerardo",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 18, "fin": 19},
+          {"dia": 1, "inicio": 18, "fin": 19},
+          {"dia": 2, "inicio": 18, "fin": 19},
+          {"dia": 3, "inicio": 18, "fin": 19},
+          {"dia": 4, "inicio": 18, "fin": 19}
+        ]
+      },
+      {
+        "id": "2026A-MEC-DINSIST-D5",
+        "profesor": "Jarquín Hernández Gerardo",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 17, "fin": 18},
+          {"dia": 1, "inicio": 17, "fin": 18},
+          {"dia": 2, "inicio": 17, "fin": 18},
+          {"dia": 3, "inicio": 17, "fin": 18},
+          {"dia": 4, "inicio": 17, "fin": 18}
+        ]
+      },
+      {
+        "id": "2026A-MEC-DINSIST-E5",
+        "profesor": "Fernandez Ramirez Karla Ivonne",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 10, "fin": 11},
+          {"dia": 1, "inicio": 10, "fin": 11},
+          {"dia": 2, "inicio": 10, "fin": 11},
+          {"dia": 3, "inicio": 10, "fin": 11},
+          {"dia": 4, "inicio": 10, "fin": 11}
+        ]
+      },
+      {
+        "id": "2026A-MEC-DINSIST-F5",
+        "profesor": "Machorro Fernández Felipe Alberto",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 16, "fin": 17},
+          {"dia": 1, "inicio": 16, "fin": 17},
+          {"dia": 2, "inicio": 16, "fin": 17},
+          {"dia": 3, "inicio": 16, "fin": 17},
+          {"dia": 4, "inicio": 16, "fin": 17}
+        ]
+      }
+    ]
+  },
+  "MAN_AVA": {
+    "nombre": "Manufactura Avanzada",
+    "creditos": 5,
+    "semestre": 7,
+    "grupos": [
+      {
+        "id": "2026A-MEC-MANAVA-A5",
+        "profesor": "Gomez Muñoz Ana Gabriela",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 9, "fin": 10},
+          {"dia": 1, "inicio": 9, "fin": 10},
+          {"dia": 2, "inicio": 9, "fin": 10},
+          {"dia": 3, "inicio": 9, "fin": 10},
+          {"dia": 4, "inicio": 9, "fin": 10}
+        ]
+      },
+      {
+        "id": "2026A-MEC-MANAVA-B5",
+        "profesor": "Avendaño Malacara Cesar Humberto",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 18, "fin": 19},
+          {"dia": 1, "inicio": 18, "fin": 19},
+          {"dia": 2, "inicio": 18, "fin": 19},
+          {"dia": 3, "inicio": 18, "fin": 19},
+          {"dia": 4, "inicio": 18, "fin": 19}
+        ]
+      },
+      {
+        "id": "2026A-MEC-MANAVA-C5",
+        "profesor": "Marines Leal Maria Del Socorro",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 12, "fin": 13},
+          {"dia": 1, "inicio": 12, "fin": 13},
+          {"dia": 2, "inicio": 12, "fin": 13},
+          {"dia": 3, "inicio": 12, "fin": 13},
+          {"dia": 4, "inicio": 12, "fin": 13}
+        ]
+      },
+      {
+        "id": "2026A-MEC-MANAVA-D5",
+        "profesor": "Marines Leal Maria Del Socorro",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 16, "fin": 17},
+          {"dia": 1, "inicio": 16, "fin": 17},
+          {"dia": 2, "inicio": 16, "fin": 17},
+          {"dia": 3, "inicio": 16, "fin": 17},
+          {"dia": 4, "inicio": 16, "fin": 17}
+        ]
+      },
+      {
+        "id": "2026A-MEC-MANAVA-E5",
+        "profesor": "Gomez Muñoz Ana Gabriela",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 8, "fin": 9},
+          {"dia": 1, "inicio": 8, "fin": 9},
+          {"dia": 2, "inicio": 8, "fin": 9},
+          {"dia": 3, "inicio": 8, "fin": 9},
+          {"dia": 4, "inicio": 8, "fin": 9}
+        ]
+      },
+      {
+        "id": "2026A-MEC-MANAVA-F5",
+        "profesor": "Marines Leal Maria Del Socorro",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 15, "fin": 16},
+          {"dia": 1, "inicio": 15, "fin": 16},
+          {"dia": 2, "inicio": 15, "fin": 16},
+          {"dia": 3, "inicio": 15, "fin": 16},
+          {"dia": 4, "inicio": 15, "fin": 16}
+        ]
+      }
+    ]
+  },
+  "CIR_HID_NEU": {
+    "nombre": "Circuitos Hidráulicos Y Neumáticos",
+    "creditos": 6,
+    "semestre": 7,
+    "grupos": [
+      {
+        "id": "2026A-MEC-CIRHIDNEU-A6",
+        "profesor": "Sandoval Lopez Manuel Enrique",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 14, "fin": 15},
+          {"dia": 1, "inicio": 14, "fin": 15},
+          {"dia": 2, "inicio": 14, "fin": 15},
+          {"dia": 3, "inicio": 14, "fin": 15},
+          {"dia": 4, "inicio": 14, "fin": 16}
+        ]
+      },
+      {
+        "id": "2026A-MEC-CIRHIDNEU-B6",
+        "profesor": "Santos Saucedo Luis Rey",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 13, "fin": 14},
+          {"dia": 1, "inicio": 13, "fin": 14},
+          {"dia": 2, "inicio": 13, "fin": 14},
+          {"dia": 3, "inicio": 13, "fin": 14},
+          {"dia": 4, "inicio": 13, "fin": 15}
+        ]
+      },
+      {
+        "id": "2026A-MEC-CIRHIDNEU-C6",
+        "profesor": "Santos Saucedo Luis Rey",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 16, "fin": 17},
+          {"dia": 1, "inicio": 16, "fin": 17},
+          {"dia": 2, "inicio": 16, "fin": 17},
+          {"dia": 3, "inicio": 16, "fin": 17},
+          {"dia": 4, "inicio": 15, "fin": 17}
+        ]
+      },
+      {
+        "id": "2026A-MEC-CIRHIDNEU-D6",
+        "profesor": "Sandoval Lopez Manuel Enrique",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 11, "fin": 12},
+          {"dia": 1, "inicio": 11, "fin": 12},
+          {"dia": 2, "inicio": 11, "fin": 12},
+          {"dia": 3, "inicio": 11, "fin": 12},
+          {"dia": 4, "inicio": 11, "fin": 13}
+        ]
+      },
+      {
+        "id": "2026A-MEC-CIRHIDNEU-E6",
+        "profesor": "Contreras Silva Iván De Jesús",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 19, "fin": 20},
+          {"dia": 1, "inicio": 19, "fin": 20},
+          {"dia": 2, "inicio": 19, "fin": 20},
+          {"dia": 3, "inicio": 19, "fin": 20},
+          {"dia": 4, "inicio": 18, "fin": 20}
+        ]
+      }
+    ]
+  },
+  "MANT": {
+    "nombre": "Mantenimiento",
+    "creditos": 5,
+    "semestre": 7,
+    "grupos": [
+      {
+        "id": "2026A-MEC-MANT-A5",
+        "profesor": "Resendiz Vielma Jose Maria",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 15, "fin": 16},
+          {"dia": 1, "inicio": 15, "fin": 16},
+          {"dia": 2, "inicio": 15, "fin": 16},
+          {"dia": 3, "inicio": 15, "fin": 16},
+          {"dia": 4, "inicio": 15, "fin": 16}
+        ]
+      },
+      {
+        "id": "2026A-MEC-MANT-B5",
+        "profesor": "Ramos Garcia Francisco Jesus",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 17, "fin": 18},
+          {"dia": 1, "inicio": 17, "fin": 18},
+          {"dia": 2, "inicio": 17, "fin": 18},
+          {"dia": 3, "inicio": 17, "fin": 18},
+          {"dia": 4, "inicio": 17, "fin": 18}
+        ]
+      },
+      {
+        "id": "2026A-MEC-MANT-C5",
+        "profesor": "Sanchez Chavez Luis Gerardo",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 21, "fin": 22},
+          {"dia": 1, "inicio": 21, "fin": 22},
+          {"dia": 2, "inicio": 21, "fin": 22},
+          {"dia": 3, "inicio": 21, "fin": 22},
+          {"dia": 4, "inicio": 21, "fin": 22}
+        ]
+      },
+      {
+        "id": "2026A-MEC-MANT-D5",
+        "profesor": "Resendiz Vielma Jose Maria",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 16, "fin": 17},
+          {"dia": 1, "inicio": 16, "fin": 17},
+          {"dia": 2, "inicio": 16, "fin": 17},
+          {"dia": 3, "inicio": 16, "fin": 17},
+          {"dia": 4, "inicio": 16, "fin": 17}
+        ]
+      },
+      {
+        "id": "2026A-MEC-MANT-E5",
+        "profesor": "Sanchez Chavez Luis Gerardo",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 18, "fin": 19},
+          {"dia": 1, "inicio": 18, "fin": 19},
+          {"dia": 2, "inicio": 18, "fin": 19},
+          {"dia": 3, "inicio": 18, "fin": 19},
+          {"dia": 4, "inicio": 18, "fin": 19}
+        ]
+      },
+      {
+        "id": "2026A-MEC-MANT-F5",
+        "profesor": "Lopez Lara Pedro Celedonio",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 20, "fin": 21},
+          {"dia": 1, "inicio": 20, "fin": 21},
+          {"dia": 2, "inicio": 20, "fin": 21},
+          {"dia": 3, "inicio": 20, "fin": 21},
+          {"dia": 4, "inicio": 20, "fin": 21}
+        ]
+      },
+      {
+        "id": "2026A-MEC-MANT-G5",
+        "profesor": "Lopez Lara Pedro Celedonio",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 19, "fin": 20},
+          {"dia": 1, "inicio": 19, "fin": 20},
+          {"dia": 2, "inicio": 19, "fin": 20},
+          {"dia": 3, "inicio": 19, "fin": 20},
+          {"dia": 4, "inicio": 19, "fin": 20}
+        ]
+      }
+    ]
+  },
+  "MICRO": {
+    "nombre": "Microcontroladores",
+    "creditos": 5,
+    "semestre": 7,
+    "grupos": [
+      {
+        "id": "2026A-MEC-MICRO-C5",
+        "profesor": "Saldaña Mora M.I. Huitzilihuitl",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 15, "fin": 16},
+          {"dia": 1, "inicio": 15, "fin": 16},
+          {"dia": 2, "inicio": 15, "fin": 16},
+          {"dia": 3, "inicio": 15, "fin": 16},
+          {"dia": 4, "inicio": 15, "fin": 16}
+        ]
+      },
+      {
+        "id": "2026A-MEC-MICRO-D5",
+        "profesor": "Quintanilla Contreras Pedro",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 11, "fin": 12},
+          {"dia": 1, "inicio": 11, "fin": 12},
+          {"dia": 2, "inicio": 11, "fin": 12},
+          {"dia": 3, "inicio": 11, "fin": 12},
+          {"dia": 4, "inicio": 11, "fin": 12}
+        ]
+      },
+      {
+        "id": "2026A-MEC-MICRO-E5",
+        "profesor": "Saldaña Mora M.I. Huitzilihuitl",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 17, "fin": 18},
+          {"dia": 1, "inicio": 17, "fin": 18},
+          {"dia": 2, "inicio": 17, "fin": 18},
+          {"dia": 3, "inicio": 17, "fin": 18},
+          {"dia": 4, "inicio": 17, "fin": 18}
+        ]
+      },
+      {
+        "id": "2026A-MEC-MICRO-F5",
+        "profesor": "Reyes Reyna Jozef Jesus",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 18, "fin": 19},
+          {"dia": 1, "inicio": 18, "fin": 19},
+          {"dia": 2, "inicio": 18, "fin": 19},
+          {"dia": 3, "inicio": 18, "fin": 19},
+          {"dia": 4, "inicio": 18, "fin": 19}
+        ]
+      }
+    ]
+  },
+  "DIS_ASIS_COMP": {
+    "nombre": "Diseño Asistido por Computadora",
+    "creditos": 5,
+    "semestre": 7,
+    "grupos": [
+      {
+        "id": "2026A-MEC-DISASISCOMP-A5",
+        "profesor": "Avendaño Méndez José Santos",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 12, "fin": 13},
+          {"dia": 1, "inicio": 12, "fin": 13},
+          {"dia": 2, "inicio": 12, "fin": 13},
+          {"dia": 3, "inicio": 12, "fin": 13},
+          {"dia": 4, "inicio": 12, "fin": 13}
+        ]
+      },
+      {
+        "id": "2026A-MEC-DISASISCOMP-B5",
+        "profesor": "Saucedo Jimenez Ana Laura",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 9, "fin": 10},
+          {"dia": 1, "inicio": 9, "fin": 10},
+          {"dia": 2, "inicio": 9, "fin": 10},
+          {"dia": 3, "inicio": 9, "fin": 10},
+          {"dia": 4, "inicio": 9, "fin": 10}
+        ]
+      },
+      {
+        "id": "2026A-MEC-DISASISCOMP-D5",
+        "profesor": "Vallejo Casillas Jose Ascención",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 15, "fin": 16},
+          {"dia": 1, "inicio": 15, "fin": 16},
+          {"dia": 2, "inicio": 15, "fin": 16},
+          {"dia": 3, "inicio": 15, "fin": 16},
+          {"dia": 4, "inicio": 15, "fin": 16}
+        ]
+      },
+      {
+        "id": "2026A-MEC-DISASISCOMP-E5",
+        "profesor": "Vallejo Casillas Jose Ascención",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 16, "fin": 17},
+          {"dia": 1, "inicio": 16, "fin": 17},
+          {"dia": 2, "inicio": 16, "fin": 17},
+          {"dia": 3, "inicio": 16, "fin": 17},
+          {"dia": 4, "inicio": 16, "fin": 17}
+        ]
+      },
+      {
+        "id": "2026A-MEC-DISASISCOMP-F5",
+        "profesor": "Avendaño Méndez José Santos",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 9, "fin": 10},
+          {"dia": 1, "inicio": 9, "fin": 10},
+          {"dia": 2, "inicio": 9, "fin": 10},
+          {"dia": 3, "inicio": 9, "fin": 10},
+          {"dia": 4, "inicio": 9, "fin": 10}
+        ]
+      },
+      {
+        "id": "2026A-MEC-DISASISCOMP-G5",
+        "profesor": "Valerio Castillo Jose Luis",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 16, "fin": 17},
+          {"dia": 1, "inicio": 16, "fin": 17},
+          {"dia": 2, "inicio": 16, "fin": 17},
+          {"dia": 3, "inicio": 16, "fin": 17},
+          {"dia": 4, "inicio": 16, "fin": 17}
+        ]
+      },
+      {
+        "id": "2026A-MEC-DISASISCOMP-H5",
+        "profesor": "García Bustos Luis Uriel",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 20, "fin": 21},
+          {"dia": 1, "inicio": 20, "fin": 21},
+          {"dia": 2, "inicio": 20, "fin": 21},
+          {"dia": 3, "inicio": 20, "fin": 21},
+          {"dia": 4, "inicio": 20, "fin": 21}
+        ]
+      }
+    ]
+  },
+  {
+  "CONTROL": {
+    "nombre": "Control",
+    "creditos": 6,
+    "semestre": 8,
+    "grupos": [
+      {
+        "id": "2026A-MEC-CONTROL-A6",
+        "profesor": "Ruiz Ramos Isaac",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 19, "fin": 20},
+          {"dia": 1, "inicio": 19, "fin": 20},
+          {"dia": 2, "inicio": 19, "fin": 20},
+          {"dia": 3, "inicio": 19, "fin": 20},
+          {"dia": 4, "inicio": 19, "fin": 21}
+        ]
+      },
+      {
+        "id": "2026A-MEC-CONTROL-C6",
+        "profesor": "Martínez Alvarado Ricardo",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 17, "fin": 18},
+          {"dia": 1, "inicio": 17, "fin": 18},
+          {"dia": 2, "inicio": 17, "fin": 18},
+          {"dia": 3, "inicio": 17, "fin": 18},
+          {"dia": 4, "inicio": 16, "fin": 18}
+        ]
+      },
+      {
+        "id": "2026A-MEC-CONTROL-D6",
+        "profesor": "Ruiz Ramos Isaac",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 9, "fin": 10},
+          {"dia": 1, "inicio": 9, "fin": 10},
+          {"dia": 2, "inicio": 9, "fin": 10},
+          {"dia": 3, "inicio": 9, "fin": 10},
+          {"dia": 4, "inicio": 9, "fin": 11}
+        ]
+      }
+    ]
+  },
+  "FORM_EVAL_PROY": {
+    "nombre": "Formulación Y Evaluación De Proyectos",
+    "creditos": 3,
+    "semestre": 8,
+    "grupos": [
+      {
+        "id": "2026A-MEC-FORMEVALPROY-A3",
+        "profesor": "Betancourt Valero Isidro",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 12, "fin": 13},
+          {"dia": 1, "inicio": 12, "fin": 13},
+          {"dia": 2, "inicio": 12, "fin": 13}
+        ]
+      },
+      {
+        "id": "2026A-MEC-FORMEVALPROY-B3",
+        "profesor": "Ramirez Santillan Nadia Patricia",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 8, "fin": 9},
+          {"dia": 1, "inicio": 8, "fin": 9},
+          {"dia": 2, "inicio": 8, "fin": 9}
+        ]
+      },
+      {
+        "id": "2026A-MEC-FORMEVALPROY-C3",
+        "profesor": "Hernandez Flores Luis Humberto",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 13, "fin": 14},
+          {"dia": 1, "inicio": 13, "fin": 14},
+          {"dia": 2, "inicio": 13, "fin": 14}
+        ]
+      },
+      {
+        "id": "2026A-MEC-FORMEVALPROY-D3",
+        "profesor": "Betancourt Valero Isidro",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 11, "fin": 12},
+          {"dia": 1, "inicio": 11, "fin": 12},
+          {"dia": 2, "inicio": 11, "fin": 12}
+        ]
+      }
+    ]
+  },
+  "CTRL_LOG_PROG": {
+    "nombre": "Controladores Lógicos Programables",
+    "creditos": 5,
+    "semestre": 8,
+    "grupos": [
+      {
+        "id": "2026A-MEC-CTRLLOGPROG-15",
+        "profesor": "Gomez Muñoz Ana Gabriela",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 10, "fin": 11},
+          {"dia": 1, "inicio": 10, "fin": 11},
+          {"dia": 2, "inicio": 10, "fin": 11},
+          {"dia": 3, "inicio": 10, "fin": 11},
+          {"dia": 4, "inicio": 10, "fin": 11}
+        ]
+      },
+      {
+        "id": "2026A-MEC-CTRLLOGPROG-25",
+        "profesor": "Martinez Miwa Carlos Alberto",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 12, "fin": 13},
+          {"dia": 1, "inicio": 12, "fin": 13},
+          {"dia": 2, "inicio": 12, "fin": 13},
+          {"dia": 3, "inicio": 12, "fin": 13},
+          {"dia": 4, "inicio": 12, "fin": 13}
+        ]
+      },
+      {
+        "id": "2026A-MEC-CTRLLOGPROG-A5",
+        "profesor": "Sandoval Lopez Manuel Enrique",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 13, "fin": 14},
+          {"dia": 1, "inicio": 13, "fin": 14},
+          {"dia": 2, "inicio": 13, "fin": 14},
+          {"dia": 3, "inicio": 13, "fin": 14},
+          {"dia": 4, "inicio": 13, "fin": 14}
+        ]
+      },
+      {
+        "id": "2026A-MEC-CTRLLOGPROG-C5",
+        "profesor": "Ponce Llamas Mario Alberto",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 18, "fin": 19},
+          {"dia": 1, "inicio": 18, "fin": 19},
+          {"dia": 2, "inicio": 18, "fin": 19},
+          {"dia": 3, "inicio": 18, "fin": 19},
+          {"dia": 4, "inicio": 18, "fin": 19}
+        ]
+      },
+      {
+        "id": "2026A-MEC-CTRLLOGPROG-D5",
+        "profesor": "Gomez Muñoz Ana Gabriela",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 11, "fin": 12},
+          {"dia": 1, "inicio": 11, "fin": 12},
+          {"dia": 2, "inicio": 11, "fin": 12},
+          {"dia": 3, "inicio": 11, "fin": 12},
+          {"dia": 4, "inicio": 11, "fin": 12}
+        ]
+      },
+      {
+        "id": "2026A-MEC-CTRLLOGPROG-E5",
+        "profesor": "Sandoval Lopez Manuel Enrique",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 17, "fin": 18},
+          {"dia": 1, "inicio": 17, "fin": 18},
+          {"dia": 2, "inicio": 17, "fin": 18},
+          {"dia": 3, "inicio": 17, "fin": 18},
+          {"dia": 4, "inicio": 17, "fin": 18}
+        ]
+      }
+    ]
+  },
+  "SIST_AVA_MAN": {
+    "nombre": "Sistemas Avanzados De Manufactura",
+    "creditos": 5,
+    "semestre": 8,
+    "grupos": [
+      {
+        "id": "2026A-MEC-SISTAVAMAN-A5",
+        "profesor": "Marines Leal Maria Del Socorro",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 17, "fin": 18},
+          {"dia": 1, "inicio": 17, "fin": 18},
+          {"dia": 2, "inicio": 17, "fin": 18},
+          {"dia": 3, "inicio": 17, "fin": 18},
+          {"dia": 4, "inicio": 17, "fin": 18}
+        ]
+      },
+      {
+        "id": "2026A-MEC-SISTAVAMAN-C5",
+        "profesor": "Velarde Sanchez Ada Karina",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 10, "fin": 11},
+          {"dia": 1, "inicio": 10, "fin": 11},
+          {"dia": 2, "inicio": 10, "fin": 11},
+          {"dia": 3, "inicio": 10, "fin": 11},
+          {"dia": 4, "inicio": 10, "fin": 11}
+        ]
+      },
+      {
+        "id": "2026A-MEC-SISTAVAMAN-D5",
+        "profesor": "Velarde Sanchez Ada Karina",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 8, "fin": 9},
+          {"dia": 1, "inicio": 8, "fin": 9},
+          {"dia": 2, "inicio": 8, "fin": 9},
+          {"dia": 3, "inicio": 8, "fin": 9},
+          {"dia": 4, "inicio": 8, "fin": 9}
+        ]
+      }
+    ]
+  },
+  "REDES_IND": {
+    "nombre": "Redes Industriales",
+    "creditos": 5,
+    "semestre": 8,
+    "grupos": [
+      {
+        "id": "2026A-MEC-REDESIND-A5",
+        "profesor": "Flores Sanmiguel Francisco",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 16, "fin": 17},
+          {"dia": 1, "inicio": 16, "fin": 17},
+          {"dia": 2, "inicio": 16, "fin": 17},
+          {"dia": 3, "inicio": 16, "fin": 17},
+          {"dia": 4, "inicio": 16, "fin": 17}
+        ]
+      },
+      {
+        "id": "2026A-MEC-REDESIND-B5",
+        "profesor": "Gonzalez Roblero Neider",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 19, "fin": 20},
+          {"dia": 1, "inicio": 19, "fin": 20},
+          {"dia": 2, "inicio": 19, "fin": 20},
+          {"dia": 3, "inicio": 19, "fin": 20},
+          {"dia": 4, "inicio": 19, "fin": 20}
+        ]
+      },
+      {
+        "id": "2026A-MEC-REDESIND-C5",
+        "profesor": "Flores Sanmiguel Francisco",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 17, "fin": 18},
+          {"dia": 1, "inicio": 17, "fin": 18},
+          {"dia": 2, "inicio": 17, "fin": 18},
+          {"dia": 3, "inicio": 17, "fin": 18},
+          {"dia": 4, "inicio": 17, "fin": 18}
+        ]
+      },
+      {
+        "id": "2026A-MEC-REDESIND-D5",
+        "profesor": "Gonzalez Roblero Neider",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 20, "fin": 21},
+          {"dia": 1, "inicio": 20, "fin": 21},
+          {"dia": 2, "inicio": 20, "fin": 21},
+          {"dia": 3, "inicio": 20, "fin": 21},
+          {"dia": 4, "inicio": 20, "fin": 21}
+        ]
+      },
+      {
+        "id": "2026A-MEC-REDESIND-E5",
+        "profesor": "Flores Sanmiguel Francisco",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 18, "fin": 19},
+          {"dia": 1, "inicio": 18, "fin": 19},
+          {"dia": 2, "inicio": 18, "fin": 19},
+          {"dia": 3, "inicio": 18, "fin": 19},
+          {"dia": 4, "inicio": 18, "fin": 19}
+        ]
+      }
+    ]
+  },
+  {
+  "TOP_SEL_AUT_IND": {
+    "nombre": "Tópicos Selectos de Automatización Industrial",
+    "creditos": 6,
+    "semestre": 9,
+    "grupos": [
+      {
+        "id": "2026A-MEC-TOPSELAUTIND-A6",
+        "profesor": "Santos Saucedo Luis Rey",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 19, "fin": 20},
+          {"dia": 1, "inicio": 19, "fin": 20},
+          {"dia": 2, "inicio": 19, "fin": 20},
+          {"dia": 3, "inicio": 19, "fin": 20},
+          {"dia": 4, "inicio": 19, "fin": 21}
+        ]
+      },
+      {
+        "id": "2026A-MEC-TOPSELAUTIND-B6",
+        "profesor": "Retana Castillo Victor Manuel",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 20, "fin": 21},
+          {"dia": 1, "inicio": 20, "fin": 21},
+          {"dia": 2, "inicio": 20, "fin": 21},
+          {"dia": 3, "inicio": 20, "fin": 21},
+          {"dia": 4, "inicio": 20, "fin": 22}
+        ]
+      },
+      {
+        "id": "2026A-MEC-TOPSELAUTIND-C6",
+        "profesor": "Gomez Muñoz Ana Gabriela",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 12, "fin": 13},
+          {"dia": 1, "inicio": 12, "fin": 13},
+          {"dia": 2, "inicio": 12, "fin": 13},
+          {"dia": 3, "inicio": 12, "fin": 13},
+          {"dia": 4, "inicio": 12, "fin": 14}
+        ]
+      },
+      {
+        "id": "2026A-MEC-TOPSELAUTIND-D6",
+        "profesor": "Contreras Silva Iván De Jesús",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 20, "fin": 21},
+          {"dia": 1, "inicio": 20, "fin": 21},
+          {"dia": 2, "inicio": 20, "fin": 21},
+          {"dia": 3, "inicio": 20, "fin": 21},
+          {"dia": 4, "inicio": 20, "fin": 22}
+        ]
+      },
+      {
+        "id": "2026A-MEC-TOPSELAUTIND-F6",
+        "profesor": "Retana Castillo Victor Manuel",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 18, "fin": 19},
+          {"dia": 1, "inicio": 18, "fin": 19},
+          {"dia": 2, "inicio": 18, "fin": 19},
+          {"dia": 3, "inicio": 18, "fin": 19},
+          {"dia": 4, "inicio": 17, "fin": 19}
+        ]
+      }
+    ]
+  },
+  "ROB": {
+    "nombre": "Robótica",
+    "creditos": 5,
+    "semestre": 9,
+    "grupos": [
+      {
+        "id": "2026A-MEC-ROB-A5",
+        "profesor": "Fernandez Ramirez Karla Ivonne",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 17, "fin": 18},
+          {"dia": 1, "inicio": 17, "fin": 18},
+          {"dia": 2, "inicio": 17, "fin": 18},
+          {"dia": 3, "inicio": 17, "fin": 18},
+          {"dia": 4, "inicio": 17, "fin": 18}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ROB-B5",
+        "profesor": "Jarquín Hernández Gerardo",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 19, "fin": 20},
+          {"dia": 1, "inicio": 19, "fin": 20},
+          {"dia": 2, "inicio": 19, "fin": 20},
+          {"dia": 3, "inicio": 19, "fin": 20},
+          {"dia": 4, "inicio": 19, "fin": 20}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ROB-C5",
+        "profesor": "Machorro Fernández Felipe Alberto",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 1, "inicio": 21, "fin": 22},
+          {"dia": 2, "inicio": 21, "fin": 22},
+          {"dia": 3, "inicio": 21, "fin": 22},
+          {"dia": 4, "inicio": 20, "fin": 22}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ROB-D5",
+        "profesor": "Fernandez Ramirez Karla Ivonne",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 15, "fin": 16},
+          {"dia": 1, "inicio": 15, "fin": 16},
+          {"dia": 2, "inicio": 15, "fin": 16},
+          {"dia": 3, "inicio": 15, "fin": 16},
+          {"dia": 4, "inicio": 15, "fin": 16}
+        ]
+      },
+      {
+        "id": "2026A-MEC-ROB-F5",
+        "profesor": "Jarquín Hernández Gerardo",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 0, "inicio": 20, "fin": 21},
+          {"dia": 1, "inicio": 20, "fin": 21},
+          {"dia": 2, "inicio": 20, "fin": 21},
+          {"dia": 3, "inicio": 20, "fin": 21},
+          {"dia": 4, "inicio": 20, "fin": 21}
+        ]
+      }
+    ]
+  },
+  "RES_PROF": {
+    "nombre": "Residencia Profesional",
+    "creditos": 10,
+    "semestre": 9,
+    "grupos": [
+      {
+        "id": "2026A-MEC-RESPROF-A10",
+        "profesor": "POR ASIGNAR",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 5, "inicio": 8, "fin": 9}
+        ]
+      },
+      {
+        "id": "2026A-MEC-RESPROF-B10",
+        "profesor": "POR ASIGNAR",
+        "salon": "POR ASIGNAR",
+        "horario": [
+          {"dia": 5, "inicio": 8, "fin": 9}
+        ]
+      }
+    ]
+  }
+}
