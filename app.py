@@ -305,12 +305,14 @@ st.markdown(
         box-shadow:0 12px 28px rgba(0,0,0,.18);
     }
     .horario-grid th { background:var(--guinda-700); color:white; padding:9px; border:1px solid #5d0c20; }
-    .horario-grid td { border:1px solid #e0e3e9; height:47px; vertical-align:middle; padding:2px; }
+    .horario-grid td { border:1px solid #e0e3e9; height:62px; vertical-align:middle; padding:2px; }
     .hora-col { background:#e8eaf0; font-weight:900; width:72px; }
     .clase-cell {
-        border-radius:6px; padding:5px; color:#111; font-weight:800; font-size:.92em;
-        height:100%; display:flex; flex-direction:column; justify-content:center;
+        border-radius:6px; padding:5px; color:#111; font-weight:800; font-size:.86em;
+        height:100%; display:flex; flex-direction:column; justify-content:center; gap:2px;
     }
+    .clase-cell small { display:block; line-height:1.2; font-weight:700; }
+    .clase-cell .salon-line { color:#5b1726; font-weight:900; }
 
     .footer-note { text-align:center; color:#7f8794; font-size:.75rem; padding-top:25px; }
 
@@ -1325,9 +1327,11 @@ def create_timetable_html(schedule):
         for session in course["horario"]:
             for hour in range(session[1], session[2]):
                 if session[0] < day_count:
+                    classroom = str(course.get("salon", "POR ASIGNAR")).strip() or "POR ASIGNAR"
                     grid[hour][session[0]] = (
                         f"<div class='clase-cell' style='background-color:{colors[course['materia']]}'><span>{course['materia']}</span>"
-                        f"<small>{display_professor_name(course['profesor'])}</small></div>"
+                        f"<small>{display_professor_name(course['profesor'])}</small>"
+                        f"<small class='salon-line'>📍 Salón: {classroom}</small></div>"
                     )
 
     headers = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"][:day_count]
@@ -1595,12 +1599,16 @@ def create_schedule_pdf(schedule, option_number, student_data):
                 pdf.set_font("Helvetica", "B", 6.5)
                 pdf.set_xy(x + 1, row_y + 1.0)
                 pdf.cell(day_width - 2, 3.2, _pdf_short(course["materia"], 34), align="C")
-                pdf.set_font("Helvetica", "", 6)
+                pdf.set_font("Helvetica", "", 5.5)
                 pdf.set_xy(x + 1, row_y + min(4.9, row_height - 3.4))
+                classroom = str(course.get("salon", "POR ASIGNAR")).strip() or "POR ASIGNAR"
+                professor_and_room = (
+                    f"{display_professor_name(course['profesor'])} | Salón: {classroom}"
+                )
                 pdf.cell(
                     day_width - 2,
                     3,
-                    _pdf_short(display_professor_name(course["profesor"]), 32),
+                    _pdf_short(professor_and_room, 48),
                     align="C",
                 )
             else:
@@ -1862,11 +1870,13 @@ elif st.session_state.step == 3:
                             option_labels = {}
                             for group_index, group, option_id, option_key in option_data:
                                 schedule_text = compact_schedule(group.get("horario", []))
+                                classroom = str(group.get("salon", "POR ASIGNAR")).strip() or "POR ASIGNAR"
+                                schedule_and_room = f"{schedule_text} · 📍 Salón: {classroom}"
                                 reports = report_count(group)
-                                option_labels[option_id] = (schedule_text, group)
+                                option_labels[option_id] = (schedule_and_room, group)
 
                                 selected = st.checkbox(
-                                    schedule_text,
+                                    schedule_and_room,
                                     value=(preference != "❌"),
                                     key=option_key,
                                     disabled=(preference == "❌"),
