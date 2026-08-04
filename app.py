@@ -571,6 +571,9 @@ REPORT_HEADERS = [
     "Carrera",
 ]
 
+# Respaldo del archivo opiniones_its. El valor no es una credencial privada.
+DEFAULT_SPREADSHEET_ID = "1I2RS8vuH2Yr32k2vZG18n-YZF6h_9z4N7oVTNf2EmyQ"
+
 
 def _normalize(value):
     text = unicodedata.normalize("NFKD", str(value or ""))
@@ -622,6 +625,22 @@ def _professor_matches(saved_name, target_name):
     return SequenceMatcher(None, saved, target).ratio() >= 0.80
 
 
+def display_professor_name(value):
+    """Convierte 'Apellidos Nombres' a 'Nombres Apellidos' para mostrarlo."""
+    original = " ".join(str(value or "POR ASIGNAR").split())
+    if _normalize(original) == "por asignar":
+        return "POR ASIGNAR"
+
+    parts = original.split()
+    if len(parts) < 3:
+        return original
+
+    # La oferta del ITS coloca normalmente dos apellidos al inicio.
+    surnames = parts[:2]
+    given_names = parts[2:]
+    return " ".join(given_names + surnames)
+
+
 @st.cache_resource
 def get_db_connection():
     try:
@@ -657,16 +676,35 @@ def get_spreadsheet():
         return None
 
     config = _sheet_config()
-    try:
-        if config.get("spreadsheet_id"):
-            return client.open_by_key(str(config["spreadsheet_id"]))
-        if config.get("spreadsheet_url"):
-            return client.open_by_url(str(config["spreadsheet_url"]))
-        if config.get("spreadsheet_name"):
-            return client.open(str(config["spreadsheet_name"]))
 
-        # Coincide con el archivo mostrado por el usuario.
-        for name in (
+    # Cada intento se prueba por separado. Un ID mal escrito en Secrets ya no
+    # impide que la app pruebe el ID correcto o el nombre del archivo.
+    id_candidates = []
+    configured_id = str(config.get("spreadsheet_id", "")).strip()
+    if configured_id:
+        id_candidates.append(configured_id)
+    if DEFAULT_SPREADSHEET_ID not in id_candidates:
+        id_candidates.append(DEFAULT_SPREADSHEET_ID)
+
+    for spreadsheet_id in id_candidates:
+        try:
+            return client.open_by_key(spreadsheet_id)
+        except Exception:
+            continue
+
+    configured_url = str(config.get("spreadsheet_url", "")).strip()
+    if configured_url:
+        try:
+            return client.open_by_url(configured_url)
+        except Exception:
+            pass
+
+    name_candidates = []
+    configured_name = str(config.get("spreadsheet_name", "")).strip()
+    if configured_name:
+        name_candidates.append(configured_name)
+    name_candidates.extend(
+        [
             "opiniones_its",
             "Opiniones_its",
             "Opiniones ITS",
@@ -674,13 +712,15 @@ def get_spreadsheet():
             "HorarioITS",
             "Waze Académico",
             "Waze Academico",
-        ):
-            try:
-                return client.open(name)
-            except gspread.SpreadsheetNotFound:
-                continue
-    except Exception:
-        return None
+        ]
+    )
+
+    for name in dict.fromkeys(name_candidates):
+        try:
+            return client.open(name)
+        except Exception:
+            continue
+
     return None
 
 
@@ -1116,6 +1156,15 @@ def _schedule_presence_metrics(schedule):
     return (total_presence, idle_hours, days_on_campus, latest_exit)
 
 
+def _schedule_preference_score(schedule):
+    return sum(int(course.get("_preference", 0)) for course in schedule)
+
+
+def _combination_sort_key(schedule):
+    # Mayor preferencia primero; después menor permanencia en el Tec.
+    return (-_schedule_preference_score(schedule), *_schedule_presence_metrics(schedule))
+
+
 def generate_combinations(subjects, filtered_offer):
     if not subjects:
         return [[]], "OK"
@@ -1128,17 +1177,16 @@ def generate_combinations(subjects, filtered_offer):
             return [], f"No quedó ningún horario habilitado para {subject}."
         pools.append(options)
 
-    # Búsqueda best-first: explora primero las combinaciones cuya permanencia
-    # acumulada en el Tec es menor. Así la Opción 1 queda priorizada correctamente.
     sequence = count()
-    heap = [(0, 0, next(sequence), 0, [])]
+    # (-preferencia, permanencia, huecos, secuencia, índice, combinación)
+    heap = [(0, 0, 0, next(sequence), 0, [])]
     completed = []
-    max_completed_to_compare = max(MAX_RESULTADOS * 12, 120)
-    max_states = 60000
+    max_completed_to_compare = max(MAX_RESULTADOS * 15, 150)
+    max_states = 75000
     explored = 0
 
     while heap and len(completed) < max_completed_to_compare and explored < max_states:
-        _, _, _, index, combination = heapq.heappop(heap)
+        _, _, _, _, index, combination = heapq.heappop(heap)
         explored += 1
 
         if index == len(pools):
@@ -1153,13 +1201,14 @@ def generate_combinations(subjects, filtered_offer):
                 continue
 
             new_combination = combination + [group]
+            preference = _schedule_preference_score(new_combination)
             presence, idle, _, _ = _schedule_presence_metrics(new_combination)
             heapq.heappush(
                 heap,
-                (presence, idle, next(sequence), index + 1, new_combination),
+                (-preference, presence, idle, next(sequence), index + 1, new_combination),
             )
 
-    completed.sort(key=_schedule_presence_metrics)
+    completed.sort(key=_combination_sort_key)
     return completed[:MAX_RESULTADOS], "OK"
 
 
@@ -1186,7 +1235,7 @@ def create_timetable_html(schedule):
                 if session[0] < day_count:
                     grid[hour][session[0]] = (
                         f"<div class='clase-cell' style='background-color:{colors[course['materia']]}'><span>{course['materia']}</span>"
-                        f"<small>{course['profesor']}</small></div>"
+                        f"<small>{display_professor_name(course['profesor'])}</small></div>"
                     )
 
     headers = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"][:day_count]
@@ -1232,6 +1281,14 @@ def _pdf_short(value, limit):
     return text_value if len(text_value) <= limit else text_value[: max(1, limit - 3)] + "..."
 
 
+def _pdf_output_bytes(pdf):
+    """Compatible con PyFPDF 1.x y fpdf2."""
+    raw = pdf.output(dest="S")
+    if isinstance(raw, str):
+        return raw.encode("latin-1")
+    return bytes(raw)
+
+
 def create_schedule_pdf(schedule, option_number, student_data):
     pdf = FPDF(orientation="L", unit="mm", format="Letter")
     pdf.set_auto_page_break(auto=False)
@@ -1241,50 +1298,81 @@ def create_schedule_pdf(schedule, option_number, student_data):
     margin = 10
     usable_width = page_width - (2 * margin)
 
-    pdf.set_fill_color(128, 0, 0)
-    pdf.rect(0, 0, page_width, 25, style="F")
-    pdf.set_text_color(255, 255, 255)
-    pdf.set_font("Helvetica", "B", 18)
-    pdf.set_xy(margin, 6)
-    pdf.cell(usable_width, 8, _pdf_safe("HORARIO ITS"), align="C")
-    pdf.set_font("Helvetica", "", 9)
-    pdf.set_xy(margin, 15)
-    pdf.cell(
-        usable_width,
-        5,
-        _pdf_safe(f"{PERIODO_TEXTO} - Opción {option_number}"),
-        align="C",
-    )
+    tecnm_path = _first_existing_path("assets/logo_tecnm.png", "assets/logo_tec.png", "logo_tec.png")
+    its_path = _first_existing_path("assets/logo_its.png", "logo_its.png")
 
-    y = 30
-    pdf.set_text_color(30, 30, 30)
+    # Encabezado institucional.
+    pdf.set_fill_color(255, 255, 255)
+    pdf.rect(0, 0, page_width, 34, style="F")
+    pdf.set_fill_color(128, 0, 0)
+    pdf.rect(0, 31, page_width, 3, style="F")
+
+    if tecnm_path:
+        try:
+            pdf.image(str(tecnm_path), x=margin, y=6, w=34)
+        except Exception:
+            pass
+    if its_path:
+        try:
+            pdf.image(str(its_path), x=page_width - margin - 24, y=5, w=24)
+        except Exception:
+            pass
+
+    pdf.set_text_color(65, 65, 65)
+    pdf.set_font("Helvetica", "B", 10)
+    pdf.set_xy(48, 5)
+    pdf.cell(page_width - 96, 5, _pdf_safe("TECNOLÓGICO NACIONAL DE MÉXICO"), align="C")
+    pdf.set_font("Helvetica", "B", 13)
+    pdf.set_xy(48, 11)
+    pdf.cell(page_width - 96, 6, _pdf_safe("INSTITUTO TECNOLÓGICO DE SALTILLO"), align="C")
+    pdf.set_text_color(128, 0, 0)
+    pdf.set_font("Helvetica", "B", 17)
+    pdf.set_xy(48, 19)
+    pdf.cell(page_width - 96, 7, _pdf_safe("HORARIO ITS"), align="C")
+
+    y = 38
+    pdf.set_text_color(35, 35, 35)
     pdf.set_font("Helvetica", "B", 9)
     pdf.set_xy(margin, y)
-    pdf.cell(usable_width, 5, _pdf_safe(st.session_state.get("carrera_nombre", "")), ln=1)
+    pdf.cell(usable_width * 0.55, 5, _pdf_safe(st.session_state.get("carrera_nombre", "")))
+    pdf.set_xy(margin + usable_width * 0.55, y)
+    pdf.cell(
+        usable_width * 0.45,
+        5,
+        _pdf_safe(f"{PERIODO_TEXTO}  |  Opción {option_number}"),
+        align="R",
+    )
 
     detail_parts = []
     for label, key in (
         ("Nombre", "nombre"),
         ("Matrícula", "matricula"),
         ("Semestre", "semestre"),
-        ("Grupo", "grupo"),
     ):
         value = str(student_data.get(key, "")).strip()
         if value:
             detail_parts.append(f"{label}: {value}")
 
-    if detail_parts:
-        pdf.set_font("Helvetica", "", 8)
-        pdf.cell(usable_width, 5, _pdf_safe("   |   ".join(detail_parts)), ln=1)
-        y = pdf.get_y() + 2
-    else:
-        y = pdf.get_y() + 2
+    y += 7
+    pdf.set_fill_color(247, 242, 244)
+    pdf.set_draw_color(128, 0, 0)
+    pdf.rect(margin, y, usable_width, 8, style="DF")
+    pdf.set_xy(margin + 2, y + 1.5)
+    pdf.set_text_color(55, 55, 55)
+    pdf.set_font("Helvetica", "", 8)
+    pdf.cell(
+        usable_width - 4,
+        5,
+        _pdf_safe("   |   ".join(detail_parts) if detail_parts else "Datos del estudiante no especificados"),
+        align="C",
+    )
+    y += 11
 
     if not schedule:
         pdf.set_xy(margin, y + 10)
         pdf.set_font("Helvetica", "B", 12)
         pdf.cell(usable_width, 10, _pdf_safe("La carga no contiene materias con horario."), align="C")
-        return bytes(pdf.output())
+        return _pdf_output_bytes(pdf)
 
     hours = [hour for course in schedule for session in course["horario"] for hour in (session[1], session[2])]
     min_hour, max_hour = min(hours), max(hours)
@@ -1302,9 +1390,9 @@ def create_schedule_pdf(schedule, option_number, student_data):
 
     time_width = 22
     day_width = (usable_width - time_width) / day_count
-    available_height = pdf.h - y - 12
+    available_height = pdf.h - y - 10
     row_count = max(1, max_hour - min_hour)
-    row_height = min(12, max(7.5, (available_height - 10) / row_count))
+    row_height = min(12, max(7.2, (available_height - 9) / row_count))
 
     pdf.set_xy(margin, y)
     pdf.set_fill_color(128, 0, 0)
@@ -1343,11 +1431,16 @@ def create_schedule_pdf(schedule, option_number, student_data):
                 pdf.rect(x, row_y, day_width, row_height, style="DF")
                 pdf.set_text_color(20, 20, 20)
                 pdf.set_font("Helvetica", "B", 6.5)
-                pdf.set_xy(x + 1, row_y + 1.1)
+                pdf.set_xy(x + 1, row_y + 1.0)
                 pdf.cell(day_width - 2, 3.2, _pdf_short(course["materia"], 34), align="C")
                 pdf.set_font("Helvetica", "", 6)
-                pdf.set_xy(x + 1, row_y + min(5.0, row_height - 3.5))
-                pdf.cell(day_width - 2, 3, _pdf_short(course["profesor"], 32), align="C")
+                pdf.set_xy(x + 1, row_y + min(4.9, row_height - 3.4))
+                pdf.cell(
+                    day_width - 2,
+                    3,
+                    _pdf_short(display_professor_name(course["profesor"]), 32),
+                    align="C",
+                )
             else:
                 pdf.set_fill_color(255, 255, 255)
                 pdf.cell(day_width, row_height, "", border=1, fill=True)
@@ -1355,7 +1448,7 @@ def create_schedule_pdf(schedule, option_number, student_data):
 
         pdf.set_y(row_y + row_height)
 
-    return bytes(pdf.output())
+    return _pdf_output_bytes(pdf)
 
 
 # =============================================================================
@@ -1496,7 +1589,7 @@ elif st.session_state.step == 2:
 elif st.session_state.step == 3:
     render_section_header(
         "👨‍🏫 Profesores y horarios disponibles",
-        "Define tu disponibilidad y conserva los horarios que deseas considerar.",
+        "Marca tus preferencias y conserva únicamente los horarios que deseas considerar.",
     )
 
     selected_subjects = list(st.session_state.seleccion)
@@ -1504,6 +1597,9 @@ elif st.session_state.step == 3:
 
     if RESIDENCIA in selected_subjects:
         st.info("Residencia Profesional cuenta en tu carga y créditos, pero no ocupa bloques en el horario.")
+
+    if get_spreadsheet() is None:
+        st.warning("Las opiniones y reportes no pudieron conectarse en este momento.")
 
     with st.container(border=True):
         range_col, blocked_col = st.columns(2, gap="large")
@@ -1515,6 +1611,8 @@ elif st.session_state.step == 3:
                 [f"{hour}:00-{hour+1}:00" for hour in range(7, 22)],
                 placeholder="Selecciona las horas que deseas dejar libres",
             )
+
+    st.caption("Preferencia: ✅ preferido · ➖ neutral · ❌ descartado. Todos comienzan en neutral.")
 
     filtered_offer = {}
     missing_subjects = []
@@ -1537,7 +1635,7 @@ elif st.session_state.step == 3:
             )
 
             if not groups:
-                st.warning("No hay grupos de esta materia dentro de la disponibilidad seleccionada.")
+                st.warning("No hay horarios de esta materia dentro de la disponibilidad seleccionada.")
                 missing_subjects.append(subject)
                 filtered_offer[subject] = []
                 continue
@@ -1547,9 +1645,11 @@ elif st.session_state.step == 3:
                 groups_by_professor[group.get("profesor", "POR ASIGNAR")].append(group)
 
             enabled_groups = []
-            professor_items = sorted(groups_by_professor.items(), key=lambda item: _normalize(item[0]))
+            professor_items = sorted(
+                groups_by_professor.items(),
+                key=lambda item: _normalize(display_professor_name(item[0])),
+            )
 
-            # Tres profesores por renglón para mantener una interfaz compacta.
             for row_start in range(0, len(professor_items), 3):
                 row_items = professor_items[row_start:row_start + 3]
                 columns = st.columns(3, gap="medium")
@@ -1557,26 +1657,55 @@ elif st.session_state.step == 3:
                 for column, (professor, professor_groups) in zip(columns, row_items):
                     with column:
                         with st.container(border=True):
+                            professor_token = f"{_normalize(subject)}_{_normalize(professor)}"
+                            display_name = display_professor_name(professor)
                             ratings = ratings_for_professor(professor)
+
                             st.markdown(
-                                f'<div class="professor-card-head"><div class="professor-card-name">{professor}</div>'
+                                f'<div class="professor-card-head"><div class="professor-card-name">{display_name}</div>'
                                 f'<div class="professor-card-sub">{len(professor_groups)} horario(s) disponible(s)</div></div>',
                                 unsafe_allow_html=True,
                             )
+
+                            preference_key = f"preference_{professor_token}"
+                            previous_key = f"previous_{preference_key}"
+                            preference = st.radio(
+                                "Preferencia del profesor",
+                                options=["✅", "➖", "❌"],
+                                index=1,
+                                horizontal=True,
+                                key=preference_key,
+                                help="✅ Preferido · ➖ Neutral · ❌ Descartar",
+                            )
+
+                            option_data = []
+                            for group_index, group in enumerate(professor_groups):
+                                option_id = group_option_id(group)
+                                option_key = f"option_{professor_token}_{group_index}_{option_id}"
+                                option_data.append((group_index, group, option_id, option_key))
+
+                            previous_preference = st.session_state.get(previous_key, "➖")
+                            if preference == "❌":
+                                for _, _, _, option_key in option_data:
+                                    st.session_state[option_key] = False
+                            elif previous_preference == "❌":
+                                for _, _, _, option_key in option_data:
+                                    st.session_state[option_key] = True
+                            st.session_state[previous_key] = preference
+
                             st.markdown(rating_html(ratings), unsafe_allow_html=True)
 
                             option_labels = {}
-                            for group_index, group in enumerate(professor_groups):
-                                option_id = group_option_id(group)
+                            for group_index, group, option_id, option_key in option_data:
                                 schedule_text = compact_schedule(group.get("horario", []))
                                 reports = report_count(group)
-                                label = schedule_text
-                                option_labels[option_id] = (label, group)
+                                option_labels[option_id] = (schedule_text, group)
 
                                 selected = st.checkbox(
-                                    label,
-                                    value=True,
-                                    key=f"option_{_normalize(subject)}_{_normalize(professor)}_{group_index}_{option_id}",
+                                    schedule_text,
+                                    value=(preference != "❌"),
+                                    key=option_key,
+                                    disabled=(preference == "❌"),
                                 )
                                 if reports:
                                     st.markdown(
@@ -1584,8 +1713,11 @@ elif st.session_state.step == 3:
                                         'Aun así puedes seleccionarlo.</div>',
                                         unsafe_allow_html=True,
                                     )
-                                if selected:
-                                    enabled_groups.append(group)
+
+                                if selected and preference != "❌":
+                                    selected_group = dict(group)
+                                    selected_group["_preference"] = 1 if preference == "✅" else 0
+                                    enabled_groups.append(selected_group)
 
                             comments = [item for item in ratings if item["comentario"].strip()]
                             with st.expander(f"Comentarios ({len(comments)})"):
@@ -1597,47 +1729,47 @@ elif st.session_state.step == 3:
                                     st.caption("Este profesor todavía no tiene comentarios.")
 
                             with st.expander("Agregar opinión"):
-                                with st.form(f"rating_form_{_normalize(subject)}_{_normalize(professor)}"):
+                                with st.form(f"rating_form_{professor_token}"):
                                     score = st.slider(
                                         "Calificación (0 a 100)",
                                         0,
                                         100,
                                         80,
                                         step=5,
-                                        key=f"score_{_normalize(subject)}_{_normalize(professor)}",
+                                        key=f"score_{professor_token}",
                                     )
                                     comment = st.text_area(
                                         "Tu comentario",
                                         max_chars=300,
-                                        key=f"comment_{_normalize(subject)}_{_normalize(professor)}",
+                                        key=f"comment_{professor_token}",
                                     )
                                     send_rating = st.form_submit_button("Publicar opinión", use_container_width=True)
                                 if send_rating:
-                                    if submit_rating(professor, score, comment):
+                                    if submit_rating(display_name, score, comment):
                                         st.success("Opinión registrada.")
                                         st.rerun()
                                     else:
                                         st.warning("No se pudo conectar con la hoja de opiniones.")
 
-                            toggle_key = f"show_report_{_normalize(subject)}_{_normalize(professor)}"
+                            toggle_key = f"show_report_{professor_token}"
                             if st.button(
                                 "Reportar horario lleno",
-                                key=f"toggle_report_{_normalize(subject)}_{_normalize(professor)}",
+                                key=f"toggle_report_{professor_token}",
                                 use_container_width=True,
                             ):
                                 st.session_state[toggle_key] = not st.session_state.get(toggle_key, False)
                                 st.rerun()
 
-                            if st.session_state.get(toggle_key, False):
+                            if st.session_state.get(toggle_key, False) and option_labels:
                                 selected_option = st.radio(
-                                    "Selecciona únicamente el horario reportado",
+                                    "Selecciona el horario reportado",
                                     options=list(option_labels),
                                     format_func=lambda value, labels=option_labels: labels[value][0],
-                                    key=f"report_select_{_normalize(subject)}_{_normalize(professor)}",
+                                    key=f"report_select_{professor_token}",
                                 )
                                 if st.button(
                                     "Confirmar reporte",
-                                    key=f"confirm_report_{_normalize(subject)}_{_normalize(professor)}",
+                                    key=f"confirm_report_{professor_token}",
                                     use_container_width=True,
                                 ):
                                     group_to_report = option_labels[selected_option][1]
@@ -1679,8 +1811,23 @@ elif st.session_state.step == 3:
 elif st.session_state.step == 4:
     render_section_header(
         "🗓️ Horarios compatibles",
-        "Las opciones están ordenadas por el menor tiempo total de permanencia en el Tec.",
+        "Primero se respetan tus profesores preferidos y después se minimiza el tiempo total dentro del Tec.",
     )
+
+    with st.expander("Datos para descarga de PDF (opcional)", expanded=False):
+        pdf_col_1, pdf_col_2, pdf_col_3 = st.columns(3)
+        with pdf_col_1:
+            student_name = st.text_input("Nombre", key="pdf_student_name")
+        with pdf_col_2:
+            student_id = st.text_input("Matrícula", key="pdf_student_id")
+        with pdf_col_3:
+            student_semester = st.text_input("Semestre", key="pdf_student_semester")
+
+    student_data = {
+        "nombre": student_name,
+        "matricula": student_id,
+        "semestre": student_semester,
+    }
 
     subjects = st.session_state.get("materias_horario", [])
     filtered_offer = st.session_state.get("oferta_filtrada", {})
@@ -1700,45 +1847,14 @@ elif st.session_state.step == 4:
             option_number = index + 1
             with st.expander(f"Opción {option_number}", expanded=(index == 0)):
                 st.markdown(create_timetable_html(schedule), unsafe_allow_html=True)
-
-                with st.expander("Descargar horario en PDF"):
-                    field_col_1, field_col_2 = st.columns(2)
-                    with field_col_1:
-                        student_name = st.text_input(
-                            "Nombre (opcional)",
-                            key=f"pdf_name_{option_number}",
-                        )
-                        student_id = st.text_input(
-                            "Matrícula (opcional)",
-                            key=f"pdf_id_{option_number}",
-                        )
-                    with field_col_2:
-                        student_semester = st.text_input(
-                            "Semestre (opcional)",
-                            key=f"pdf_semester_{option_number}",
-                        )
-                        student_group = st.text_input(
-                            "Grupo o sección (opcional)",
-                            key=f"pdf_group_{option_number}",
-                        )
-
-                    pdf_data = create_schedule_pdf(
-                        schedule,
-                        option_number,
-                        {
-                            "nombre": student_name,
-                            "matricula": student_id,
-                            "semestre": student_semester,
-                            "grupo": student_group,
-                        },
-                    )
-                    st.download_button(
-                        "Descargar PDF",
-                        data=pdf_data,
-                        file_name=f"Horario_ITS_Opcion_{option_number}.pdf",
-                        mime="application/pdf",
-                        key=f"download_pdf_{option_number}",
-                        use_container_width=True,
-                    )
+                pdf_data = create_schedule_pdf(schedule, option_number, student_data)
+                st.download_button(
+                    f"Descargar PDF · Opción {option_number}",
+                    data=pdf_data,
+                    file_name=f"Horario_ITS_Opcion_{option_number}.pdf",
+                    mime="application/pdf",
+                    key=f"download_pdf_{option_number}",
+                    use_container_width=True,
+                )
 
 render_footer()
