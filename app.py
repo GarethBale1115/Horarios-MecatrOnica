@@ -475,53 +475,39 @@ def render_section_header(title, description):
 
 
 def render_subject_card_css():
-    """Activa el estilo de tarjetas únicamente en la página de materias."""
+    """Tarjetas de materias con una caja real de tamaño uniforme."""
     st.markdown(
         r"""
         <style>
-        /* Fuerza ancho y alto sobre todos los envoltorios que Streamlit
-           puede generar para un checkbox. */
         [data-testid="stCheckbox"] {
+            position: relative !important;
+            display: block !important;
             width: 100% !important;
-            min-width: 0 !important;
-            max-width: none !important;
-            min-height: 168px !important;
-            height: 168px !important;
-            max-height: 168px !important;
+            min-width: 100% !important;
+            max-width: 100% !important;
+            height: 174px !important;
+            min-height: 174px !important;
+            max-height: 174px !important;
             margin: 0 0 12px 0 !important;
-            display: flex !important;
-            flex: 1 1 100% !important;
-            align-items: stretch !important;
-            align-self: stretch !important;
-            box-sizing: border-box !important;
-        }
-        [data-testid="stCheckbox"] > div,
-        [data-testid="stCheckbox"] > div > div {
-            width: 100% !important;
-            min-width: 0 !important;
-            max-width: none !important;
-            height: 100% !important;
-            min-height: 100% !important;
-            display: flex !important;
-            flex: 1 1 100% !important;
-            align-items: stretch !important;
             box-sizing: border-box !important;
         }
         [data-testid="stCheckbox"] label,
         [data-testid="stCheckbox"] label[data-baseweb="checkbox"] {
+            position: absolute !important;
+            inset: 0 !important;
             width: 100% !important;
-            min-width: 0 !important;
-            max-width: none !important;
-            height: 100% !important;
-            min-height: 100% !important;
-            max-height: 100% !important;
-            flex: 1 1 100% !important;
-            align-self: stretch !important;
+            min-width: 100% !important;
+            max-width: 100% !important;
+            height: 174px !important;
+            min-height: 174px !important;
+            max-height: 174px !important;
+            margin: 0 !important;
             box-sizing: border-box !important;
             border: 1px solid rgba(180,186,198,.28) !important;
             border-radius: 14px !important;
             padding: 12px 8px !important;
-            display: flex !important;
+            display: grid !important;
+            grid-template-columns: 24px minmax(0, 1fr) !important;
             align-items: center !important;
             justify-content: center !important;
             text-align: center !important;
@@ -543,26 +529,27 @@ def render_subject_card_css():
         }
         [data-testid="stCheckbox"] div[data-testid="stMarkdownContainer"] {
             width: 100% !important;
-            display:flex !important;
-            align-items:center !important;
-            justify-content:center !important;
+            min-width: 0 !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
         }
         [data-testid="stCheckbox"] div[data-testid="stMarkdownContainer"] p {
-            width:100% !important;
-            margin:0 !important;
-            color:#f5f6f8 !important;
-            font-size:clamp(.61rem,.69vw,.78rem) !important;
-            line-height:1.2 !important;
-            font-weight:780 !important;
-            text-align:center !important;
-            white-space:normal !important;
-            word-break:normal !important;
-            overflow-wrap:break-word !important;
-            hyphens:none !important;
+            width: 100% !important;
+            margin: 0 !important;
+            color: #f5f6f8 !important;
+            font-size: clamp(.61rem,.69vw,.78rem) !important;
+            line-height: 1.2 !important;
+            font-weight: 780 !important;
+            text-align: center !important;
+            white-space: normal !important;
+            word-break: normal !important;
+            overflow-wrap: break-word !important;
+            hyphens: none !important;
         }
         [data-testid="stCheckbox"]:has(input:checked) div[data-testid="stMarkdownContainer"] p {
-            color:white !important;
-            font-weight:900 !important;
+            color: white !important;
+            font-weight: 900 !important;
         }
         @media (max-width:1180px) {
             [data-testid="stCheckbox"] div[data-testid="stMarkdownContainer"] p {
@@ -735,12 +722,32 @@ def display_professor_name(value):
 
 @st.cache_resource(show_spinner=False)
 def get_db_connection():
-    """Crea el cliente autenticado una sola vez por proceso."""
+    """Crea el cliente autenticado y limita cada petición para evitar bloqueos."""
     info = dict(st.secrets["gcp_service_account"])
     if "private_key" in info:
         info["private_key"] = info["private_key"].replace("\\n", "\n")
+
     creds = Credentials.from_service_account_info(info, scopes=SCOPES)
-    return gspread.authorize(creds)
+    client = gspread.authorize(creds)
+
+    # gspread 6.1+ permite fijar timeout directamente. En versiones anteriores
+    # se aplica el mismo límite sobre la sesión HTTP cuando está disponible.
+    http_client = getattr(client, "http_client", None)
+    if http_client is not None and hasattr(http_client, "set_timeout"):
+        http_client.set_timeout((3.0, 6.0))
+    else:
+        session = getattr(http_client, "session", None) or getattr(client, "session", None)
+        if session is not None and not getattr(session, "_horario_its_timeout", False):
+            original_request = session.request
+
+            def request_with_timeout(method, url, **kwargs):
+                kwargs.setdefault("timeout", (3.0, 6.0))
+                return original_request(method, url, **kwargs)
+
+            session.request = request_with_timeout
+            session._horario_its_timeout = True
+
+    return client
 
 
 def _sheet_config():
@@ -760,52 +767,26 @@ def _sheet_config():
 
 
 def _open_spreadsheet_once(client):
-    """Prueba ID, URL y nombre; un dato incorrecto no bloquea los respaldos."""
+    """Abre por ID para evitar búsquedas lentas por Drive o por nombre."""
     config = _sheet_config()
-
-    id_candidates = []
     configured_id = str(config.get("spreadsheet_id", "")).strip()
-    if configured_id:
+
+    # El ID conocido se prueba primero. Si Secrets contiene otro ID, queda como
+    # segundo respaldo sin recorrer archivos por nombre.
+    id_candidates = [DEFAULT_SPREADSHEET_ID]
+    if configured_id and configured_id not in id_candidates:
         id_candidates.append(configured_id)
-    if DEFAULT_SPREADSHEET_ID not in id_candidates:
-        id_candidates.append(DEFAULT_SPREADSHEET_ID)
 
     for spreadsheet_id in id_candidates:
         try:
             return client.open_by_key(spreadsheet_id)
         except Exception:
             continue
-
-    configured_url = str(config.get("spreadsheet_url", "")).strip()
-    if configured_url:
-        try:
-            return client.open_by_url(configured_url)
-        except Exception:
-            pass
-
-    name_candidates = []
-    configured_name = str(config.get("spreadsheet_name", "")).strip()
-    if configured_name:
-        name_candidates.append(configured_name)
-    name_candidates.extend([
-        "opiniones_its",
-        "Opiniones_its",
-        "Opiniones ITS",
-        "Horario ITS",
-        "HorarioITS",
-        "Waze Académico",
-        "Waze Academico",
-    ])
-    for name in dict.fromkeys(name_candidates):
-        try:
-            return client.open(name)
-        except Exception:
-            continue
     return None
 
 
 def get_spreadsheet(force_retry=False):
-    """Conserva solo conexiones exitosas y reintenta fallos transitorios."""
+    """Guarda conexiones válidas y nunca deja la interfaz esperando minutos."""
     if force_retry:
         st.session_state.pop("_google_spreadsheet", None)
         st.session_state.pop("_google_retry_after", None)
@@ -815,26 +796,22 @@ def get_spreadsheet(force_retry=False):
         return cached_book
 
     now = time.monotonic()
-    retry_after = float(st.session_state.get("_google_retry_after", 0.0))
-    if now < retry_after:
+    if now < float(st.session_state.get("_google_retry_after", 0.0)):
         return None
 
     try:
         client = get_db_connection()
-    except Exception:
-        st.session_state["_google_retry_after"] = now + 2.0
-        return None
-
-    for attempt in range(2):
         book = _open_spreadsheet_once(client)
-        if book is not None:
-            st.session_state["_google_spreadsheet"] = book
-            st.session_state.pop("_google_retry_after", None)
-            return book
-        if attempt == 0:
-            time.sleep(0.20)
+    except Exception:
+        book = None
 
-    st.session_state["_google_retry_after"] = time.monotonic() + 2.0
+    if book is not None:
+        st.session_state["_google_spreadsheet"] = book
+        st.session_state.pop("_google_retry_after", None)
+        return book
+
+    # Evita que cada tarjeta vuelva a lanzar una conexión fallida en el mismo rerun.
+    st.session_state["_google_retry_after"] = time.monotonic() + 8.0
     return None
 
 
@@ -984,9 +961,10 @@ def invalidate_google_cache(kind=None):
         st.session_state.pop("_reports_cache", None)
 
 
-def ratings_for_professor(professor):
+def ratings_for_professor(professor, rating_rows=None):
     result = []
-    for row in read_ratings():
+    rows = read_ratings() if rating_rows is None else rating_rows
+    for row in rows:
         saved_name = _record_value(row, "Profesor", "Maestro", "Docente")
         if not _professor_matches(saved_name, professor):
             continue
@@ -1030,7 +1008,7 @@ def _professor_identity_key(name):
     return "|".join(tokens) or _normalize(name)
 
 
-def all_professors_for_directory():
+def all_professors_for_directory(rating_rows=None):
     """Combina docentes de la oferta y de Google Sheets sin duplicarlos."""
     professors = {}
 
@@ -1062,7 +1040,8 @@ def all_professors_for_directory():
 
     # 3) Los nombres escritos en la hoja tienen prioridad visual, porque suelen
     # estar en orden Nombre(s) + Apellidos.
-    for row in read_ratings():
+    rows = read_ratings() if rating_rows is None else rating_rows
+    for row in rows:
         saved_name = str(_record_value(row, "Profesor", "Maestro", "Docente")).strip()
         if not saved_name:
             continue
@@ -1082,13 +1061,14 @@ def group_option_id(group):
     return f"{group.get('id', '')}|{schedule_signature(group)}"
 
 
-def report_count(group):
+def report_count(group, report_rows=None):
     option_target = _normalize(group_option_id(group))
     group_target = _normalize(group.get("id", ""))
     schedule_target = _normalize(compact_schedule(group.get("horario", [])))
     count = 0
 
-    for row in read_reports():
+    rows = read_reports() if report_rows is None else report_rows
+    for row in rows:
         state = _normalize(_record_value(row, "Estado", "Reporte", "Status"))
         if state not in ("", "lleno", "grupo lleno", "cerrado"):
             continue
@@ -1905,6 +1885,10 @@ elif st.session_state.step == 3:
 
     st.caption("Preferencia: ✅ preferido · ➖ neutral · ❌ descartado. Todos comienzan en neutral.")
 
+    # Una sola lectura por pantalla; las tarjetas reutilizan estos datos en memoria.
+    rating_rows = read_ratings()
+    report_rows = read_reports()
+
     filtered_offer = {}
     missing_subjects = []
 
@@ -1950,7 +1934,7 @@ elif st.session_state.step == 3:
                         with st.container(border=True):
                             professor_token = f"{_normalize(subject)}_{_normalize(professor)}"
                             display_name = display_professor_name(professor)
-                            ratings = ratings_for_professor(professor)
+                            ratings = ratings_for_professor(professor, rating_rows)
 
                             st.markdown(
                                 f'<div class="professor-card-head"><div class="professor-card-name">{display_name}</div>'
@@ -1991,7 +1975,7 @@ elif st.session_state.step == 3:
                                 schedule_text = compact_schedule(group.get("horario", []))
                                 classroom = str(group.get("salon", "POR ASIGNAR")).strip() or "POR ASIGNAR"
                                 schedule_and_room = f"{schedule_text} · 📍 Salón: {classroom}"
-                                reports = report_count(group)
+                                reports = report_count(group, report_rows)
                                 option_labels[option_id] = (schedule_and_room, group)
 
                                 selected = st.checkbox(
@@ -2201,7 +2185,8 @@ elif st.session_state.step == 5:
         "Consulta evaluaciones y comentarios, o publica tu propia opinión sobre un docente.",
     )
 
-    teachers = all_professors_for_directory()
+    rating_rows = read_ratings()
+    teachers = all_professors_for_directory(rating_rows)
     search_teacher = st.text_input(
         "Buscar profesor",
         placeholder="Escribe nombre o apellido",
@@ -2224,7 +2209,7 @@ elif st.session_state.step == 5:
         for teacher_index, teacher in enumerate(teachers):
             with teacher_columns[teacher_index % 3]:
                 teacher_token = re.sub(r"[^a-zA-Z0-9]+", "_", _normalize(teacher)).strip("_")
-                teacher_ratings = ratings_for_professor(teacher)
+                teacher_ratings = ratings_for_professor(teacher, rating_rows)
                 comments = [
                     item for item in teacher_ratings
                     if str(item.get("comentario", "")).strip()
