@@ -93,13 +93,14 @@ st.markdown(
 
     .brand-header {
         display: grid;
-        grid-template-columns: minmax(120px, .75fr) minmax(420px, 2.5fr) minmax(120px, .75fr);
-        gap: 24px;
+        grid-template-columns: minmax(220px, .9fr) minmax(620px, 3fr) minmax(220px, .9fr);
+        gap: 34px;
         align-items: center;
-        padding: 16px 22px;
+        min-height: 170px;
+        padding: 24px 30px;
         border: 1px solid var(--borde);
-        border-top: 4px solid var(--guinda-600);
-        border-radius: 20px;
+        border-top: 5px solid var(--guinda-600);
+        border-radius: 22px;
         background: linear-gradient(135deg, rgba(29, 33, 44, .97), rgba(17, 20, 28, .98));
         box-shadow: 0 18px 48px rgba(0, 0, 0, .23);
         margin-bottom: 12px;
@@ -109,14 +110,15 @@ st.markdown(
         display: flex;
         justify-content: center;
         align-items: center;
-        min-height: 70px;
+        min-height: 115px;
     }
 
     .institution-logo img {
         width: 100%;
-        max-width: 170px;
-        max-height: 75px;
+        max-width: 245px;
+        max-height: 112px;
         object-fit: contain;
+        filter: drop-shadow(0 8px 18px rgba(0,0,0,.28));
     }
 
     .institution-fallback {
@@ -131,8 +133,13 @@ st.markdown(
         letter-spacing: .08em;
     }
 
-    .project-logo { display: flex; justify-content: center; align-items: center; }
-    .project-logo img { width: min(100%, 670px); max-height: 116px; object-fit: contain; }
+    .project-logo { display: flex; justify-content: center; align-items: center; min-height: 132px; }
+    .project-logo img {
+        width: min(100%, 940px);
+        max-height: 154px;
+        object-fit: contain;
+        filter: drop-shadow(0 10px 22px rgba(0,0,0,.26));
+    }
 
     .progress-track {
         display: grid;
@@ -317,14 +324,21 @@ st.markdown(
     .footer-note { text-align:center; color:#7f8794; font-size:.75rem; padding-top:25px; }
 
     @media (max-width: 1180px) {
-        .brand-header { grid-template-columns:110px 1fr 110px; }
+        .brand-header {
+            grid-template-columns: 170px minmax(420px, 1fr) 170px;
+            gap: 18px;
+            min-height: 145px;
+            padding: 20px 22px;
+        }
+        .institution-logo img { max-width: 185px; max-height: 92px; }
+        .project-logo img { max-height: 132px; }
         .progress-step span { display:none; }
     }
 
     @media (max-width:760px) {
-        .brand-header { grid-template-columns:1fr; gap:10px; }
+        .brand-header { grid-template-columns:1fr; gap:10px; min-height:auto; padding:18px; }
         .institution-logo { display:none; }
-        .project-logo img { max-height:92px; }
+        .project-logo img { max-height:112px; }
         .progress-step { font-size:.66rem; padding:7px 3px; }
         .hero-panel { padding:22px 18px; }
     }
@@ -360,6 +374,7 @@ def _logo_html(path, fallback):
 
 
 def render_brand_header(current_step):
+    # Encabezado ampliado: logos institucionales y marca principal más visibles.
     tecnm_path = _first_existing_path("assets/logo_tecnm.png", "assets/logo_tec.png", "logo_tec.png")
     its_path = _first_existing_path("assets/logo_its.png", "logo_its.png")
     project_path = _first_existing_path(
@@ -407,7 +422,8 @@ def render_brand_header(current_step):
     st.markdown('<div class="progress-track">' + "".join(items) + "</div>", unsafe_allow_html=True)
 
     # Accesos públicos independientes del flujo principal.
-    nav_teacher, nav_reticula, nav_status, nav_space = st.columns([1.15, 1.05, 1.15, 2.65], gap="small")
+    # Se eliminó el indicador técnico de Google Sheets porque no aporta valor al usuario.
+    nav_teacher, nav_reticula, nav_space = st.columns([1.2, 1.1, 3.9], gap="small")
 
     if current_step == 5:
         if nav_teacher.button(
@@ -445,21 +461,7 @@ def render_brand_header(current_step):
             use_container_width=True,
         )
 
-    # Estado de la capa comunitaria. El generador sigue funcionando aunque falle.
-    if get_spreadsheet() is not None:
-        nav_status.markdown(
-            '<div style="padding:.62rem .75rem;border:1px solid rgba(52,211,153,.45);'
-            'border-radius:10px;text-align:center;color:#6ee7b7;font-weight:800;'
-            'background:rgba(4,95,70,.18)">🟢 Opiniones activas</div>',
-            unsafe_allow_html=True,
-        )
-    else:
-        nav_status.markdown(
-            '<div style="padding:.62rem .75rem;border:1px solid rgba(251,191,36,.45);'
-            'border-radius:10px;text-align:center;color:#fde68a;font-weight:800;'
-            'background:rgba(120,53,15,.18)">🟡 Opiniones no disponibles</div>',
-            unsafe_allow_html=True,
-        )
+
 
 
 def render_section_header(title, description):
@@ -477,13 +479,21 @@ def render_subject_card_css():
         r"""
         <style>
         [data-testid="stCheckbox"] {
+            width: 100% !important;
+            min-width: 100% !important;
+            max-width: 100% !important;
             min-height: 160px !important;
             height: 160px !important;
             max-height: 160px !important;
             margin-bottom: 10px !important;
+            display: block !important;
+            align-self: stretch !important;
         }
         [data-testid="stCheckbox"] > label {
             width: 100% !important;
+            min-width: 100% !important;
+            max-width: 100% !important;
+            align-self: stretch !important;
             min-height: 152px !important;
             height: 152px !important;
             max-height: 152px !important;
@@ -703,7 +713,7 @@ def display_professor_name(value):
     return " ".join(given_names + surnames)
 
 
-@st.cache_resource
+@st.cache_resource(show_spinner=False)
 def get_db_connection():
     try:
         info = dict(st.secrets["gcp_service_account"])
@@ -731,59 +741,24 @@ def _sheet_config():
     return config
 
 
-@st.cache_resource
+@st.cache_resource(show_spinner=False)
 def get_spreadsheet():
+    """Abre directamente el archivo configurado, sin búsquedas lentas por nombre."""
     client = get_db_connection()
     if client is None:
         return None
 
     config = _sheet_config()
+    spreadsheet_id = str(
+        config.get("spreadsheet_id") or DEFAULT_SPREADSHEET_ID
+    ).strip()
+    if not spreadsheet_id:
+        return None
 
-    # Cada intento se prueba por separado. Un ID mal escrito en Secrets ya no
-    # impide que la app pruebe el ID correcto o el nombre del archivo.
-    id_candidates = []
-    configured_id = str(config.get("spreadsheet_id", "")).strip()
-    if configured_id:
-        id_candidates.append(configured_id)
-    if DEFAULT_SPREADSHEET_ID not in id_candidates:
-        id_candidates.append(DEFAULT_SPREADSHEET_ID)
-
-    for spreadsheet_id in id_candidates:
-        try:
-            return client.open_by_key(spreadsheet_id)
-        except Exception:
-            continue
-
-    configured_url = str(config.get("spreadsheet_url", "")).strip()
-    if configured_url:
-        try:
-            return client.open_by_url(configured_url)
-        except Exception:
-            pass
-
-    name_candidates = []
-    configured_name = str(config.get("spreadsheet_name", "")).strip()
-    if configured_name:
-        name_candidates.append(configured_name)
-    name_candidates.extend(
-        [
-            "opiniones_its",
-            "Opiniones_its",
-            "Opiniones ITS",
-            "Horario ITS",
-            "HorarioITS",
-            "Waze Académico",
-            "Waze Academico",
-        ]
-    )
-
-    for name in dict.fromkeys(name_candidates):
-        try:
-            return client.open(name)
-        except Exception:
-            continue
-
-    return None
+    try:
+        return client.open_by_key(spreadsheet_id)
+    except Exception:
+        return None
 
 
 def _ensure_headers(worksheet, required_headers):
@@ -804,7 +779,7 @@ def _ensure_headers(worksheet, required_headers):
         return list(required_headers)
 
 
-def _worksheet(candidates, headers):
+def _worksheet(candidates, headers, *, ensure_headers=True, create_if_missing=True):
     book = get_spreadsheet()
     if book is None:
         return None
@@ -812,15 +787,23 @@ def _worksheet(candidates, headers):
     for name in candidates:
         try:
             worksheet = book.worksheet(name)
-            _ensure_headers(worksheet, headers)
+            if ensure_headers:
+                _ensure_headers(worksheet, headers)
             return worksheet
         except gspread.WorksheetNotFound:
             continue
         except Exception:
             return None
 
+    if not create_if_missing:
+        return None
+
     try:
-        worksheet = book.add_worksheet(title=candidates[0], rows=1500, cols=max(12, len(headers)))
+        worksheet = book.add_worksheet(
+            title=candidates[0],
+            rows=1500,
+            cols=max(12, len(headers)),
+        )
         worksheet.append_row(headers)
         return worksheet
     except Exception:
@@ -843,10 +826,15 @@ def _append_record(worksheet, values_by_header, required_headers):
     worksheet.append_row(row, value_input_option="USER_ENTERED")
 
 
-@st.cache_data(ttl=30)
+@st.cache_data(ttl=300, show_spinner=False)
 def read_ratings():
-    """Lee Hoja 1 sin depender de get_all_records, que falla con columnas vacías."""
-    worksheet = _worksheet(("Hoja 1", "Opiniones", "Calificaciones", "Profesores"), RATING_HEADERS)
+    """Lee opiniones una vez cada 5 minutos, sin mostrar el spinner técnico."""
+    worksheet = _worksheet(
+        ("Hoja 1", "Opiniones", "Calificaciones", "Profesores"),
+        RATING_HEADERS,
+        ensure_headers=False,
+        create_if_missing=False,
+    )
     if worksheet is None:
         return []
 
@@ -872,9 +860,14 @@ def read_ratings():
         return []
 
 
-@st.cache_data(ttl=30)
+@st.cache_data(ttl=300, show_spinner=False)
 def read_reports():
-    worksheet = _worksheet(("reportes_grupos", "Grupos_Llenos", "Grupos Llenos", "Reportes"), REPORT_HEADERS)
+    worksheet = _worksheet(
+        ("reportes_grupos", "Grupos_Llenos", "Grupos Llenos", "Reportes"),
+        REPORT_HEADERS,
+        ensure_headers=False,
+        create_if_missing=False,
+    )
     if worksheet is None:
         return []
     try:
