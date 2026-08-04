@@ -399,6 +399,45 @@ def render_brand_header(current_step):
         )
     st.markdown('<div class="progress-track">' + "".join(items) + "</div>", unsafe_allow_html=True)
 
+    # Accesos públicos independientes del flujo principal.
+    nav_teacher, nav_reticula, nav_space = st.columns([1.15, 1.05, 3.8], gap="small")
+
+    if current_step == 5:
+        if nav_teacher.button(
+            "← Volver al generador",
+            key="header_back_from_teacher_ratings",
+            use_container_width=True,
+        ):
+            st.session_state.step = st.session_state.get("step_before_teacher_ratings", 1)
+            st.rerun()
+    else:
+        if nav_teacher.button(
+            "👩‍🏫 Calificación docente",
+            key=f"header_teacher_ratings_{current_step}",
+            use_container_width=True,
+        ):
+            st.session_state.step_before_teacher_ratings = current_step
+            st.session_state.step = 5
+            st.rerun()
+
+    reticula_path = _first_existing_path("reticula.pdf", "assets/reticula.pdf")
+    if reticula_path is not None:
+        nav_reticula.download_button(
+            "📄 Descargar retícula",
+            data=reticula_path.read_bytes(),
+            file_name="Reticula_Ingenieria_Mecatronica_ITS.pdf",
+            mime="application/pdf",
+            key=f"header_download_reticula_{current_step}",
+            use_container_width=True,
+        )
+    else:
+        nav_reticula.button(
+            "📄 Retícula no disponible",
+            key=f"header_reticula_missing_{current_step}",
+            disabled=True,
+            use_container_width=True,
+        )
+
 
 def render_section_header(title, description):
     st.markdown(
@@ -861,6 +900,53 @@ def ratings_for_professor(professor):
     return result
 
 
+def _professor_identity_key(name):
+    """Identificador estable sin depender del orden, acentos ni mayúsculas."""
+    tokens = sorted(set(_name_tokens(name)))
+    return "|".join(tokens) or _normalize(name)
+
+
+def all_professors_for_directory():
+    """Combina docentes de la oferta y de Google Sheets sin duplicarlos."""
+    professors = {}
+
+    # 1) Oferta cargada actualmente.
+    current_offer = st.session_state.get("oferta", {})
+    for groups in current_offer.values():
+        for group in groups:
+            raw_name = str(group.get("profesor", "")).strip()
+            if not raw_name or _normalize(raw_name) == "por asignar":
+                continue
+            display_name = display_professor_name(raw_name)
+            professors[_professor_identity_key(display_name)] = display_name
+
+    # 2) Si todavía no se cargó una carrera, usa Mecatrónica como catálogo base.
+    if not professors:
+        try:
+            data = load_oferta_json(PERIODO_CODIGO, "mecatronica")
+            if data:
+                offer, _, _ = format_json_to_oferta(data)
+                for groups in offer.values():
+                    for group in groups:
+                        raw_name = str(group.get("profesor", "")).strip()
+                        if not raw_name or _normalize(raw_name) == "por asignar":
+                            continue
+                        display_name = display_professor_name(raw_name)
+                        professors[_professor_identity_key(display_name)] = display_name
+        except Exception:
+            pass
+
+    # 3) Los nombres escritos en la hoja tienen prioridad visual, porque suelen
+    # estar en orden Nombre(s) + Apellidos.
+    for row in read_ratings():
+        saved_name = str(_record_value(row, "Profesor", "Maestro", "Docente")).strip()
+        if not saved_name:
+            continue
+        professors[_professor_identity_key(saved_name)] = saved_name
+
+    return sorted(professors.values(), key=lambda value: _normalize(value))
+
+
 def schedule_signature(group):
     return "|".join(
         f"{day}-{start}-{end}"
@@ -1209,6 +1295,12 @@ def generate_combinations(subjects, filtered_offer):
             )
 
     completed.sort(key=_combination_sort_key)
+    if not completed:
+        return [], (
+            "No se encontró ninguna combinación compatible con los profesores y "
+            "horarios seleccionados. Regresa a Grupos, habilita otra opción o cambia "
+            "alguna preferencia docente."
+        )
     return completed[:MAX_RESULTADOS], "OK"
 
 
@@ -1526,6 +1618,8 @@ def create_schedule_pdf(schedule, option_number, student_data):
 # =============================================================================
 if "step" not in st.session_state:
     st.session_state.step = 1
+if "step_before_teacher_ratings" not in st.session_state:
+    st.session_state.step_before_teacher_ratings = 1
 
 render_brand_header(st.session_state.step)
 
@@ -1891,7 +1985,19 @@ elif st.session_state.step == 4:
         with pdf_col_2:
             student_id = st.text_input("Matrícula", key="pdf_student_id")
         with pdf_col_3:
-            student_semester = st.text_input("Semestre", key="pdf_student_semester")
+            semester_options = [""] + list(range(1, 14))
+            current_semester = st.session_state.get("pdf_student_semester", "")
+            try:
+                semester_index = semester_options.index(int(current_semester)) if current_semester not in ("", None) else 0
+            except (TypeError, ValueError):
+                semester_index = 0
+            student_semester = st.selectbox(
+                "Semestre",
+                semester_options,
+                index=semester_index,
+                format_func=lambda value: "No especificado" if value == "" else str(value),
+                key="pdf_student_semester_select",
+            )
 
     student_data = {
         "nombre": student_name,
@@ -1909,7 +2015,12 @@ elif st.session_state.step == 4:
         st.rerun()
 
     if not results:
-        st.error(message)
+        st.error("No hay opciones de horario compatibles.")
+        st.info(
+            message
+            if message and message != "OK"
+            else "Regresa a Grupos y habilita otros profesores u horarios para intentar nuevamente."
+        )
     else:
         st.success(f"Se encontraron {len(results)} opciones compatibles.")
 
@@ -1926,5 +2037,95 @@ elif st.session_state.step == 4:
                     key=f"download_pdf_{option_number}",
                     use_container_width=True,
                 )
+
+# =============================================================================
+# PÁGINA 5 — CALIFICACIÓN DOCENTE
+# =============================================================================
+elif st.session_state.step == 5:
+    render_section_header(
+        "👩‍🏫 Calificación docente",
+        "Consulta evaluaciones y comentarios, o publica tu propia opinión sobre un docente.",
+    )
+
+    teachers = all_professors_for_directory()
+    search_teacher = st.text_input(
+        "Buscar profesor",
+        placeholder="Escribe nombre o apellido",
+        key="teacher_directory_search",
+    )
+    normalized_search = _normalize(search_teacher)
+    if normalized_search:
+        teachers = [
+            teacher
+            for teacher in teachers
+            if normalized_search in _normalize(teacher)
+        ]
+
+    st.caption(f"{len(teachers)} docente(s) encontrado(s).")
+
+    if not teachers:
+        st.warning("No se encontraron docentes con ese criterio de búsqueda.")
+    else:
+        teacher_columns = st.columns(3, gap="large")
+        for teacher_index, teacher in enumerate(teachers):
+            with teacher_columns[teacher_index % 3]:
+                teacher_token = re.sub(r"[^a-zA-Z0-9]+", "_", _normalize(teacher)).strip("_")
+                teacher_ratings = ratings_for_professor(teacher)
+                comments = [
+                    item for item in teacher_ratings
+                    if str(item.get("comentario", "")).strip()
+                ]
+
+                with st.container(border=True):
+                    st.markdown(
+                        f'<div class="professor-card-head">'
+                        f'<div class="professor-card-name">{teacher}</div>'
+                        f'<div class="professor-card-sub">'
+                        f'{len(teacher_ratings)} evaluación(es) · {len(comments)} comentario(s)'
+                        f'</div></div>',
+                        unsafe_allow_html=True,
+                    )
+                    st.markdown(rating_html(teacher_ratings), unsafe_allow_html=True)
+
+                    with st.expander(f"Ver comentarios ({len(comments)})"):
+                        if comments:
+                            for item in reversed(comments[-20:]):
+                                date_text = f" — {item['fecha']}" if item.get("fecha") else ""
+                                st.write(f"• {item['comentario']}{date_text}")
+                        else:
+                            st.caption("Este docente todavía no tiene comentarios.")
+
+                    with st.expander("Calificar profesor"):
+                        with st.form(f"teacher_directory_form_{teacher_token}"):
+                            teacher_score = st.slider(
+                                "Calificación (0 a 100)",
+                                min_value=0,
+                                max_value=100,
+                                value=80,
+                                step=5,
+                                key=f"teacher_directory_score_{teacher_token}",
+                            )
+                            teacher_comment = st.text_area(
+                                "Comentario",
+                                max_chars=300,
+                                key=f"teacher_directory_comment_{teacher_token}",
+                            )
+                            submit_teacher_rating = st.form_submit_button(
+                                "Publicar opinión",
+                                use_container_width=True,
+                            )
+
+                        if submit_teacher_rating:
+                            if submit_rating(teacher, teacher_score, teacher_comment):
+                                st.success("Opinión registrada correctamente.")
+                                st.rerun()
+                            else:
+                                st.warning("No se pudo conectar con la hoja de opiniones.")
+
+    st.divider()
+    if st.button("← Volver al generador", use_container_width=True, key="teacher_directory_back_bottom"):
+        st.session_state.step = st.session_state.get("step_before_teacher_ratings", 1)
+        st.rerun()
+
 
 render_footer()
