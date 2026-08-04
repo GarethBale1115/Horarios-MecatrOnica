@@ -1330,43 +1330,113 @@ def create_schedule_pdf(schedule, option_number, student_data):
     pdf.set_xy(48, 19)
     pdf.cell(page_width - 96, 7, _pdf_safe("HORARIO ITS"), align="C")
 
+    # Tabla visible con datos institucionales, académicos y del estudiante.
     y = 38
-    pdf.set_text_color(35, 35, 35)
-    pdf.set_font("Helvetica", "B", 9)
+    carrera = str(st.session_state.get("carrera_nombre", "")).strip() or "No especificada"
+    nombre = str(student_data.get("nombre", "")).strip() or "No especificado"
+    matricula = str(student_data.get("matricula", "")).strip() or "No especificada"
+    semestre = str(student_data.get("semestre", "")).strip() or "No especificado"
+
+    title_height = 7
+    row_height_info = 7
+    label_width = 24
+    value_width = (usable_width - (2 * label_width)) / 2
+
     pdf.set_xy(margin, y)
-    pdf.cell(usable_width * 0.55, 5, _pdf_safe(st.session_state.get("carrera_nombre", "")))
-    pdf.set_xy(margin + usable_width * 0.55, y)
-    pdf.cell(
-        usable_width * 0.45,
-        5,
-        _pdf_safe(f"{PERIODO_TEXTO}  |  Opción {option_number}"),
-        align="R",
-    )
-
-    detail_parts = []
-    for label, key in (
-        ("Nombre", "nombre"),
-        ("Matrícula", "matricula"),
-        ("Semestre", "semestre"),
-    ):
-        value = str(student_data.get(key, "")).strip()
-        if value:
-            detail_parts.append(f"{label}: {value}")
-
-    y += 7
-    pdf.set_fill_color(247, 242, 244)
+    pdf.set_fill_color(128, 0, 0)
     pdf.set_draw_color(128, 0, 0)
-    pdf.rect(margin, y, usable_width, 8, style="DF")
-    pdf.set_xy(margin + 2, y + 1.5)
-    pdf.set_text_color(55, 55, 55)
-    pdf.set_font("Helvetica", "", 8)
+    pdf.set_text_color(255, 255, 255)
+    pdf.set_font("Helvetica", "B", 9)
     pdf.cell(
-        usable_width - 4,
-        5,
-        _pdf_safe("   |   ".join(detail_parts) if detail_parts else "Datos del estudiante no especificados"),
+        usable_width,
+        title_height,
+        _pdf_safe("DATOS ACADÉMICOS Y DEL ESTUDIANTE"),
+        border=1,
         align="C",
+        fill=True,
     )
-    y += 11
+    y += title_height
+
+    info_rows = [
+        (
+            "Sistema",
+            "Tecnológico Nacional de México",
+            "Plantel",
+            "Instituto Tecnológico de Saltillo",
+        ),
+        (
+            "Carrera",
+            carrera,
+            "Periodo",
+            PERIODO_TEXTO,
+        ),
+        (
+            "Nombre",
+            nombre,
+            "Matrícula",
+            matricula,
+        ),
+        (
+            "Semestre",
+            semestre,
+            "Horario",
+            f"Opción {option_number}",
+        ),
+    ]
+
+    for left_label, left_value, right_label, right_value in info_rows:
+        pdf.set_xy(margin, y)
+
+        pdf.set_fill_color(128, 0, 0)
+        pdf.set_text_color(255, 255, 255)
+        pdf.set_font("Helvetica", "B", 7.5)
+        pdf.cell(
+            label_width,
+            row_height_info,
+            _pdf_safe(left_label),
+            border=1,
+            align="C",
+            fill=True,
+        )
+
+        pdf.set_fill_color(250, 246, 247)
+        pdf.set_text_color(35, 35, 35)
+        pdf.set_font("Helvetica", "", 7.5)
+        pdf.cell(
+            value_width,
+            row_height_info,
+            _pdf_short(left_value, 52),
+            border=1,
+            align="C",
+            fill=True,
+        )
+
+        pdf.set_fill_color(128, 0, 0)
+        pdf.set_text_color(255, 255, 255)
+        pdf.set_font("Helvetica", "B", 7.5)
+        pdf.cell(
+            label_width,
+            row_height_info,
+            _pdf_safe(right_label),
+            border=1,
+            align="C",
+            fill=True,
+        )
+
+        pdf.set_fill_color(250, 246, 247)
+        pdf.set_text_color(35, 35, 35)
+        pdf.set_font("Helvetica", "", 7.5)
+        pdf.cell(
+            value_width,
+            row_height_info,
+            _pdf_short(right_value, 52),
+            border=1,
+            align="C",
+            fill=True,
+        )
+        y += row_height_info
+
+    y += 4
 
     if not schedule:
         pdf.set_xy(margin, y + 10)
