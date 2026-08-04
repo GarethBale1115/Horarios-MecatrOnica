@@ -362,13 +362,18 @@ def _logo_html(path, fallback):
 def render_brand_header(current_step):
     tecnm_path = _first_existing_path("assets/logo_tecnm.png", "assets/logo_tec.png", "logo_tec.png")
     its_path = _first_existing_path("assets/logo_its.png", "logo_its.png")
-    project_path = _first_existing_path("assets/horario_its_logo.svg", "horario_its_logo.svg")
+    project_path = _first_existing_path(
+        "assets/horario_its_logo.png",
+        "horario_its_logo.png",
+        "assets/horario_its_logo.svg",
+        "horario_its_logo.svg",
+    )
 
     project_uri = _data_uri(project_path)
     project_html = (
         f'<img src="{project_uri}" alt="{APP_NAME}">'
         if project_uri
-        else '<div style="text-align:center"><div style="font-size:2.1rem;font-weight:950;color:#fff">HORARIO ITS 🫏</div><div style="color:#b9bec8;font-size:.8rem">GENERADOR DE HORARIOS</div></div>'
+        else '<div style="text-align:center"><div style="font-size:2.1rem;font-weight:950;color:#fff">HORARIO ITS · BURROS PARDOS</div><div style="color:#b9bec8;font-size:.8rem">GENERADOR DE HORARIOS</div></div>'
     )
 
     st.markdown(
@@ -402,7 +407,7 @@ def render_brand_header(current_step):
     st.markdown('<div class="progress-track">' + "".join(items) + "</div>", unsafe_allow_html=True)
 
     # Accesos públicos independientes del flujo principal.
-    nav_teacher, nav_reticula, nav_space = st.columns([1.15, 1.05, 3.8], gap="small")
+    nav_teacher, nav_reticula, nav_status, nav_space = st.columns([1.15, 1.05, 1.15, 2.65], gap="small")
 
     if current_step == 5:
         if nav_teacher.button(
@@ -438,6 +443,22 @@ def render_brand_header(current_step):
             key=f"header_reticula_missing_{current_step}",
             disabled=True,
             use_container_width=True,
+        )
+
+    # Estado de la capa comunitaria. El generador sigue funcionando aunque falle.
+    if get_spreadsheet() is not None:
+        nav_status.markdown(
+            '<div style="padding:.62rem .75rem;border:1px solid rgba(52,211,153,.45);'
+            'border-radius:10px;text-align:center;color:#6ee7b7;font-weight:800;'
+            'background:rgba(4,95,70,.18)">🟢 Opiniones activas</div>',
+            unsafe_allow_html=True,
+        )
+    else:
+        nav_status.markdown(
+            '<div style="padding:.62rem .75rem;border:1px solid rgba(251,191,36,.45);'
+            'border-radius:10px;text-align:center;color:#fde68a;font-weight:800;'
+            'background:rgba(120,53,15,.18)">🟡 Opiniones no disponibles</div>',
+            unsafe_allow_html=True,
         )
 
 
@@ -1882,9 +1903,23 @@ elif st.session_state.step == 3:
                                     disabled=(preference == "❌"),
                                 )
                                 if reports:
+                                    if reports >= 5:
+                                        report_message = (
+                                            f"🔴 Reportado como lleno · {reports} reportes. "
+                                            "Aun así puedes seleccionarlo."
+                                        )
+                                    elif reports >= 3:
+                                        report_message = (
+                                            f"🟠 Probablemente lleno · {reports} reportes. "
+                                            "Aun así puedes seleccionarlo."
+                                        )
+                                    else:
+                                        report_message = (
+                                            f"⚠ Posiblemente lleno · {reports} reporte(s). "
+                                            "Aun así puedes seleccionarlo."
+                                        )
                                     st.markdown(
-                                        f'<div class="group-warning">⚠ Reportado como lleno {reports} vez/veces. '
-                                        'Aun así puedes seleccionarlo.</div>',
+                                        f'<div class="group-warning">{report_message}</div>',
                                         unsafe_allow_html=True,
                                     )
 
@@ -2036,7 +2071,18 @@ elif st.session_state.step == 4:
 
         for index, schedule in enumerate(results):
             option_number = index + 1
-            with st.expander(f"Opción {option_number}", expanded=(index == 0)):
+            preference_score = _schedule_preference_score(schedule)
+            presence_hours, idle_hours, campus_days, latest_exit = _schedule_presence_metrics(schedule)
+            preference_text = (
+                f"✅ {preference_score} preferido(s)"
+                if preference_score
+                else "➖ sin profesor prioritario"
+            )
+            option_title = (
+                f"Opción {option_number} · {preference_text} · "
+                f"⏱ {presence_hours} h en el Tec · 🕳 {idle_hours} h libres"
+            )
+            with st.expander(option_title, expanded=(index == 0)):
                 st.markdown(create_timetable_html(schedule), unsafe_allow_html=True)
                 pdf_data = create_schedule_pdf(schedule, option_number, student_data)
                 st.download_button(
