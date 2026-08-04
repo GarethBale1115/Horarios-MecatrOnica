@@ -475,32 +475,37 @@ def render_section_header(title, description):
 
 
 def render_subject_card_css():
-    """Tarjetas de materias con una caja real de tamaño uniforme."""
+    """Tarjetas uniformes sin depender de posicionamiento absoluto."""
     st.markdown(
         r"""
         <style>
+        /* El contenedor de Streamlit también debe ocupar toda la columna. */
+        [data-testid="stElementContainer"]:has([data-testid="stCheckbox"]) {
+            width: 100% !important;
+            min-width: 0 !important;
+        }
+
         [data-testid="stCheckbox"] {
-            position: relative !important;
             display: block !important;
             width: 100% !important;
             min-width: 100% !important;
             max-width: 100% !important;
-            height: 174px !important;
-            min-height: 174px !important;
-            max-height: 174px !important;
+            height: 160px !important;
+            min-height: 160px !important;
+            max-height: 160px !important;
             margin: 0 0 12px 0 !important;
             box-sizing: border-box !important;
         }
-        [data-testid="stCheckbox"] label,
+
+        [data-testid="stCheckbox"] > label,
         [data-testid="stCheckbox"] label[data-baseweb="checkbox"] {
-            position: absolute !important;
-            inset: 0 !important;
+            position: static !important;
             width: 100% !important;
             min-width: 100% !important;
             max-width: 100% !important;
-            height: 174px !important;
-            min-height: 174px !important;
-            max-height: 174px !important;
+            height: 152px !important;
+            min-height: 152px !important;
+            max-height: 152px !important;
             margin: 0 !important;
             box-sizing: border-box !important;
             border: 1px solid rgba(180,186,198,.28) !important;
@@ -516,17 +521,20 @@ def render_subject_card_css():
             cursor: pointer !important;
             background: linear-gradient(145deg, rgba(27,32,43,.98), rgba(16,19,27,.98));
         }
+
         [data-testid="stCheckbox"] label:hover {
             border-color: var(--guinda-500) !important;
             background: linear-gradient(145deg, rgba(83,15,33,.72), rgba(24,27,37,.98)) !important;
             transform: translateY(-2px);
             box-shadow: 0 10px 22px rgba(0,0,0,.18);
         }
+
         [data-testid="stCheckbox"]:has(input:checked) label {
             background: linear-gradient(145deg, var(--guinda-700), var(--guinda-500)) !important;
             border-color: #d74b68 !important;
             box-shadow: 0 10px 25px rgba(123,16,40,.32);
         }
+
         [data-testid="stCheckbox"] div[data-testid="stMarkdownContainer"] {
             width: 100% !important;
             min-width: 0 !important;
@@ -534,6 +542,7 @@ def render_subject_card_css():
             align-items: center !important;
             justify-content: center !important;
         }
+
         [data-testid="stCheckbox"] div[data-testid="stMarkdownContainer"] p {
             width: 100% !important;
             margin: 0 !important;
@@ -547,13 +556,15 @@ def render_subject_card_css():
             overflow-wrap: break-word !important;
             hyphens: none !important;
         }
+
         [data-testid="stCheckbox"]:has(input:checked) div[data-testid="stMarkdownContainer"] p {
             color: white !important;
             font-weight: 900 !important;
         }
+
         @media (max-width:1180px) {
             [data-testid="stCheckbox"] div[data-testid="stMarkdownContainer"] p {
-                font-size:.58rem !important;
+                font-size: .58rem !important;
             }
         }
         </style>
@@ -721,33 +732,20 @@ def display_professor_name(value):
 
 
 @st.cache_resource(show_spinner=False)
-def get_db_connection():
-    """Crea el cliente autenticado y limita cada petición para evitar bloqueos."""
+def _build_google_client():
+    """Construye el cliente; los errores no se almacenan en caché."""
     info = dict(st.secrets["gcp_service_account"])
     if "private_key" in info:
         info["private_key"] = info["private_key"].replace("\\n", "\n")
-
     creds = Credentials.from_service_account_info(info, scopes=SCOPES)
-    client = gspread.authorize(creds)
+    return gspread.authorize(creds)
 
-    # gspread 6.1+ permite fijar timeout directamente. En versiones anteriores
-    # se aplica el mismo límite sobre la sesión HTTP cuando está disponible.
-    http_client = getattr(client, "http_client", None)
-    if http_client is not None and hasattr(http_client, "set_timeout"):
-        http_client.set_timeout((3.0, 6.0))
-    else:
-        session = getattr(http_client, "session", None) or getattr(client, "session", None)
-        if session is not None and not getattr(session, "_horario_its_timeout", False):
-            original_request = session.request
 
-            def request_with_timeout(method, url, **kwargs):
-                kwargs.setdefault("timeout", (3.0, 6.0))
-                return original_request(method, url, **kwargs)
-
-            session.request = request_with_timeout
-            session._horario_its_timeout = True
-
-    return client
+def get_db_connection():
+    try:
+        return _build_google_client()
+    except Exception:
+        return None
 
 
 def _sheet_config():
@@ -766,53 +764,60 @@ def _sheet_config():
     return config
 
 
-def _open_spreadsheet_once(client):
-    """Abre por ID para evitar búsquedas lentas por Drive o por nombre."""
-    config = _sheet_config()
-    configured_id = str(config.get("spreadsheet_id", "")).strip()
+@st.cache_resource(show_spinner=False)
+def _open_spreadsheet_cached(configured_id, configured_url, configured_name):
+    """Abre la hoja configurada; solo una conexión válida queda en caché."""
+    client = _build_google_client()
 
-    # El ID conocido se prueba primero. Si Secrets contiene otro ID, queda como
-    # segundo respaldo sin recorrer archivos por nombre.
-    id_candidates = [DEFAULT_SPREADSHEET_ID]
-    if configured_id and configured_id not in id_candidates:
+    id_candidates = []
+    configured_id = str(configured_id or "").strip()
+    if configured_id:
         id_candidates.append(configured_id)
+    if DEFAULT_SPREADSHEET_ID not in id_candidates:
+        id_candidates.append(DEFAULT_SPREADSHEET_ID)
 
     for spreadsheet_id in id_candidates:
         try:
             return client.open_by_key(spreadsheet_id)
         except Exception:
             continue
-    return None
+
+    configured_url = str(configured_url or "").strip()
+    if configured_url:
+        try:
+            return client.open_by_url(configured_url)
+        except Exception:
+            pass
+
+    names = []
+    configured_name = str(configured_name or "").strip()
+    if configured_name:
+        names.append(configured_name)
+    names.extend(("opiniones_its", "Opiniones_its", "Opiniones ITS"))
+
+    for name in dict.fromkeys(names):
+        try:
+            return client.open(name)
+        except Exception:
+            continue
+
+    raise RuntimeError("No fue posible abrir la hoja de opiniones_its.")
 
 
 def get_spreadsheet(force_retry=False):
-    """Guarda conexiones válidas y nunca deja la interfaz esperando minutos."""
     if force_retry:
-        st.session_state.pop("_google_spreadsheet", None)
-        st.session_state.pop("_google_retry_after", None)
+        _open_spreadsheet_cached.clear()
+        _build_google_client.clear()
 
-    cached_book = st.session_state.get("_google_spreadsheet")
-    if cached_book is not None:
-        return cached_book
-
-    now = time.monotonic()
-    if now < float(st.session_state.get("_google_retry_after", 0.0)):
-        return None
-
+    config = _sheet_config()
     try:
-        client = get_db_connection()
-        book = _open_spreadsheet_once(client)
+        return _open_spreadsheet_cached(
+            str(config.get("spreadsheet_id", "")),
+            str(config.get("spreadsheet_url", "")),
+            str(config.get("spreadsheet_name", "")),
+        )
     except Exception:
-        book = None
-
-    if book is not None:
-        st.session_state["_google_spreadsheet"] = book
-        st.session_state.pop("_google_retry_after", None)
-        return book
-
-    # Evita que cada tarjeta vuelva a lanzar una conexión fallida en el mismo rerun.
-    st.session_state["_google_retry_after"] = time.monotonic() + 8.0
-    return None
+        return None
 
 
 def _ensure_headers(worksheet, required_headers):
@@ -873,14 +878,35 @@ def _record_value(record, *aliases):
     return ""
 
 
+def _exception_status_code(error):
+    response = getattr(error, "response", None)
+    status = getattr(response, "status_code", None)
+    if status is None:
+        status = getattr(error, "status_code", None)
+    try:
+        return int(status) if status is not None else None
+    except (TypeError, ValueError):
+        return None
+
+
 def _append_record(worksheet, values_by_header, required_headers):
+    """Una sola lectura de encabezados y una sola escritura; reintenta solo 429."""
     headers = _ensure_headers(worksheet, required_headers)
     normalized_values = {_normalize(key): value for key, value in values_by_header.items()}
     row = [normalized_values.get(_normalize(header), "") for header in headers]
-    worksheet.append_row(row, value_input_option="USER_ENTERED")
+
+    for attempt in range(3):
+        try:
+            worksheet.append_row(row, value_input_option="USER_ENTERED")
+            return
+        except Exception as error:
+            if _exception_status_code(error) != 429 or attempt == 2:
+                raise
+            time.sleep(0.6 * (2 ** attempt))
 
 
-def _load_ratings_from_google():
+@st.cache_data(ttl=30, show_spinner=False)
+def _read_ratings_cached():
     worksheet = _worksheet(
         ("Hoja 1", "Opiniones", "Calificaciones", "Profesores"),
         RATING_HEADERS,
@@ -888,31 +914,28 @@ def _load_ratings_from_google():
         create_if_missing=False,
     )
     if worksheet is None:
-        return None
+        raise RuntimeError("No se encontró la pestaña de opiniones.")
 
-    try:
-        values = worksheet.get_all_values()
-        if not values:
-            return []
+    values = worksheet.get_all_values()
+    if not values:
+        return []
 
-        headers = [_normalize(value) for value in values[0]]
-        records = []
-        for raw_row in values[1:]:
-            if not any(str(value).strip() for value in raw_row):
-                continue
-            padded = list(raw_row) + [""] * max(0, len(headers) - len(raw_row))
-            records.append({
-                headers[index]: padded[index]
-                for index in range(len(headers))
-                if headers[index]
-            })
-        return records
-    except Exception:
-        st.session_state.pop("_google_spreadsheet", None)
-        return None
+    headers = [_normalize(value) for value in values[0]]
+    records = []
+    for raw_row in values[1:]:
+        if not any(str(value).strip() for value in raw_row):
+            continue
+        padded = list(raw_row) + [""] * max(0, len(headers) - len(raw_row))
+        records.append({
+            headers[index]: padded[index]
+            for index in range(len(headers))
+            if headers[index]
+        })
+    return records
 
 
-def _load_reports_from_google():
+@st.cache_data(ttl=30, show_spinner=False)
+def _read_reports_cached():
     worksheet = _worksheet(
         ("reportes_grupos", "Grupos_Llenos", "Grupos Llenos", "Reportes"),
         REPORT_HEADERS,
@@ -920,45 +943,36 @@ def _load_reports_from_google():
         create_if_missing=False,
     )
     if worksheet is None:
-        return None
-    try:
-        return worksheet.get_all_records()
-    except Exception:
-        st.session_state.pop("_google_spreadsheet", None)
-        return None
-
-
-def _session_cached_google_data(cache_key, loader, ttl_seconds=300):
-    """Cache rápido por sesión sin guardar errores de conexión."""
-    now = time.monotonic()
-    entry = st.session_state.get(cache_key)
-    if entry and now - float(entry.get("loaded_at", 0.0)) < ttl_seconds:
-        return entry.get("data", [])
-
-    loaded = loader()
-    if loaded is not None:
-        st.session_state[cache_key] = {"loaded_at": now, "data": loaded}
-        return loaded
-
-    # Mantiene los últimos datos válidos si Google tiene un corte momentáneo.
-    if entry:
-        return entry.get("data", [])
-    return []
+        raise RuntimeError("No se encontró la pestaña de reportes.")
+    return worksheet.get_all_records()
 
 
 def read_ratings():
-    return _session_cached_google_data("_ratings_cache", _load_ratings_from_google)
+    try:
+        rows = _read_ratings_cached()
+        st.session_state["_ratings_last_good"] = rows
+        return rows
+    except Exception:
+        # No congela el fallo: el próximo rerun vuelve a intentar la conexión.
+        _open_spreadsheet_cached.clear()
+        return st.session_state.get("_ratings_last_good", [])
 
 
 def read_reports():
-    return _session_cached_google_data("_reports_cache", _load_reports_from_google)
+    try:
+        rows = _read_reports_cached()
+        st.session_state["_reports_last_good"] = rows
+        return rows
+    except Exception:
+        _open_spreadsheet_cached.clear()
+        return st.session_state.get("_reports_last_good", [])
 
 
 def invalidate_google_cache(kind=None):
     if kind in (None, "ratings"):
-        st.session_state.pop("_ratings_cache", None)
+        _read_ratings_cached.clear()
     if kind in (None, "reports"):
-        st.session_state.pop("_reports_cache", None)
+        _read_reports_cached.clear()
 
 
 def ratings_for_professor(professor, rating_rows=None):
@@ -1086,7 +1100,11 @@ def report_count(group, report_rows=None):
 
 
 def submit_rating(professor, score, comment):
-    worksheet = _worksheet(("Hoja 1", "Opiniones", "Calificaciones", "Profesores"), RATING_HEADERS)
+    worksheet = _worksheet(
+        ("Hoja 1", "Opiniones", "Calificaciones", "Profesores"),
+        RATING_HEADERS,
+        ensure_headers=False,
+    )
     if worksheet is None:
         return False
     try:
@@ -1107,7 +1125,11 @@ def submit_rating(professor, score, comment):
 
 
 def submit_full_report(subject, group):
-    worksheet = _worksheet(("reportes_grupos", "Grupos_Llenos", "Grupos Llenos", "Reportes"), REPORT_HEADERS)
+    worksheet = _worksheet(
+        ("reportes_grupos", "Grupos_Llenos", "Grupos Llenos", "Reportes"),
+        REPORT_HEADERS,
+        ensure_headers=False,
+    )
     if worksheet is None:
         return False
     try:
@@ -1135,7 +1157,7 @@ def submit_full_report(subject, group):
 # =============================================================================
 # 5. CARGA Y NORMALIZACIÓN DE LA OFERTA
 # =============================================================================
-@st.cache_data
+@st.cache_data(max_entries=4, show_spinner=False)
 def _read_json(filepath, modified_ns):
     del modified_ns
     with open(filepath, "r", encoding="utf-8") as file:
