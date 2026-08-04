@@ -7,6 +7,7 @@ import json
 import mimetypes
 import os
 import re
+import time
 import unicodedata
 from datetime import datetime, timezone
 from pathlib import Path
@@ -478,25 +479,44 @@ def render_subject_card_css():
     st.markdown(
         r"""
         <style>
+        /* Fuerza ancho y alto sobre todos los envoltorios que Streamlit
+           puede generar para un checkbox. */
         [data-testid="stCheckbox"] {
             width: 100% !important;
-            min-width: 100% !important;
-            max-width: 100% !important;
-            min-height: 160px !important;
-            height: 160px !important;
-            max-height: 160px !important;
-            margin-bottom: 10px !important;
-            display: block !important;
+            min-width: 0 !important;
+            max-width: none !important;
+            min-height: 168px !important;
+            height: 168px !important;
+            max-height: 168px !important;
+            margin: 0 0 12px 0 !important;
+            display: flex !important;
+            flex: 1 1 100% !important;
+            align-items: stretch !important;
             align-self: stretch !important;
+            box-sizing: border-box !important;
         }
-        [data-testid="stCheckbox"] > label {
+        [data-testid="stCheckbox"] > div,
+        [data-testid="stCheckbox"] > div > div {
             width: 100% !important;
-            min-width: 100% !important;
-            max-width: 100% !important;
+            min-width: 0 !important;
+            max-width: none !important;
+            height: 100% !important;
+            min-height: 100% !important;
+            display: flex !important;
+            flex: 1 1 100% !important;
+            align-items: stretch !important;
+            box-sizing: border-box !important;
+        }
+        [data-testid="stCheckbox"] label,
+        [data-testid="stCheckbox"] label[data-baseweb="checkbox"] {
+            width: 100% !important;
+            min-width: 0 !important;
+            max-width: none !important;
+            height: 100% !important;
+            min-height: 100% !important;
+            max-height: 100% !important;
+            flex: 1 1 100% !important;
             align-self: stretch !important;
-            min-height: 152px !important;
-            height: 152px !important;
-            max-height: 152px !important;
             box-sizing: border-box !important;
             border: 1px solid rgba(180,186,198,.28) !important;
             border-radius: 14px !important;
@@ -505,18 +525,18 @@ def render_subject_card_css():
             align-items: center !important;
             justify-content: center !important;
             text-align: center !important;
-            overflow: visible !important;
+            overflow: hidden !important;
             transition: transform .16s ease, border-color .16s ease, background .16s ease !important;
             cursor: pointer !important;
             background: linear-gradient(145deg, rgba(27,32,43,.98), rgba(16,19,27,.98));
         }
-        [data-testid="stCheckbox"] > label:hover {
+        [data-testid="stCheckbox"] label:hover {
             border-color: var(--guinda-500) !important;
             background: linear-gradient(145deg, rgba(83,15,33,.72), rgba(24,27,37,.98)) !important;
             transform: translateY(-2px);
             box-shadow: 0 10px 22px rgba(0,0,0,.18);
         }
-        [data-testid="stCheckbox"]:has(input:checked) > label {
+        [data-testid="stCheckbox"]:has(input:checked) label {
             background: linear-gradient(145deg, var(--guinda-700), var(--guinda-500)) !important;
             border-color: #d74b68 !important;
             box-shadow: 0 10px 25px rgba(123,16,40,.32);
@@ -715,14 +735,12 @@ def display_professor_name(value):
 
 @st.cache_resource(show_spinner=False)
 def get_db_connection():
-    try:
-        info = dict(st.secrets["gcp_service_account"])
-        if "private_key" in info:
-            info["private_key"] = info["private_key"].replace("\\n", "\n")
-        creds = Credentials.from_service_account_info(info, scopes=SCOPES)
-        return gspread.authorize(creds)
-    except Exception:
-        return None
+    """Crea el cliente autenticado una sola vez por proceso."""
+    info = dict(st.secrets["gcp_service_account"])
+    if "private_key" in info:
+        info["private_key"] = info["private_key"].replace("\\n", "\n")
+    creds = Credentials.from_service_account_info(info, scopes=SCOPES)
+    return gspread.authorize(creds)
 
 
 def _sheet_config():
@@ -741,24 +759,83 @@ def _sheet_config():
     return config
 
 
-@st.cache_resource(show_spinner=False)
-def get_spreadsheet():
-    """Abre directamente el archivo configurado, sin búsquedas lentas por nombre."""
-    client = get_db_connection()
-    if client is None:
-        return None
-
+def _open_spreadsheet_once(client):
+    """Prueba ID, URL y nombre; un dato incorrecto no bloquea los respaldos."""
     config = _sheet_config()
-    spreadsheet_id = str(
-        config.get("spreadsheet_id") or DEFAULT_SPREADSHEET_ID
-    ).strip()
-    if not spreadsheet_id:
+
+    id_candidates = []
+    configured_id = str(config.get("spreadsheet_id", "")).strip()
+    if configured_id:
+        id_candidates.append(configured_id)
+    if DEFAULT_SPREADSHEET_ID not in id_candidates:
+        id_candidates.append(DEFAULT_SPREADSHEET_ID)
+
+    for spreadsheet_id in id_candidates:
+        try:
+            return client.open_by_key(spreadsheet_id)
+        except Exception:
+            continue
+
+    configured_url = str(config.get("spreadsheet_url", "")).strip()
+    if configured_url:
+        try:
+            return client.open_by_url(configured_url)
+        except Exception:
+            pass
+
+    name_candidates = []
+    configured_name = str(config.get("spreadsheet_name", "")).strip()
+    if configured_name:
+        name_candidates.append(configured_name)
+    name_candidates.extend([
+        "opiniones_its",
+        "Opiniones_its",
+        "Opiniones ITS",
+        "Horario ITS",
+        "HorarioITS",
+        "Waze Académico",
+        "Waze Academico",
+    ])
+    for name in dict.fromkeys(name_candidates):
+        try:
+            return client.open(name)
+        except Exception:
+            continue
+    return None
+
+
+def get_spreadsheet(force_retry=False):
+    """Conserva solo conexiones exitosas y reintenta fallos transitorios."""
+    if force_retry:
+        st.session_state.pop("_google_spreadsheet", None)
+        st.session_state.pop("_google_retry_after", None)
+
+    cached_book = st.session_state.get("_google_spreadsheet")
+    if cached_book is not None:
+        return cached_book
+
+    now = time.monotonic()
+    retry_after = float(st.session_state.get("_google_retry_after", 0.0))
+    if now < retry_after:
         return None
 
     try:
-        return client.open_by_key(spreadsheet_id)
+        client = get_db_connection()
     except Exception:
+        st.session_state["_google_retry_after"] = now + 2.0
         return None
+
+    for attempt in range(2):
+        book = _open_spreadsheet_once(client)
+        if book is not None:
+            st.session_state["_google_spreadsheet"] = book
+            st.session_state.pop("_google_retry_after", None)
+            return book
+        if attempt == 0:
+            time.sleep(0.20)
+
+    st.session_state["_google_retry_after"] = time.monotonic() + 2.0
+    return None
 
 
 def _ensure_headers(worksheet, required_headers):
@@ -826,9 +903,7 @@ def _append_record(worksheet, values_by_header, required_headers):
     worksheet.append_row(row, value_input_option="USER_ENTERED")
 
 
-@st.cache_data(ttl=300, show_spinner=False)
-def read_ratings():
-    """Lee opiniones una vez cada 5 minutos, sin mostrar el spinner técnico."""
+def _load_ratings_from_google():
     worksheet = _worksheet(
         ("Hoja 1", "Opiniones", "Calificaciones", "Profesores"),
         RATING_HEADERS,
@@ -836,7 +911,7 @@ def read_ratings():
         create_if_missing=False,
     )
     if worksheet is None:
-        return []
+        return None
 
     try:
         values = worksheet.get_all_values()
@@ -849,19 +924,18 @@ def read_ratings():
             if not any(str(value).strip() for value in raw_row):
                 continue
             padded = list(raw_row) + [""] * max(0, len(headers) - len(raw_row))
-            record = {
+            records.append({
                 headers[index]: padded[index]
                 for index in range(len(headers))
                 if headers[index]
-            }
-            records.append(record)
+            })
         return records
     except Exception:
-        return []
+        st.session_state.pop("_google_spreadsheet", None)
+        return None
 
 
-@st.cache_data(ttl=300, show_spinner=False)
-def read_reports():
+def _load_reports_from_google():
     worksheet = _worksheet(
         ("reportes_grupos", "Grupos_Llenos", "Grupos Llenos", "Reportes"),
         REPORT_HEADERS,
@@ -869,11 +943,45 @@ def read_reports():
         create_if_missing=False,
     )
     if worksheet is None:
-        return []
+        return None
     try:
         return worksheet.get_all_records()
     except Exception:
-        return []
+        st.session_state.pop("_google_spreadsheet", None)
+        return None
+
+
+def _session_cached_google_data(cache_key, loader, ttl_seconds=300):
+    """Cache rápido por sesión sin guardar errores de conexión."""
+    now = time.monotonic()
+    entry = st.session_state.get(cache_key)
+    if entry and now - float(entry.get("loaded_at", 0.0)) < ttl_seconds:
+        return entry.get("data", [])
+
+    loaded = loader()
+    if loaded is not None:
+        st.session_state[cache_key] = {"loaded_at": now, "data": loaded}
+        return loaded
+
+    # Mantiene los últimos datos válidos si Google tiene un corte momentáneo.
+    if entry:
+        return entry.get("data", [])
+    return []
+
+
+def read_ratings():
+    return _session_cached_google_data("_ratings_cache", _load_ratings_from_google)
+
+
+def read_reports():
+    return _session_cached_google_data("_reports_cache", _load_reports_from_google)
+
+
+def invalidate_google_cache(kind=None):
+    if kind in (None, "ratings"):
+        st.session_state.pop("_ratings_cache", None)
+    if kind in (None, "reports"):
+        st.session_state.pop("_reports_cache", None)
 
 
 def ratings_for_professor(professor):
@@ -1012,7 +1120,7 @@ def submit_rating(professor, score, comment):
             },
             RATING_HEADERS,
         )
-        read_ratings.clear()
+        invalidate_google_cache("ratings")
         return True
     except Exception:
         return False
@@ -1038,7 +1146,7 @@ def submit_full_report(subject, group):
             },
             REPORT_HEADERS,
         )
-        read_reports.clear()
+        invalidate_google_cache("reports")
         return True
     except Exception:
         return False
@@ -1783,9 +1891,6 @@ elif st.session_state.step == 3:
 
     if RESIDENCIA in selected_subjects:
         st.info("Residencia Profesional cuenta en tu carga y créditos, pero no ocupa bloques en el horario.")
-
-    if get_spreadsheet() is None:
-        st.warning("Las opiniones y reportes no pudieron conectarse en este momento.")
 
     with st.container(border=True):
         range_col, blocked_col = st.columns(2, gap="large")
