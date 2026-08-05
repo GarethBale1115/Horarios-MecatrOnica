@@ -1368,6 +1368,76 @@ def _schedule_presence_metrics(schedule):
     return (total_presence, idle_hours, days_on_campus, latest_exit)
 
 
+def _schedule_daily_metrics(schedule):
+    """Calcula permanencia y horas libres por cada día con clases."""
+    sessions_by_day = defaultdict(list)
+
+    for course in schedule:
+        for day, start, end in course.get("horario", []):
+            sessions_by_day[int(day)].append((int(start), int(end)))
+
+    metrics = {}
+    for day, sessions in sorted(sessions_by_day.items()):
+        first_start = min(start for start, _ in sessions)
+        last_end = max(end for _, end in sessions)
+        presence_hours = last_end - first_start
+
+        occupied = set()
+        for start, end in sessions:
+            occupied.update(range(start, end))
+
+        class_hours = len(occupied)
+        idle_hours = max(0, presence_hours - class_hours)
+        metrics[day] = {
+            "presence": presence_hours,
+            "idle": idle_hours,
+            "class_hours": class_hours,
+            "start": first_start,
+            "end": last_end,
+        }
+
+    return metrics
+
+
+def _group_daily_metric(metrics, field):
+    """Agrupa días consecutivos que comparten el mismo valor."""
+    if not metrics:
+        return "Sin clases"
+
+    ordered_days = sorted(metrics)
+    groups = []
+    start_day = ordered_days[0]
+    previous_day = ordered_days[0]
+    current_value = metrics[start_day][field]
+
+    for day in ordered_days[1:]:
+        value = metrics[day][field]
+        if day == previous_day + 1 and value == current_value:
+            previous_day = day
+            continue
+
+        groups.append((start_day, previous_day, current_value))
+        start_day = previous_day = day
+        current_value = value
+
+    groups.append((start_day, previous_day, current_value))
+
+    parts = []
+    for first, last, value in groups:
+        day_label = DIAS[first] if first == last else f"{DIAS[first]}–{DIAS[last]}"
+        unit = "h"
+        parts.append(f"{day_label} {value} {unit}")
+
+    return " · ".join(parts)
+
+
+def _schedule_daily_summary(schedule):
+    metrics = _schedule_daily_metrics(schedule)
+    presence_text = _group_daily_metric(metrics, "presence")
+    idle_text = _group_daily_metric(metrics, "idle")
+    return presence_text, idle_text
+
+
 def _schedule_preference_score(schedule):
     return sum(int(course.get("_preference", 0)) for course in schedule)
 
@@ -2176,7 +2246,7 @@ elif st.session_state.step == 4:
         for index, schedule in enumerate(results):
             option_number = index + 1
             preference_score = _schedule_preference_score(schedule)
-            presence_hours, idle_hours, campus_days, latest_exit = _schedule_presence_metrics(schedule)
+            daily_presence, daily_idle = _schedule_daily_summary(schedule)
             preference_text = (
                 f"✅ {preference_score} preferido(s)"
                 if preference_score
@@ -2184,7 +2254,8 @@ elif st.session_state.step == 4:
             )
             option_title = (
                 f"Opción {option_number} · {preference_text} · "
-                f"⏱ {presence_hours} h en el Tec · 🕳 {idle_hours} h libres"
+                f"⏱ Horas diarias: {daily_presence} · "
+                f"🕳 Libres por día: {daily_idle}"
             )
             with st.expander(option_title, expanded=(index == 0)):
                 st.markdown(create_timetable_html(schedule), unsafe_allow_html=True)
