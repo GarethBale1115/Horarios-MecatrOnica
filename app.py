@@ -89,13 +89,6 @@ CARRERAS_CONFIG = {
         "reticula_filename": "Reticula_Ingenieria_Materiales_ITS.pdf",
         "max_creditos": 36,
     },
-    "INGENIERÍA QUÍMICA": {
-        "slug": "quimica",
-        "display_name": "Ingeniería Química",
-        "reticula_candidates": ("reticulas/quimica.pdf", "reticula_quimica.pdf"),
-        "reticula_filename": "Reticula_Ingenieria_Quimica_ITS.pdf",
-        "max_creditos": 36,
-    },
     "INGENIERÍA EN GESTIÓN EMPRESARIAL": {
         "slug": "gestion_empresarial",
         "display_name": "Ingeniería en Gestión Empresarial",
