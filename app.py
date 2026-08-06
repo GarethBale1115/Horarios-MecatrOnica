@@ -30,17 +30,108 @@ MAX_RESULTADOS = 15
 RESIDENCIA = "Residencia Profesional"
 MAX_MATERIAS_ADICIONALES_RESIDENCIA = 2
 
-CARRERAS = {
-    "INGENIERÍA MECATRÓNICA": "mecatronica",
-    "INGENIERÍA INDUSTRIAL": "industrial",
-    "INGENIERÍA MECÁNICA": "mecanica",
-    "INGENIERÍA ELÉCTRICA": "electrica",
-    "INGENIERÍA ELECTRÓNICA": "electronica",
-    "INGENIERÍA EN SISTEMAS COMPUTACIONALES": "sistemas",
-    "INGENIERÍA EN MATERIALES": "materiales",
-    "INGENIERÍA QUÍMICA": "quimica",
-    "INGENIERÍA EN GESTIÓN EMPRESARIAL": "gestion_empresarial",
+# Catálogo central. Para agregar otra carrera solo se necesita:
+# 1) data/<PERIODO_CODIGO>/<slug>.json
+# 2) reticulas/<slug>.pdf
+# El JSON puede incluir opcionalmente "config" y "seriaciones" en la raíz.
+CARRERAS_CONFIG = {
+    "INGENIERÍA MECATRÓNICA": {
+        "slug": "mecatronica",
+        "display_name": "Ingeniería Mecatrónica",
+        "reticula_candidates": (
+            "reticulas/mecatronica.pdf",
+            "reticula_mecatronica.pdf",
+            "reticula.pdf",  # Compatibilidad con el archivo actual.
+            "assets/reticula.pdf",
+        ),
+        "reticula_filename": "Reticula_Ingenieria_Mecatronica_ITS.pdf",
+        "max_creditos": 36,
+    },
+    "INGENIERÍA INDUSTRIAL": {
+        "slug": "industrial",
+        "display_name": "Ingeniería Industrial",
+        "reticula_candidates": ("reticulas/industrial.pdf", "reticula_industrial.pdf"),
+        "reticula_filename": "Reticula_Ingenieria_Industrial_ITS.pdf",
+        "max_creditos": 36,
+    },
+    "INGENIERÍA MECÁNICA": {
+        "slug": "mecanica",
+        "display_name": "Ingeniería Mecánica",
+        "reticula_candidates": ("reticulas/mecanica.pdf", "reticula_mecanica.pdf"),
+        "reticula_filename": "Reticula_Ingenieria_Mecanica_ITS.pdf",
+        "max_creditos": 36,
+    },
+    "INGENIERÍA ELÉCTRICA": {
+        "slug": "electrica",
+        "display_name": "Ingeniería Eléctrica",
+        "reticula_candidates": ("reticulas/electrica.pdf", "reticula_electrica.pdf"),
+        "reticula_filename": "Reticula_Ingenieria_Electrica_ITS.pdf",
+        "max_creditos": 36,
+    },
+    "INGENIERÍA ELECTRÓNICA": {
+        "slug": "electronica",
+        "display_name": "Ingeniería Electrónica",
+        "reticula_candidates": ("reticulas/electronica.pdf", "reticula_electronica.pdf"),
+        "reticula_filename": "Reticula_Ingenieria_Electronica_ITS.pdf",
+        "max_creditos": 36,
+    },
+    "INGENIERÍA EN SISTEMAS COMPUTACIONALES": {
+        "slug": "sistemas",
+        "display_name": "Ingeniería en Sistemas Computacionales",
+        "reticula_candidates": ("reticulas/sistemas.pdf", "reticula_sistemas.pdf"),
+        "reticula_filename": "Reticula_Ingenieria_Sistemas_Computacionales_ITS.pdf",
+        "max_creditos": 36,
+    },
+    "INGENIERÍA EN MATERIALES": {
+        "slug": "materiales",
+        "display_name": "Ingeniería en Materiales",
+        "reticula_candidates": ("reticulas/materiales.pdf", "reticula_materiales.pdf"),
+        "reticula_filename": "Reticula_Ingenieria_Materiales_ITS.pdf",
+        "max_creditos": 36,
+    },
+    "INGENIERÍA QUÍMICA": {
+        "slug": "quimica",
+        "display_name": "Ingeniería Química",
+        "reticula_candidates": ("reticulas/quimica.pdf", "reticula_quimica.pdf"),
+        "reticula_filename": "Reticula_Ingenieria_Quimica_ITS.pdf",
+        "max_creditos": 36,
+    },
+    "INGENIERÍA EN GESTIÓN EMPRESARIAL": {
+        "slug": "gestion_empresarial",
+        "display_name": "Ingeniería en Gestión Empresarial",
+        "reticula_candidates": (
+            "reticulas/gestion_empresarial.pdf",
+            "reticula_gestion_empresarial.pdf",
+        ),
+        "reticula_filename": "Reticula_Ingenieria_Gestion_Empresarial_ITS.pdf",
+        "max_creditos": 36,
+    },
 }
+
+CARRERAS = {name: config["slug"] for name, config in CARRERAS_CONFIG.items()}
+CARRERAS_POR_SLUG = {config["slug"]: config for config in CARRERAS_CONFIG.values()}
+
+
+def career_config(*, name=None, slug=None):
+    if name and name in CARRERAS_CONFIG:
+        return CARRERAS_CONFIG[name]
+    if slug and slug in CARRERAS_POR_SLUG:
+        return CARRERAS_POR_SLUG[slug]
+    return None
+
+
+def current_career_config():
+    return career_config(
+        name=st.session_state.get("carrera_nombre"),
+        slug=st.session_state.get("carrera"),
+    ) or {}
+
+
+def current_max_credits():
+    try:
+        return int(st.session_state.get("max_creditos_actual", current_career_config().get("max_creditos", MAX_CREDITOS)))
+    except (TypeError, ValueError):
+        return MAX_CREDITOS
 
 DIAS = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"]
 
@@ -424,7 +515,7 @@ def render_brand_header(current_step):
 
     # Accesos públicos independientes del flujo principal.
     # Se eliminó el indicador técnico de Google Sheets porque no aporta valor al usuario.
-    nav_teacher, nav_reticula, nav_space = st.columns([1.2, 1.1, 3.9], gap="small")
+    nav_teacher, nav_reticula, nav_space = st.columns([1.2, 2.15, 3.0], gap="small")
 
     if current_step == 5:
         if nav_teacher.button(
@@ -444,23 +535,36 @@ def render_brand_header(current_step):
             st.session_state.step = 5
             st.rerun()
 
-    reticula_path = _first_existing_path("reticula.pdf", "assets/reticula.pdf")
-    if reticula_path is not None:
-        nav_reticula.download_button(
-            "📄 Descargar retícula",
-            data=reticula_path.read_bytes(),
-            file_name="Reticula_Ingenieria_Mecatronica_ITS.pdf",
-            mime="application/pdf",
-            key=f"header_download_reticula_{current_step}",
-            use_container_width=True,
-        )
-    else:
-        nav_reticula.button(
-            "📄 Retícula no disponible",
-            key=f"header_reticula_missing_{current_step}",
-            disabled=True,
-            use_container_width=True,
-        )
+    # La retícula aparece únicamente después de cargar una carrera.
+    selected_slug = str(st.session_state.get("carrera", "")).strip()
+    selected_name = str(st.session_state.get("carrera_nombre", "")).strip()
+    selected_config = career_config(name=selected_name, slug=selected_slug)
+
+    if selected_slug and selected_config:
+        display_name = selected_config.get("display_name", selected_name.title())
+        reticula_candidates = tuple(selected_config.get("reticula_candidates", ()))
+        reticula_path = _first_existing_path(*reticula_candidates) if reticula_candidates else None
+        button_label = f"📄 Descargar retícula de {display_name}"
+
+        if reticula_path is not None:
+            nav_reticula.download_button(
+                button_label,
+                data=reticula_path.read_bytes(),
+                file_name=selected_config.get(
+                    "reticula_filename",
+                    f"Reticula_{selected_slug}_ITS.pdf",
+                ),
+                mime="application/pdf",
+                key=f"header_download_reticula_{selected_slug}_{current_step}",
+                use_container_width=True,
+            )
+        else:
+            nav_reticula.button(
+                f"📄 Retícula de {display_name} no disponible",
+                key=f"header_reticula_missing_{selected_slug}_{current_step}",
+                disabled=True,
+                use_container_width=True,
+            )
 
 
 
@@ -637,6 +741,49 @@ SERIADAS_DIRECTAS = (
     ("Taller De Investigación I", "Taller De Investigación II"),
 )
 
+
+# Reglas de respaldo. Los JSON nuevos pueden traer su propia lista en la raíz:
+# "seriaciones": [["Materia previa", "Materia siguiente"], ...]
+SERIACIONES_RESPALDO_POR_CARRERA = {
+    "mecatronica": SERIADAS_DIRECTAS,
+}
+
+
+def extract_career_runtime_config(json_data, slug):
+    raw_config = json_data.get("config", {}) if isinstance(json_data, dict) else {}
+    raw_config = raw_config if isinstance(raw_config, dict) else {}
+    base_config = career_config(slug=slug) or {}
+
+    try:
+        max_credits = int(raw_config.get("max_creditos", base_config.get("max_creditos", MAX_CREDITOS)))
+    except (TypeError, ValueError):
+        max_credits = int(base_config.get("max_creditos", MAX_CREDITOS))
+
+    raw_serials = json_data.get("seriaciones", []) if isinstance(json_data, dict) else []
+    serials = []
+    if isinstance(raw_serials, (list, tuple)):
+        for relation in raw_serials:
+            if isinstance(relation, (list, tuple)) and len(relation) == 2:
+                previous = str(relation[0]).strip()
+                next_subject = str(relation[1]).strip()
+                if previous and next_subject:
+                    serials.append((previous, next_subject))
+
+    if not serials:
+        serials = list(SERIACIONES_RESPALDO_POR_CARRERA.get(slug, ()))
+
+    return {
+        "max_creditos": max_credits,
+        "seriaciones": tuple(serials),
+        "residencia_nombre": str(raw_config.get("residencia_nombre", RESIDENCIA)).strip() or RESIDENCIA,
+        "max_materias_adicionales_residencia": int(
+            raw_config.get(
+                "max_materias_adicionales_residencia",
+                MAX_MATERIAS_ADICIONALES_RESIDENCIA,
+            )
+        ),
+    }
+
 # =============================================================================
 # 4. GOOGLE SHEETS: OPINIONES Y REPORTES
 # =============================================================================
@@ -660,6 +807,9 @@ REPORT_HEADERS = [
     "Periodo",
     "Carrera",
 ]
+
+# Caché en memoria de encabezados para no leer la fila 1 en cada escritura.
+_WORKSHEET_HEADER_CACHE = {}
 
 # Respaldo del archivo opiniones_its. El valor no es una credencial privada.
 DEFAULT_SPREADSHEET_ID = "1I2RS8vuH2Yr32k2vZG18n-YZF6h_9z4N7oVTNf2EmyQ"
@@ -820,21 +970,34 @@ def get_spreadsheet(force_retry=False):
         return None
 
 
-def _ensure_headers(worksheet, required_headers):
+def _worksheet_header_cache_key(worksheet):
+    spreadsheet_id = getattr(getattr(worksheet, "spreadsheet", None), "id", "")
+    worksheet_id = getattr(worksheet, "id", "")
+    return (str(spreadsheet_id), str(worksheet_id), str(getattr(worksheet, "title", "")))
+
+
+def _ensure_headers(worksheet, required_headers, *, force=False):
+    cache_key = _worksheet_header_cache_key(worksheet)
+    if not force and cache_key in _WORKSHEET_HEADER_CACHE:
+        return list(_WORKSHEET_HEADER_CACHE[cache_key])
+
     try:
         values = worksheet.get_all_values()
         if not values:
             worksheet.append_row(required_headers)
-            return list(required_headers)
+            headers = list(required_headers)
+        else:
+            headers = [str(value).strip() for value in values[0]]
+            normalized = {_normalize(header) for header in headers if header}
+            missing = [header for header in required_headers if _normalize(header) not in normalized]
+            if missing:
+                headers.extend(missing)
+                worksheet.update(range_name="A1", values=[headers])
 
-        headers = [str(value).strip() for value in values[0]]
-        normalized = {_normalize(header) for header in headers if header}
-        missing = [header for header in required_headers if _normalize(header) not in normalized]
-        if missing:
-            headers.extend(missing)
-            worksheet.update(range_name="A1", values=[headers])
+        _WORKSHEET_HEADER_CACHE[cache_key] = tuple(headers)
         return headers
     except Exception:
+        # Si Google falla, se conserva el orden conocido para no hacer otra lectura.
         return list(required_headers)
 
 
@@ -890,19 +1053,28 @@ def _exception_status_code(error):
 
 
 def _append_record(worksheet, values_by_header, required_headers):
-    """Una sola lectura de encabezados y una sola escritura; reintenta solo 429."""
+    """Una escritura por envío, con encabezados cacheados y backoff exponencial."""
     headers = _ensure_headers(worksheet, required_headers)
     normalized_values = {_normalize(key): value for key, value in values_by_header.items()}
     row = [normalized_values.get(_normalize(header), "") for header in headers]
+    retryable_statuses = {429, 500, 502, 503, 504}
 
     for attempt in range(3):
         try:
             worksheet.append_row(row, value_input_option="USER_ENTERED")
-            return
+            return True
         except Exception as error:
-            if _exception_status_code(error) != 429 or attempt == 2:
+            status = _exception_status_code(error)
+            if status is None:
+                match = re.search(r"\b(429|500|502|503|504)\b", str(error))
+                status = int(match.group(1)) if match else None
+
+            if status not in retryable_statuses or attempt == 2:
                 raise
-            time.sleep(0.6 * (2 ** attempt))
+
+            time.sleep(0.75 * (2 ** attempt))
+
+    return False
 
 
 @st.cache_data(ttl=30, show_spinner=False)
@@ -1103,7 +1275,7 @@ def submit_rating(professor, score, comment):
     worksheet = _worksheet(
         ("Hoja 1", "Opiniones", "Calificaciones", "Profesores"),
         RATING_HEADERS,
-        ensure_headers=False,
+        ensure_headers=True,
     )
     if worksheet is None:
         return False
@@ -1128,7 +1300,7 @@ def submit_full_report(subject, group):
     worksheet = _worksheet(
         ("reportes_grupos", "Grupos_Llenos", "Grupos Llenos", "Reportes"),
         REPORT_HEADERS,
-        ensure_headers=False,
+        ensure_headers=True,
     )
     if worksheet is None:
         return False
@@ -1229,33 +1401,39 @@ def format_json_to_oferta(json_data):
 # =============================================================================
 # 6. REGLAS ACADÉMICAS
 # =============================================================================
-def build_prerequisite_graph():
+def build_prerequisite_graph(relations):
     graph = {}
-    for previous, next_subject in SERIADAS_DIRECTAS:
+    for previous, next_subject in relations:
         graph.setdefault(previous, set()).add(next_subject)
     return graph
 
 
-GRAFO_SERIADAS = build_prerequisite_graph()
+def current_serial_relations():
+    relations = st.session_state.get("seriaciones_actuales")
+    if relations is not None:
+        return tuple(relations)
+    slug = str(st.session_state.get("carrera", "mecatronica"))
+    return tuple(SERIACIONES_RESPALDO_POR_CARRERA.get(slug, ()))
 
 
-def later_subjects(subject):
+def later_subjects(subject, graph):
     visited = set()
-    pending = list(GRAFO_SERIADAS.get(subject, set()))
+    pending = list(graph.get(subject, set()))
     while pending:
         current = pending.pop()
         if current in visited:
             continue
         visited.add(current)
-        pending.extend(GRAFO_SERIADAS.get(current, set()))
+        pending.extend(graph.get(current, set()))
     return visited
 
 
 def serial_conflicts(selection):
+    graph = build_prerequisite_graph(current_serial_relations())
     selected = set(selection)
     conflicts = []
     for previous in sorted(selected):
-        for next_subject in sorted(later_subjects(previous)):
+        for next_subject in sorted(later_subjects(previous, graph)):
             if next_subject in selected:
                 conflicts.append((previous, next_subject))
     return conflicts
@@ -1264,17 +1442,26 @@ def serial_conflicts(selection):
 def validate_selection(selection, desired_count, credits_by_subject):
     errors = []
     total_credits = sum(credits_by_subject.get(subject, 0) for subject in selection)
+    max_credits = current_max_credits()
+    residence_name = str(st.session_state.get("residencia_nombre_actual", RESIDENCIA))
+    max_residence_companions = int(
+        st.session_state.get(
+            "max_materias_adicionales_residencia_actual",
+            MAX_MATERIAS_ADICIONALES_RESIDENCIA,
+        )
+    )
+
     if len(selection) != desired_count:
         errors.append(
             f"Debes seleccionar exactamente {desired_count} materias; seleccionaste {len(selection)}."
         )
-    if total_credits > MAX_CREDITOS:
-        errors.append(f"La carga suma {total_credits} créditos y el máximo permitido es {MAX_CREDITOS}.")
+    if total_credits > max_credits:
+        errors.append(f"La carga suma {total_credits} créditos y el máximo permitido es {max_credits}.")
     for previous, next_subject in serial_conflicts(selection):
         errors.append(f"No puedes cursar {previous} y {next_subject} en el mismo periodo porque son seriadas.")
-    if RESIDENCIA in selection and len(selection) - 1 > MAX_MATERIAS_ADICIONALES_RESIDENCIA:
+    if residence_name in selection and len(selection) - 1 > max_residence_companions:
         errors.append(
-            f"Residencia Profesional puede acompañarse de máximo {MAX_MATERIAS_ADICIONALES_RESIDENCIA} materias adicionales."
+            f"{residence_name} puede acompañarse de máximo {max_residence_companions} materias adicionales."
         )
     return errors, total_credits
 
@@ -1336,11 +1523,21 @@ def group_fits(group, time_range, blocked_hours):
 
 
 def schedules_overlap(schedule_1, schedule_2):
-    for session_1 in schedule_1:
-        for session_2 in schedule_2:
-            if session_1[0] == session_2[0] and max(session_1[1], session_2[1]) < min(session_1[2], session_2[2]):
-                return True
-    return False
+    return bool(schedule_to_bitmask(schedule_1) & schedule_to_bitmask(schedule_2))
+
+
+def schedule_to_bitmask(schedule):
+    """Convierte un horario en una máscara: un bit por cada hora de la semana."""
+    mask = 0
+    for day, start, end in schedule:
+        day = int(day)
+        start = int(start)
+        end = int(end)
+        if day < 0 or day > 6 or start < 0 or end > 24 or start >= end:
+            continue
+        for hour in range(start, end):
+            mask |= 1 << (day * 24 + hour)
+    return mask
 
 
 def _schedule_presence_metrics(schedule):
@@ -1449,26 +1646,38 @@ def _combination_sort_key(schedule):
 
 def generate_combinations(subjects, filtered_offer):
     if not subjects:
-        return [[]], "OK"
+        return [[]], "No hay materias que procesar."
 
     ordered_subjects = sorted(subjects, key=lambda subject: len(filtered_offer.get(subject, [])))
     pools = []
+
+    # Precalcular las máscaras evita comparar listas de sesiones en cada rama.
     for subject in ordered_subjects:
-        options = filtered_offer.get(subject, [])
+        options = []
+        for group in filtered_offer.get(subject, []):
+            group_with_mask = dict(group)
+            group_with_mask["_bitmask"] = schedule_to_bitmask(group.get("horario", []))
+            options.append(group_with_mask)
+
         if not options:
             return [], f"No quedó ningún horario habilitado para {subject}."
         pools.append(options)
 
     sequence = count()
-    # (-preferencia, permanencia, huecos, secuencia, índice, combinación)
-    heap = [(0, 0, 0, next(sequence), 0, [])]
+    # (-preferencia, permanencia, huecos, secuencia, índice, combinación, máscara)
+    heap = [(0, 0, 0, next(sequence), 0, [], 0)]
     completed = []
     max_completed_to_compare = max(MAX_RESULTADOS * 15, 150)
     max_states = 75000
     explored = 0
+    search_truncated = False
 
-    while heap and len(completed) < max_completed_to_compare and explored < max_states:
-        _, _, _, _, index, combination = heapq.heappop(heap)
+    while heap and len(completed) < max_completed_to_compare:
+        if explored >= max_states:
+            search_truncated = True
+            break
+
+        _, _, _, _, index, combination, current_mask = heapq.heappop(heap)
         explored += 1
 
         if index == len(pools):
@@ -1476,28 +1685,49 @@ def generate_combinations(subjects, filtered_offer):
             continue
 
         for group in pools[index]:
-            if any(
-                schedules_overlap(group.get("horario", []), previous.get("horario", []))
-                for previous in combination
-            ):
+            group_mask = int(group.get("_bitmask", 0))
+            if current_mask & group_mask:
                 continue
 
             new_combination = combination + [group]
+            new_mask = current_mask | group_mask
             preference = _schedule_preference_score(new_combination)
             presence, idle, _, _ = _schedule_presence_metrics(new_combination)
             heapq.heappush(
                 heap,
-                (-preference, presence, idle, next(sequence), index + 1, new_combination),
+                (
+                    -preference,
+                    presence,
+                    idle,
+                    next(sequence),
+                    index + 1,
+                    new_combination,
+                    new_mask,
+                ),
             )
 
     completed.sort(key=_combination_sort_key)
+
     if not completed:
+        if search_truncated:
+            return [], (
+                "La búsqueda alcanzó el límite de procesamiento antes de encontrar una opción. "
+                "Regresa a Grupos, habilita alternativas diferentes e inténtalo nuevamente."
+            )
         return [], (
             "No se encontró ninguna combinación compatible con los profesores y "
             "horarios seleccionados. Regresa a Grupos, habilita otra opción o cambia "
             "alguna preferencia docente."
         )
-    return completed[:MAX_RESULTADOS], "OK"
+
+    results = completed[:MAX_RESULTADOS]
+    if search_truncated:
+        return results, (
+            f"Se encontraron {len(results)} opciones compatibles. La búsqueda alcanzó "
+            "el límite de procesamiento, por lo que podrían existir más alternativas."
+        )
+
+    return results, f"Se encontraron {len(results)} opciones compatibles."
 
 
 # =============================================================================
@@ -1868,7 +2098,8 @@ if st.session_state.step == 1:
             submit = st.form_submit_button("Cargar oferta  ➜", use_container_width=True, type="primary")
 
         if submit:
-            slug = CARRERAS[career]
+            selected_career_config = CARRERAS_CONFIG[career]
+            slug = selected_career_config["slug"]
             try:
                 data = load_oferta_json(PERIODO_CODIGO, slug)
                 if data is None:
@@ -1879,10 +2110,17 @@ if st.session_state.step == 1:
                         st.session_state.mat_sem,
                         st.session_state.creditos,
                     ) = format_json_to_oferta(data)
+                    runtime_config = extract_career_runtime_config(data, slug)
                     st.session_state.seleccion = []
                     st.session_state.cant_deseada = int(amount)
                     st.session_state.carrera = slug
                     st.session_state.carrera_nombre = career
+                    st.session_state.max_creditos_actual = runtime_config["max_creditos"]
+                    st.session_state.seriaciones_actuales = runtime_config["seriaciones"]
+                    st.session_state.residencia_nombre_actual = runtime_config["residencia_nombre"]
+                    st.session_state.max_materias_adicionales_residencia_actual = runtime_config[
+                        "max_materias_adicionales_residencia"
+                    ]
                     for key in list(st.session_state.keys()):
                         if key.startswith(("materia_", "grupo_", "sesion_")):
                             del st.session_state[key]
@@ -1934,7 +2172,7 @@ elif st.session_state.step == 2:
     st.divider()
     state_class = "credit-ok" if not errors else "credit-error"
     st.markdown(
-        f'<div class="credit-box {state_class}">Créditos: {total_credits}/{MAX_CREDITOS} &nbsp;·&nbsp; Materias: {len(selection)}/{st.session_state.cant_deseada}</div>',
+        f'<div class="credit-box {state_class}">Créditos: {total_credits}/{current_max_credits()} &nbsp;·&nbsp; Materias: {len(selection)}/{st.session_state.cant_deseada}</div>',
         unsafe_allow_html=True,
     )
     for error in errors:
@@ -1959,10 +2197,11 @@ elif st.session_state.step == 3:
     )
 
     selected_subjects = list(st.session_state.seleccion)
-    schedulable_subjects = [subject for subject in selected_subjects if subject != RESIDENCIA]
+    residence_name = str(st.session_state.get("residencia_nombre_actual", RESIDENCIA))
+    schedulable_subjects = [subject for subject in selected_subjects if subject != residence_name]
 
-    if RESIDENCIA in selected_subjects:
-        st.info("Residencia Profesional cuenta en tu carga y créditos, pero no ocupa bloques en el horario.")
+    if residence_name in selected_subjects:
+        st.info(f"{residence_name} cuenta en tu carga y créditos, pero no ocupa bloques en el horario.")
 
     with st.container(border=True):
         range_col, blocked_col = st.columns(2, gap="large")
@@ -2241,7 +2480,10 @@ elif st.session_state.step == 4:
             else "Regresa a Grupos y habilita otros profesores u horarios para intentar nuevamente."
         )
     else:
-        st.success(f"Se encontraron {len(results)} opciones compatibles.")
+        if "límite de procesamiento" in str(message).lower():
+            st.warning(message)
+        else:
+            st.success(message or f"Se encontraron {len(results)} opciones compatibles.")
 
         for index, schedule in enumerate(results):
             option_number = index + 1
