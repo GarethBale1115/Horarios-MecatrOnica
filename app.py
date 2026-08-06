@@ -2065,11 +2065,6 @@ if st.session_state.step == 1:
             <div class="hero-kicker">Planeación académica · Ago-Dic 2026</div>
             <div class="hero-title">Organiza tu carga y genera horarios sin choques.</div>
             <p class="hero-copy">Selecciona tu carrera, materias y grupos. Horario ITS compara las opciones disponibles y crea alternativas compatibles.</p>
-            <div class="hero-meta">
-                <span class="meta-chip">🎓 Máximo 36 créditos</span>
-                <span class="meta-chip">🧩 Validación de seriaciones</span>
-                <span class="meta-chip">👤 Autor: {AUTOR}</span>
-            </div>
         </div>
         """,
         unsafe_allow_html=True,
